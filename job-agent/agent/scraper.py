@@ -9,6 +9,7 @@ from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import quote as urlquote
 
 HEADERS = {
     "User-Agent": (
@@ -44,10 +45,11 @@ def now_iso() -> str:
 def scrape_indeed(query: str, location: str = "remote") -> list[dict]:
     """Scrape Indeed job listings."""
     jobs = []
+from urllib.parse import quote as urlquote
     url = (
         f"https://www.indeed.com/jobs"
-        f"?q={requests.utils.quote(query)}"
-        f"&l={requests.utils.quote(location)}"
+        f"?q={urlquote(query)}"
+        f"&l={urlquote(location)}"
         f"&sort=date&fromage=1"
     )
     try:
@@ -104,7 +106,7 @@ def scrape_dice(query: str) -> list[dict]:
     jobs = []
     url = (
         f"https://job-search-api.svc.dhigroupinc.com/v1/dice/jobs/search"
-        f"?q={requests.utils.quote(query)}&countryCode2=US&radius=30"
+        f"?q={urlquote(query)}&countryCode2=US&radius=30"
         f"&radiusUnit=mi&page=1&pageSize=10&filters.postedDate=ONE"
         f"&language=en&eid=21522&fj=1"
     )
