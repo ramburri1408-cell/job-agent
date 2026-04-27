@@ -1,22 +1,30 @@
 {
   "job_queries": [
-    "senior software engineer",
-    "staff engineer",
-    "principal engineer",
-    "senior full stack developer",
-    "senior frontend engineer"
+  ".NET developer",
+  "full stack .NET developer",
+  "ASP.NET Core developer",
+  "full stack React .NET engineer",
+  "C# React developer",
+  ".NET React developer remote",
+  "full stack developer React Azure",
+  "software engineer .NET React",
+  "full stack developer ASP.NET",
+  "Angular .NET developer",
+  "full stack Angular developer",
+  "Angular ASP.NET Core engineer",
+  "C# Angular developer remote"
   ],
-  "location": "remote",
-  "min_fit_score": 65,
+  "location": ["remote", "onsite", "hybrid"] ,
+  "min_fit_score": 95,
   "profile": {
-    "name": "Your Full Name",
-    "email": "you@gmail.com",
-    "phone": "+1 (555) 000-0000",
-    "linkedin": "linkedin.com/in/yourprofile",
+    "name": "Ram Burri",
+    "email": "Ram.Burri1408@gmail.com",
+    "phone": "+1 (954) 445-4339",
+    "linkedin": "https://www.linkedin.com/in/ram-b-650769397/",
     "github": "github.com/yourusername",
-    "title": "Senior Software Engineer",
-    "summary": "8+ years building scalable web applications. Led teams shipping products to millions of users. Expert in React, Node.js, TypeScript, and cloud infrastructure.",
-    "skills": "TypeScript, JavaScript, Python, React, Next.js, Node.js, GraphQL, PostgreSQL, Redis, AWS, Docker, Kubernetes",
-    "achievements": "Scaled platform to 2M users, reduced latency 40%. Led 6-person team. Built product from 0 to $5M ARR."
+    "title": ".Full-Stack .NET Developer",
+    "summary": "Full-Stack .NET Developer with 4+ years of experience building scalable enterprise applications using ASP.NET Core, React, and Azure. Specialized in microservices, high-performance REST APIs, and event-driven systems. Strong background in secure financial applications with OAuth2, JWT, and SOX/PCI-DSS compliance.",
+    "skills": "C#, .NET 8, ASP.NET Core, React.js, Next.js, Angular 14/18, TypeScript, JavaScript, Node.js, Express.js, Blazor, Entity Framework Core, SQL Server, PostgreSQL, Azure, Azure DevOps, Docker, Kubernetes, JWT, OAuth2, IdentityServer4, xUnit, Jest, Jenkins, Git",
+    "achievements": "Built fraud case management system reducing manual analyst review time at Jefferson Bank. Maintained 85%+ test coverage across critical transaction modules. Modernized legacy payment portal into microservices architecture preventing duplicate transactions. Secured APIs to SOX/PCI-DSS compliance across customer-facing systems."
   }
 }
