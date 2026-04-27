@@ -34,6 +34,8 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 def scrape_indeed(query: str, location: str = "remote") -> list:
+    location = str(location)
+    query = str(query)
     jobs = []
     url = (
         f"https://www.indeed.com/jobs"
@@ -137,7 +139,7 @@ def scrape_remotive(query: str) -> list:
 def run_scraper():
     cfg      = json.loads(Path("data/config.json").read_text())
     queries  = cfg.get("job_queries", ["software engineer"])
-    location = cfg.get("location", "remote")
+    location = str(cfg.get("location", "remote"))
     existing = load_jobs()
     new_count = 0
 
