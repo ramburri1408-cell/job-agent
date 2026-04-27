@@ -30,16 +30,16 @@ jobs:
 
       - name: Run pipeline
         env:
-          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
-          GMAIL_USER:          ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD:  ${{ secrets.GMAIL_APP_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         working-directory: job-agent
         run: python agent/pipeline.py
 
       - name: Commit updated job data
         run: |
-          git config --global user.name  "Job Agent Bot"
+          git config --global user.name "Job Agent Bot"
           git config --global user.email "bot@job-agent"
-          git add job-agent/data/jobs.json job-agent/data/email_log.jsonl || true
+          git add job-agent/data/ || true
           git diff --staged --quiet || git commit -m "📊 Agent run $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
