@@ -110,27 +110,25 @@ def scrape_dice(query: str) -> list:
         print(f"[Dice] Error: {e}")
     return jobs
 
-def scrape_remotive(query: str) -> list:
+def scrape_remotive(query):
     jobs = []
     try:
-        url = f"https://remotive.com/api/remote-jobs?search={urlquote(query)}&limit=10"
+        # Use category filter to only get software dev jobs
+        url = f"https://remotive.com/api/remote-jobs?search={quote(str(query))}&category=software-dev&limit=10"
         resp = requests.get(url, timeout=15)
         data = resp.json()
         for item in data.get("jobs", []):
-            title   = item.get("title", "")
-            company = item.get("company_name", "")
-            jid     = make_id(title, company)
-            jobs.append({
-                "id": jid, "title": title, "company": company,
-                "location": "Remote",
-                "salary": item.get("salary", "Not listed"),
-                "description": BeautifulSoup(item.get("description", ""), "html.parser").get_text()[:800],
-                "url": item.get("url", ""), "portal": "Remotive",
-                "scraped_at": now_iso(), "status": "new",
-                "recruiter_email": item.get("company_email", ""), "recruiter_name": "",
-                "tailored_resume": None, "email_draft": None,
-                "email_sent": False, "email_sent_at": None, "fit_score": None,
-            })
+            title   = str(item.get("title", ""))
+            company = str(item.get("company_name", ""))
+            desc    = BeautifulSoup(str(item.get("description", "")), "html.parser").get_text()[:800]
+            jobs.append(new_job(
+                title, company, "Remote",
+                str(item.get("salary", "Not listed")),
+                desc,
+                str(item.get("url", "")),
+                "Remotive",
+                str(item.get("company_email", ""))
+            ))
         time.sleep(1)
     except Exception as e:
         print(f"[Remotive] Error: {e}")
