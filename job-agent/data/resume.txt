@@ -1,31 +1,57 @@
-YOUR NAME
-Senior Software Engineer
-your.email@gmail.com | linkedin.com/in/yourprofile | github.com/yourusername | +1 (555) 000-0000
+Ram Burri
+Full Stack .NET Developer
+Ram.burri1408@gmail.com | Ph: 9544454339
 
-SUMMARY
-8+ years building scalable web applications. Led cross-functional teams to ship products used by millions. Deep expertise in React, Node.js, TypeScript, and cloud infrastructure.
+PROFESSIONAL SUMMARY
+Full-Stack .NET Developer with 4+ years of experience designing scalable enterprise applications using ASP.NET Core, React, and cloud-native architectures on Azure. Specialized in building microservices, high-performance REST APIs, and event-driven systems using .NET 8, Entity Framework Core, and SQL Server. Experienced in containerized deployments with Docker and Kubernetes and automated CI/CD pipelines with Azure DevOps. Strong background in secure financial applications implementing OAuth2, JWT authentication, and compliance standards (SOX/PCI-DSS). Passionate about building resilient, high-availability systems and collaborating in Agile product teams to deliver reliable software at scale.
 
-EXPERIENCE
+TECHNICAL SKILLS
+Frontend:      React.js, Next.js, Angular 14/18, TypeScript, JavaScript (ES6+), HTML5, CSS3/SCSS, RxJS, Reactive Forms
+Backend:       Node.js, Express.js, C#, .NET Core, .NET 8, ASP.NET MVC, ASP.NET Core, RESTful APIs, Microservices
+ORM / Data:    Entity Framework Core, ADO.NET, LINQ, Dapper
+Database:      SQL Server (T-SQL), PostgreSQL, Oracle (PL/SQL)
+Messaging:     Azure Event Hub
+Security:      JWT, OAuth2, IdentityServer4, Role-Based Authorization, SOX/PCI-DSS Compliance
+Cloud/DevOps:  Azure, Azure DevOps, Docker, Kubernetes, Jenkins, AWS
+Testing:       xUnit, Jest, TDD
+Version Control: Git, GitHub, Bitbucket
+Tools:         SSMS, Oracle SQL Developer, Cursor AI, GitHub Copilot, Jira
+Methodologies: SAFe Agile, Scrum, Code Reviews, Cross-functional Collaboration
 
-Senior Software Engineer — Company Name (2021–Present)
-• Architected real-time collaboration feature serving 2M+ users, reducing latency by 40%
-• Led migration from monolith to microservices, cutting deployment time from 2h to 8min
-• Mentored team of 6 engineers; drove 30% improvement in sprint velocity
+PROFESSIONAL EXPERIENCE
 
-Software Engineer — Previous Company (2018–2021)
-• Built core product from 0→1, scaling to $5M ARR within 18 months
-• Designed GraphQL API layer consumed by web and mobile clients
-• Implemented CI/CD pipeline reducing production incidents by 60%
+Full Stack Developer (.NET / React / Azure) | Jefferson Bank, San Antonio, TX | Nov 2024 – Present
+- Built multi-step React.js workflows and dynamic forms for fraud case management using React Hook Form with role-based field visibility, reducing manual review time for fraud analysts.
+- Developed ASP.NET Core RESTful microservices for transaction lookup, account activity, and alert management with versioned endpoints and consistent error handling.
+- Built and maintained .NET 8 backend APIs integrated with Entity Framework Core and SQL Server, supporting internal banking dashboards and operational transaction workflows.
+- Built a shared React component library adopted across three internal banking applications, enforcing TypeScript strict mode and accessibility standards.
+- Integrated Azure Event Hub to consume real-time transaction event streams, triggering automated fraud alert notifications on the React dashboard.
+- Implemented JWT authentication with refresh token rotation and role-based route guards; remediated SOX/PCI-DSS compliance vulnerabilities in API input validation and React XSS exposure points.
+- Configured Azure DevOps CI/CD pipelines with build, test, and deploy stages; containerized services with Docker and managed Kubernetes deployments with zero-downtime rolling updates.
+- Maintained 85%+ test coverage using Jest for React components and xUnit for .NET Core API layers across critical transaction and fraud modules.
+- Contributed to sprint planning, backlog grooming, and cross-team dependency coordination within a SAFe Agile environment.
+Environment: React.js, Node.js, Express.js, TypeScript, HTML5, CSS/SCSS, C#, .NET 8, ASP.NET Core, Entity Framework Core, SQL Server, T-SQL, Azure DevOps, Azure Event Hub, Docker, Kubernetes, JWT, xUnit, Jest, Jira, SAFe Agile.
 
-Junior Software Engineer — First Company (2016–2018)
-• Developed and maintained customer-facing React applications
-• Improved page load performance by 35% through code splitting and lazy loading
+Full Stack Developer | Techbion Software Systems Pvt Ltd, India | Jun 2022 – Aug 2023
+- Contributed to modernization of legacy ASP.NET WebForms and jQuery-based portals, re-architecting the backend into layered ASP.NET MVC and ASP.NET Core applications.
+- Implemented idempotent RESTful APIs using ASP.NET Core to decompose monolithic payment logic into maintainable service components, preventing duplicate transactions.
+- Built Angular 14 components for interactive client-side workflows alongside ASP.NET MVC Razor views, progressively modernizing the frontend while maintaining legacy compatibility.
+- Participated in architectural discussions evaluating Azure Functions for event-driven processing as part of the cloud modernization roadmap.
+- Modernized data access using Entity Framework Core for new modules while retaining Dapper and ADO.NET in performance-critical legacy paths; optimized SQL Server stored procedures.
+- Secured API endpoints using OAuth2, JWT, and IdentityServer4, ensuring SOX and PCI-DSS compliance across customer-facing and internal systems.
+- Implemented structured exception handling, global error middleware, and resilient retry mechanisms to improve API reliability.
+- Configured Jenkins and Azure DevOps pipelines for automated build, test, and deployment using Docker containerization.
+Environment: Angular 14, TypeScript, RxJS, HTML5, CSS/SCSS, C#, ASP.NET Core, .NET Core, ADO.NET, Entity Framework Core, Dapper, SQL Server, T-SQL, Oracle, PL/SQL, OAuth2, JWT, IdentityServer4, Jenkins, Azure DevOps, Docker, Jira, Agile/Scrum.
 
-SKILLS
-Languages:  TypeScript, JavaScript, Python, Go
-Frontend:   React, Next.js, Vue, Tailwind CSS
-Backend:    Node.js, GraphQL, REST APIs, PostgreSQL, Redis
-Cloud:      AWS (EC2, S3, Lambda, RDS), GCP, Docker, Kubernetes
+.NET Developer | Unisys Global Services India | Nov 2020 – May 2022
+- Developed and maintained ASP.NET MVC web applications in C# and .NET Framework with clean separation across presentation, business, and data access layers.
+- Built responsive front-end interfaces using HTML5, CSS3, and JavaScript within ASP.NET MVC Razor views with client-side validation and AJAX-based data loading.
+- Implemented and optimized T-SQL stored procedures, database views, and LINQ queries for SQL Server data access using ADO.NET and Entity Framework.
+- Designed and consumed WCF-based web services with XML/XSLT transformations to support enterprise data exchange and reporting.
+- Applied dependency injection, custom validation, and reusable ASP.NET user controls to improve maintainability across application modules.
+- Wrote xUnit tests following TDD practices; participated in code reviews within an Agile/Scrum team.
+Environment: C#, .NET Framework, ASP.NET MVC, ADO.NET, Entity Framework, SQL Server, T-SQL, JavaScript, HTML5, CSS3, WCF, LINQ, XML/XSLT, xUnit, Agile/Scrum.
 
 EDUCATION
-B.S. Computer Science — State University (2016)
+Master of Science in Computer Science
+Florida Atlantic University, Boca Raton, FL | Aug 2023 – May 2025 | GPA: 3.72 / 4.0
