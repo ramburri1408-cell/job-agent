@@ -1,0 +1,31 @@
+YOUR NAME
+Senior Software Engineer
+your.email@gmail.com | linkedin.com/in/yourprofile | github.com/yourusername | +1 (555) 000-0000
+
+SUMMARY
+8+ years building scalable web applications. Led cross-functional teams to ship products used by millions. Deep expertise in React, Node.js, TypeScript, and cloud infrastructure.
+
+EXPERIENCE
+
+Senior Software Engineer — Company Name (2021–Present)
+• Architected real-time collaboration feature serving 2M+ users, reducing latency by 40%
+• Led migration from monolith to microservices, cutting deployment time from 2h to 8min
+• Mentored team of 6 engineers; drove 30% improvement in sprint velocity
+
+Software Engineer — Previous Company (2018–2021)
+• Built core product from 0→1, scaling to $5M ARR within 18 months
+• Designed GraphQL API layer consumed by web and mobile clients
+• Implemented CI/CD pipeline reducing production incidents by 60%
+
+Junior Software Engineer — First Company (2016–2018)
+• Developed and maintained customer-facing React applications
+• Improved page load performance by 35% through code splitting and lazy loading
+
+SKILLS
+Languages:  TypeScript, JavaScript, Python, Go
+Frontend:   React, Next.js, Vue, Tailwind CSS
+Backend:    Node.js, GraphQL, REST APIs, PostgreSQL, Redis
+Cloud:      AWS (EC2, S3, Lambda, RDS), GCP, Docker, Kubernetes
+
+EDUCATION
+B.S. Computer Science — State University (2016)
