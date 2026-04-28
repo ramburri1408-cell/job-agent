@@ -1,22 +1,39 @@
 """
 Pipeline — runs scraper → AI engine → sender in sequence.
-Called by GitHub Actions on schedule.
 """
 
-import sys
+import sys, json
 from pathlib import Path
 
-# Ensure agent/ is on path when run from repo root
 sys.path.insert(0, str(Path(__file__).parent))
 
 from scraper   import run_scraper
 from ai_engine import run_ai_engine
 from sender    import run_sender
 
+def reset_skipped_jobs():
+    """Reset skipped_low_score jobs back to new so they get reprocessed."""
+    data_file = Path("data/jobs.json")
+    if not data_file.exists():
+        return 0
+    jobs = json.loads(data_file.read_text())
+    count = 0
+    for jid, job in jobs.items():
+        if job.get("status") == "skipped_low_score":
+            jobs[jid]["status"] = "new"
+            count += 1
+    data_file.write_text(json.dumps(jobs, indent=2))
+    print(f"[Reset] {count} skipped jobs reset to 'new'")
+    return count
+
 def main():
     print("=" * 60)
     print("  JOB AGENT PIPELINE STARTED")
     print("=" * 60)
+
+    print("\n[0/3] RESETTING SKIPPED JOBS")
+    print("-" * 40)
+    reset_skipped_jobs()
 
     print("\n[1/3] SCRAPING JOBS")
     print("-" * 40)
