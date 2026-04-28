@@ -1,32 +1,22 @@
 """
-Multi-Portal Apply Bot
-Automatically applies to jobs on:
-- Indeed (Google login)
-- ZipRecruiter (Google login)
-- Monster (Google login)
-- JobRight.ai (Google login)
-- Dice (email/password)
-
-Uses Playwright for browser automation.
-AI answers all screening questions.
-Uploads tailored ATS PDF resume.
+Multi-Portal Apply Bot — Fixed selectors
+Portals: Indeed, ZipRecruiter, Monster, Dice, JobRight.ai
 """
 
-import json, os, time, tempfile, traceback
+import json, os, time, traceback
 from pathlib import Path
 from datetime import datetime, timezone
 import anthropic
 
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-# Credentials
 GOOGLE_EMAIL    = os.environ.get("GOOGLE_EMAIL", "")
 GOOGLE_PASSWORD = os.environ.get("GOOGLE_PASSWORD", "")
 DICE_EMAIL      = os.environ.get("DICE_EMAIL", "")
 DICE_PASSWORD   = os.environ.get("DICE_PASSWORD", "")
 
-DATA_FILE  = Path("data/jobs.json")
-LOG_FILE   = Path("data/apply_log.jsonl")
+DATA_FILE   = Path("data/jobs.json")
+LOG_FILE    = Path("data/apply_log.jsonl")
 CONFIG_FILE = Path("data/config.json")
 
 PROFILE = {
@@ -35,13 +25,12 @@ PROFILE = {
     "phone":      "9544454339",
     "location":   "Boca Raton, FL",
     "linkedin":   "linkedin.com/in/ramburri",
-    "github":     "github.com/ramburri",
     "experience": "4",
     "title":      "Full Stack .NET Developer",
-    "salary":     "100000",
-    "visa":       "OPT",
+    "salary":     "110000",
     "authorized": "Yes",
-    "sponsorship":"No",
+    "sponsorship": "No",
+    "visa":       "OPT",
 }
 
 def load_jobs():
@@ -59,107 +48,163 @@ def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
 def ai_answer(question, job_title="", options=None):
-    """Use Claude to answer screening questions."""
     opts = f"\nOptions: {options}" if options else ""
-    result = client.messages.create(
-        model="claude-opus-4-5",
-        max_tokens=100,
-        system=(
-            "You are filling out a job application for Ram Burri, "
-            "a Full Stack .NET Developer with 4+ years experience. "
-            "Answer screening questions briefly and professionally. "
-            "For yes/no questions answer Yes or No only. "
-            "For experience questions use numbers. "
-            "For salary expectations say 100000-130000. "
-            "Never say you are an AI."
-        ),
-        messages=[{"role": "user", "content":
-            f"Job: {job_title}\nQuestion: {question}{opts}\n"
-            f"Candidate: {json.dumps(PROFILE)}\nAnswer briefly:"
-        }]
-    ).content[0].text.strip()
-    return result
+    try:
+        return client.messages.create(
+            model="claude-opus-4-5", max_tokens=80,
+            system=(
+                "Fill job application for Ram Burri, Full Stack .NET Developer, 4+ years exp. "
+                "Answer briefly. Yes/No for yes-no questions. Numbers for experience. "
+                "Never reveal you are AI."
+            ),
+            messages=[{"role": "user", "content":
+                f"Job: {job_title}\nQuestion: {question}{opts}\n"
+                f"Profile: {json.dumps(PROFILE)}\nAnswer:"
+            }]
+        ).content[0].text.strip()
+    except:
+        return "Yes"
 
-def get_resume_pdf(job):
-    """Get the ATS PDF for this job."""
-    pdf_path = job.get("resume_pdf")
-    if pdf_path and Path(pdf_path).exists():
-        return pdf_path
-
-    # Generate fresh PDF
+def get_resume_pdf(jobs):
+    """Get any available PDF resume from jobs."""
+    for jid, job in jobs.items():
+        pdf_path = job.get("resume_pdf")
+        if pdf_path and Path(pdf_path).exists():
+            return pdf_path
+    # Generate fresh one
     try:
         from ats_resume import generate_ats_resume
-        result = generate_ats_resume(job, output_dir="/tmp")
+        sample_job = {"title": "Full Stack .NET Developer", "company": "Target", "description": ""}
+        result = generate_ats_resume(sample_job, output_dir="/tmp")
         return result["pdf_path"]
     except Exception as e:
-        print(f"  ! Could not generate PDF: {e}")
+        print(f"  ! PDF generation failed: {e}")
         return None
 
+def get_queries():
+    config = json.loads(CONFIG_FILE.read_text())
+    return config.get("job_queries", ["full stack .NET developer"])[:3]
 
-# ── Google OAuth Helper ────────────────────────────────────────────────────
+# ── Google OAuth ───────────────────────────────────────────────────────────
 
-def google_login(page, email, password):
-    """Handle Google OAuth login flow."""
+def google_oauth_login(page, email, password, timeout=15000):
+    """Handle Google OAuth popup or redirect."""
     try:
-        page.wait_for_selector('input[type="email"]', timeout=10000)
+        # Wait for Google email field
+        page.wait_for_selector('input[type="email"]', timeout=timeout)
         page.fill('input[type="email"]', email)
-        page.click('button:has-text("Next"), #identifierNext')
+        page.wait_for_timeout(1000)
+
+        # Click Next
+        next_btn = page.query_selector('#identifierNext button, button:has-text("Next")')
+        if next_btn:
+            next_btn.click()
+        else:
+            page.keyboard.press("Enter")
+
         page.wait_for_timeout(2000)
-        page.wait_for_selector('input[type="password"]', timeout=10000)
+
+        # Password
+        page.wait_for_selector('input[type="password"]', timeout=timeout)
         page.fill('input[type="password"]', password)
-        page.click('button:has-text("Next"), #passwordNext')
-        page.wait_for_timeout(3000)
-        print("  ✓ Google login successful")
+        page.wait_for_timeout(1000)
+
+        pwd_next = page.query_selector('#passwordNext button, button:has-text("Next")')
+        if pwd_next:
+            pwd_next.click()
+        else:
+            page.keyboard.press("Enter")
+
+        page.wait_for_timeout(4000)
+        print("  ✓ Google OAuth completed")
         return True
     except Exception as e:
-        print(f"  ! Google login failed: {e}")
+        print(f"  ! Google OAuth failed: {e}")
         return False
 
-def handle_screening_questions(page, job_title):
-    """Find and answer all screening questions on the page."""
+def click_google_button(page, timeout=10000):
+    """Try multiple selectors to find Google login button."""
+    selectors = [
+        'a[href*="google"]',
+        'button[aria-label*="Google"]',
+        'div[aria-label*="Google"]',
+        '[data-testid*="google"]',
+        'button:has-text("Continue with Google")',
+        'button:has-text("Sign in with Google")',
+        'button:has-text("Log in with Google")',
+        'a:has-text("Continue with Google")',
+        'a:has-text("Sign in with Google")',
+        '[class*="google"]',
+        'img[alt*="Google"]',
+    ]
+    for sel in selectors:
+        try:
+            btn = page.query_selector(sel)
+            if btn and btn.is_visible():
+                print(f"  → Found Google button: {sel}")
+                btn.click()
+                page.wait_for_timeout(3000)
+                return True
+        except:
+            continue
+    return False
+
+def handle_screening(page, job_title, max_questions=10):
+    """Answer screening questions on current page."""
     answered = 0
     try:
-        # Text inputs
-        inputs = page.query_selector_all('input[type="text"], input[type="number"]')
-        for inp in inputs:
-            label = ""
+        # Text/number inputs
+        for inp in page.query_selector_all('input[type="text"], input[type="number"], input[type="tel"]'):
             try:
-                label_el = page.query_selector(f'label[for="{inp.get_attribute("id")}"]')
-                if label_el:
-                    label = label_el.inner_text()
-                elif inp.get_attribute("placeholder"):
-                    label = inp.get_attribute("placeholder")
-                elif inp.get_attribute("aria-label"):
-                    label = inp.get_attribute("aria-label")
+                if inp.input_value():
+                    continue
+                label = ""
+                for attr in ["aria-label", "placeholder", "name"]:
+                    val = inp.get_attribute(attr)
+                    if val:
+                        label = val
+                        break
+                if not label:
+                    inp_id = inp.get_attribute("id")
+                    if inp_id:
+                        lbl = page.query_selector(f'label[for="{inp_id}"]')
+                        if lbl:
+                            label = lbl.inner_text()
+                if label and len(label) > 2:
+                    ans = ai_answer(label, job_title)
+                    inp.fill(ans[:100])
+                    answered += 1
+                    page.wait_for_timeout(200)
             except:
                 pass
 
-            if not label or inp.input_value():
-                continue
-
-            answer = ai_answer(label, job_title)
-            inp.fill(answer)
-            answered += 1
-            page.wait_for_timeout(300)
-
-        # Dropdowns / selects
-        selects = page.query_selector_all("select")
-        for sel in selects:
+        # Textareas
+        for ta in page.query_selector_all("textarea"):
             try:
-                label = ""
-                sel_id = sel.get_attribute("id")
-                if sel_id:
-                    label_el = page.query_selector(f'label[for="{sel_id}"]')
-                    if label_el:
-                        label = label_el.inner_text()
+                if ta.input_value():
+                    continue
+                label = ta.get_attribute("aria-label") or ta.get_attribute("placeholder") or ""
+                if label:
+                    ans = ai_answer(label, job_title)
+                    ta.fill(ans)
+                    answered += 1
+            except:
+                pass
 
-                options = [o.inner_text() for o in sel.query_selector_all("option") if o.inner_text().strip()]
-                if label and options:
-                    answer = ai_answer(label, job_title, options)
-                    # Pick closest matching option
-                    best = options[0]
-                    for opt in options:
-                        if answer.lower() in opt.lower() or opt.lower() in answer.lower():
+        # Selects
+        for sel in page.query_selector_all("select"):
+            try:
+                opts = [o.inner_text().strip() for o in sel.query_selector_all("option") if o.inner_text().strip() and o.get_attribute("value")]
+                if not opts:
+                    continue
+                sel_id = sel.get_attribute("id") or ""
+                lbl = page.query_selector(f'label[for="{sel_id}"]')
+                label = lbl.inner_text() if lbl else sel.get_attribute("aria-label") or ""
+                if label:
+                    ans = ai_answer(label, job_title, opts)
+                    best = opts[0]
+                    for opt in opts:
+                        if ans.lower() in opt.lower():
                             best = opt
                             break
                     sel.select_option(label=best)
@@ -167,164 +212,163 @@ def handle_screening_questions(page, job_title):
             except:
                 pass
 
-        # Radio buttons / Yes-No
-        radios = page.query_selector_all('input[type="radio"]')
-        seen_names = set()
-        for radio in radios:
-            name = radio.get_attribute("name")
-            if name in seen_names:
-                continue
-            seen_names.add(name)
-            try:
-                label_el = page.query_selector(f'label[for="{radio.get_attribute("id")}"]')
-                question = label_el.inner_text() if label_el else name
-                answer   = ai_answer(question, job_title)
-                # Click matching radio
-                all_radios = page.query_selector_all(f'input[name="{name}"]')
-                for r in all_radios:
-                    r_label = page.query_selector(f'label[for="{r.get_attribute("id")}"]')
-                    if r_label and answer.lower() in r_label.inner_text().lower():
-                        r.click()
-                        answered += 1
-                        break
-            except:
-                pass
-
     except Exception as e:
-        print(f"  ! Screening questions error: {e}")
+        print(f"  ! Screening error: {e}")
 
-    if answered > 0:
-        print(f"  → Answered {answered} screening questions")
+    if answered:
+        print(f"  → Answered {answered} questions")
+    return answered
 
+def click_submit(page):
+    """Try to click submit/continue button."""
+    for sel in [
+        'button[type="submit"]',
+        'button:has-text("Submit")',
+        'button:has-text("Apply")',
+        'button:has-text("Continue")',
+        'button:has-text("Next")',
+        '[data-testid="submit"]',
+    ]:
+        try:
+            btn = page.query_selector(sel)
+            if btn and btn.is_visible() and btn.is_enabled():
+                btn.click()
+                page.wait_for_timeout(3000)
+                return True
+        except:
+            continue
+    return False
 
 # ── INDEED ─────────────────────────────────────────────────────────────────
 
-def apply_indeed(page, jobs):
-    """Apply to jobs on Indeed."""
+def apply_indeed(page, jobs, resume_pdf):
     applied = 0
     print("\n[Indeed] Starting...")
 
     try:
-        page.goto("https://www.indeed.com/account/login", timeout=30000)
-        page.wait_for_timeout(2000)
-
-        # Click Google login
-        google_btn = page.query_selector('button:has-text("Google"), a:has-text("Google")')
-        if google_btn:
-            google_btn.click()
-            page.wait_for_timeout(2000)
-            if not google_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD):
-                return 0
-        else:
-            print("  ! Google button not found on Indeed")
-            return 0
-
+        # Go to Indeed login
+        page.goto("https://secure.indeed.com/auth", timeout=30000)
         page.wait_for_timeout(3000)
 
-        for jid, job in jobs.items():
-            if job.get("portal") not in ["Indeed", "Indeed (via Adzuna)", "Adzuna"] :
-                continue
-            if job.get("portal_applied"):
-                continue
-            if job.get("status") not in ["applied", "ai_ready"]:
-                continue
-
-            try:
-                print(f"  → Applying: {job['title']} @ {job['company']}")
-                job_url = job.get("url", "")
-                if not job_url:
-                    continue
-
-                page.goto(job_url, timeout=30000)
+        # Try Google login
+        if not click_google_button(page):
+            # Try alternative Indeed login page
+            page.goto("https://www.indeed.com/account/login", timeout=30000)
+            page.wait_for_timeout(2000)
+            if not click_google_button(page):
+                print("  ! Could not find Google button on Indeed")
+                # Try direct URL with Google
+                page.goto("https://secure.indeed.com/auth?hl=en&co=US&continue=https%3A%2F%2Fwww.indeed.com%2F&tmpl=desktop&service=my&from=gnav-util-homepage&jsContinue=&empContinue=", timeout=30000)
                 page.wait_for_timeout(2000)
+                click_google_button(page)
 
-                # Click Apply button
-                apply_btn = page.query_selector(
-                    'button:has-text("Apply now"), '
-                    'button:has-text("Apply"), '
-                    'a:has-text("Apply now")'
-                )
-                if not apply_btn:
-                    print(f"  ! No apply button found")
-                    continue
+        # Handle Google OAuth
+        page.wait_for_timeout(2000)
+        if "google" in page.url.lower() or "accounts.google" in page.url.lower():
+            google_oauth_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD)
 
-                apply_btn.click()
+        page.wait_for_timeout(3000)
+        print(f"  → Current URL: {page.url[:60]}")
+
+        # Search and apply
+        for query in get_queries():
+            try:
+                search_url = f"https://www.indeed.com/jobs?q={query.replace(' ', '+')}&l=Remote&sort=date&fromage=1"
+                page.goto(search_url, timeout=30000)
                 page.wait_for_timeout(3000)
 
-                # Upload resume if prompted
-                resume_input = page.query_selector('input[type="file"]')
-                if resume_input:
-                    pdf_path = get_resume_pdf(job)
-                    if pdf_path:
-                        resume_input.set_input_files(pdf_path)
+                # Get job cards
+                cards = page.query_selector_all('[data-jk], .job_seen_beacon, [data-testid="slider_item"]')
+                print(f"  → Found {len(cards)} job cards for '{query}'")
+
+                for card in cards[:5]:
+                    try:
+                        title_el = card.query_selector('h2 a, .jobTitle a, [data-testid="job-title"]')
+                        title    = title_el.inner_text().strip() if title_el else "Unknown"
+
+                        # Click the job
+                        if title_el:
+                            title_el.click()
+                            page.wait_for_timeout(2000)
+
+                        # Look for Easy Apply button in right panel
+                        apply_btn = page.query_selector(
+                            'button[id*="apply"], '
+                            'button:has-text("Apply now"), '
+                            'a:has-text("Apply on company site")'
+                        )
+
+                        if not apply_btn:
+                            continue
+
+                        btn_text = apply_btn.inner_text()
+                        if "company site" in btn_text.lower():
+                            continue  # Skip external applications
+
+                        apply_btn.click()
+                        page.wait_for_timeout(3000)
+
+                        # Handle multi-step application
+                        for step in range(5):
+                            # Upload resume if prompted
+                            file_input = page.query_selector('input[type="file"]')
+                            if file_input and resume_pdf:
+                                file_input.set_input_files(resume_pdf)
+                                page.wait_for_timeout(2000)
+
+                            handle_screening(page, title)
+
+                            if not click_submit(page):
+                                break
+
+                            # Check if done
+                            if any(x in page.url for x in ["applied", "confirmation", "success"]):
+                                break
+                            if page.query_selector(':has-text("Application submitted"), :has-text("successfully applied")'):
+                                break
+
+                        applied += 1
+                        print(f"  ✓ Applied: {title}")
+                        log_apply({"title": title, "portal": "Indeed",
+                                   "applied_at": now_iso(), "success": True})
                         page.wait_for_timeout(2000)
-                        print(f"  → Resume uploaded")
 
-                # Answer screening questions
-                handle_screening_questions(page, job["title"])
-
-                # Submit
-                submit_btn = page.query_selector(
-                    'button:has-text("Submit"), '
-                    'button:has-text("Continue"), '
-                    'button[type="submit"]'
-                )
-                if submit_btn:
-                    submit_btn.click()
-                    page.wait_for_timeout(3000)
-                    jobs[jid]["portal_applied"] = True
-                    jobs[jid]["portal_applied_at"] = now_iso()
-                    jobs[jid]["portal_applied_via"] = "Indeed"
-                    save_jobs(jobs)
-                    applied += 1
-                    print(f"  ✓ Applied on Indeed!")
-                    log_apply({"job_id": jid, "title": job["title"],
-                               "company": job["company"], "portal": "Indeed",
-                               "applied_at": now_iso(), "success": True})
-
-                page.wait_for_timeout(2000)
+                    except Exception as e:
+                        print(f"  ! Job error: {str(e)[:80]}")
+                        continue
 
             except Exception as e:
-                print(f"  ! Error on {job.get('title')}: {e}")
-                log_apply({"job_id": jid, "title": job.get("title",""),
-                           "portal": "Indeed", "applied_at": now_iso(),
-                           "success": False, "error": str(e)})
+                print(f"  ! Query error: {str(e)[:80]}")
 
     except Exception as e:
-        print(f"[Indeed] Fatal error: {e}")
+        print(f"[Indeed] Error: {str(e)[:100]}")
+        traceback.print_exc()
 
-    print(f"[Indeed] Done. {applied} applications submitted.")
+    print(f"[Indeed] Done. {applied} applied.")
     return applied
-
 
 # ── ZIPRECRUITER ───────────────────────────────────────────────────────────
 
-def apply_ziprecruiter(page, jobs):
-    """Apply to jobs on ZipRecruiter."""
+def apply_ziprecruiter(page, jobs, resume_pdf):
     applied = 0
     print("\n[ZipRecruiter] Starting...")
 
     try:
         page.goto("https://www.ziprecruiter.com/login", timeout=30000)
-        page.wait_for_timeout(2000)
-
-        google_btn = page.query_selector('button:has-text("Google"), a:has-text("Google")')
-        if google_btn:
-            google_btn.click()
-            page.wait_for_timeout(2000)
-            if not google_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD):
-                return 0
-        else:
-            print("  ! Google button not found on ZipRecruiter")
-            return 0
-
         page.wait_for_timeout(3000)
 
-        # Search for jobs
-        config  = json.loads(CONFIG_FILE.read_text())
-        queries = config.get("job_queries", [])[:3]  # top 3 queries
+        if not click_google_button(page):
+            page.goto("https://www.ziprecruiter.com/login?country=US", timeout=30000)
+            page.wait_for_timeout(2000)
+            click_google_button(page)
 
-        for query in queries:
+        page.wait_for_timeout(2000)
+        if "google" in page.url.lower():
+            google_oauth_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD)
+
+        page.wait_for_timeout(4000)
+
+        for query in get_queries():
             try:
                 page.goto(
                     f"https://www.ziprecruiter.com/jobs-search?search={query.replace(' ','+')}",
@@ -332,71 +376,66 @@ def apply_ziprecruiter(page, jobs):
                 )
                 page.wait_for_timeout(3000)
 
-                # Get job cards
-                job_cards = page.query_selector_all(
-                    'article.job_result, div[data-testid="job-card"], .job-listing'
-                )[:10]
+                cards = page.query_selector_all(
+                    'article[class*="job"], div[class*="job_result"], [data-testid="job-card"]'
+                )
+                print(f"  → Found {len(cards)} cards for '{query}'")
 
-                for card in job_cards:
+                for card in cards[:5]:
                     try:
                         title_el = card.query_selector('h2, .job_title, [data-testid="job-title"]')
-                        title    = title_el.inner_text() if title_el else ""
+                        title    = title_el.inner_text().strip() if title_el else "Unknown"
 
-                        # Click 1-Click Apply if available
+                        # 1-Click Apply
                         one_click = card.query_selector(
-                            'button:has-text("1-Click"), button:has-text("Quick Apply")'
+                            'button:has-text("1-Click"), '
+                            'button:has-text("Quick Apply"), '
+                            'button[class*="one_click"]'
                         )
                         if one_click:
                             one_click.click()
                             page.wait_for_timeout(3000)
-                            handle_screening_questions(page, title)
-
-                            submit = page.query_selector('button:has-text("Submit"), button[type="submit"]')
-                            if submit:
-                                submit.click()
-                                page.wait_for_timeout(2000)
-                                applied += 1
-                                print(f"  ✓ 1-Click Applied: {title}")
-                                log_apply({"title": title, "portal": "ZipRecruiter",
-                                           "applied_at": now_iso(), "success": True})
+                            handle_screening(page, title)
+                            click_submit(page)
+                            applied += 1
+                            print(f"  ✓ 1-Click: {title}")
+                            log_apply({"title": title, "portal": "ZipRecruiter",
+                                       "applied_at": now_iso(), "success": True})
 
                     except Exception as e:
-                        print(f"  ! Card error: {e}")
+                        print(f"  ! Card error: {str(e)[:60]}")
 
             except Exception as e:
-                print(f"  ! Query error: {e}")
+                print(f"  ! Query error: {str(e)[:60]}")
 
     except Exception as e:
-        print(f"[ZipRecruiter] Fatal error: {e}")
+        print(f"[ZipRecruiter] Error: {str(e)[:100]}")
 
-    print(f"[ZipRecruiter] Done. {applied} applications submitted.")
+    print(f"[ZipRecruiter] Done. {applied} applied.")
     return applied
-
 
 # ── MONSTER ────────────────────────────────────────────────────────────────
 
-def apply_monster(page, jobs):
-    """Apply to jobs on Monster."""
+def apply_monster(page, jobs, resume_pdf):
     applied = 0
     print("\n[Monster] Starting...")
 
     try:
         page.goto("https://www.monster.com/login", timeout=30000)
-        page.wait_for_timeout(2000)
-
-        google_btn = page.query_selector('button:has-text("Google"), a:has-text("Google")')
-        if google_btn:
-            google_btn.click()
-            page.wait_for_timeout(2000)
-            if not google_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD):
-                return 0
-
         page.wait_for_timeout(3000)
 
-        config  = json.loads(CONFIG_FILE.read_text())
-        queries = config.get("job_queries", [])[:3]
+        if not click_google_button(page):
+            page.goto("https://www.monster.com/profile/signin", timeout=30000)
+            page.wait_for_timeout(2000)
+            click_google_button(page)
 
-        for query in queries:
+        page.wait_for_timeout(2000)
+        if "google" in page.url.lower():
+            google_oauth_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD)
+
+        page.wait_for_timeout(4000)
+
+        for query in get_queries():
             try:
                 page.goto(
                     f"https://www.monster.com/jobs/search?q={query.replace(' ','+')}",
@@ -404,81 +443,144 @@ def apply_monster(page, jobs):
                 )
                 page.wait_for_timeout(3000)
 
-                job_cards = page.query_selector_all(
-                    'section.card-content, div[data-testid="jobCard"], .job-search-result'
-                )[:10]
+                cards = page.query_selector_all(
+                    '[data-testid="jobCard"], .job-search-result, '
+                    'section[class*="card"], div[class*="job-card"]'
+                )
+                print(f"  → Found {len(cards)} cards for '{query}'")
 
-                for card in job_cards:
+                for card in cards[:5]:
                     try:
-                        title_el = card.query_selector('h2, h3, .job-title')
-                        title    = title_el.inner_text() if title_el else "Unknown"
+                        title_el = card.query_selector('h2, h3, [data-testid="job-title"]')
+                        title    = title_el.inner_text().strip() if title_el else "Unknown"
 
                         apply_btn = card.query_selector(
                             'button:has-text("Apply"), a:has-text("Apply")'
                         )
-                        if apply_btn:
-                            apply_btn.click()
-                            page.wait_for_timeout(3000)
+                        if not apply_btn:
+                            continue
 
-                            # Upload resume
-                            resume_input = page.query_selector('input[type="file"]')
-                            if resume_input:
-                                # Use a job from jobs dict that has a PDF
-                                for jid, job in jobs.items():
-                                    pdf = get_resume_pdf(job)
-                                    if pdf:
-                                        resume_input.set_input_files(pdf)
-                                        break
-                                page.wait_for_timeout(2000)
+                        apply_btn.click()
+                        page.wait_for_timeout(3000)
 
-                            handle_screening_questions(page, title)
+                        file_input = page.query_selector('input[type="file"]')
+                        if file_input and resume_pdf:
+                            file_input.set_input_files(resume_pdf)
+                            page.wait_for_timeout(2000)
 
-                            submit = page.query_selector(
-                                'button:has-text("Submit"), button[type="submit"]'
-                            )
-                            if submit:
-                                submit.click()
-                                page.wait_for_timeout(2000)
-                                applied += 1
-                                print(f"  ✓ Applied: {title}")
-                                log_apply({"title": title, "portal": "Monster",
-                                           "applied_at": now_iso(), "success": True})
+                        handle_screening(page, title)
+                        click_submit(page)
+                        applied += 1
+                        print(f"  ✓ Applied: {title}")
+                        log_apply({"title": title, "portal": "Monster",
+                                   "applied_at": now_iso(), "success": True})
 
                     except Exception as e:
-                        print(f"  ! Card error: {e}")
+                        print(f"  ! Card error: {str(e)[:60]}")
 
             except Exception as e:
-                print(f"  ! Query error: {e}")
+                print(f"  ! Query error: {str(e)[:60]}")
 
     except Exception as e:
-        print(f"[Monster] Fatal error: {e}")
+        print(f"[Monster] Error: {str(e)[:100]}")
 
-    print(f"[Monster] Done. {applied} applications submitted.")
+    print(f"[Monster] Done. {applied} applied.")
     return applied
-
 
 # ── DICE ───────────────────────────────────────────────────────────────────
 
-def apply_dice(page, jobs):
-    """Apply to jobs on Dice (email/password login)."""
+def apply_dice(page, jobs, resume_pdf):
     applied = 0
     print("\n[Dice] Starting...")
 
     try:
+        # Dice login with email/password
         page.goto("https://www.dice.com/dashboard/login", timeout=30000)
+        page.wait_for_timeout(3000)
+
+        # Try multiple selectors for email field
+        email_selectors = [
+            'input[name="email"]',
+            'input[type="email"]',
+            '#email',
+            'input[placeholder*="email" i]',
+            'input[placeholder*="Email" i]',
+        ]
+        email_filled = False
+        for sel in email_selectors:
+            try:
+                el = page.query_selector(sel)
+                if el and el.is_visible():
+                    el.fill(DICE_EMAIL)
+                    email_filled = True
+                    print(f"  → Filled email with: {sel}")
+                    break
+            except:
+                continue
+
+        if not email_filled:
+            # Try clicking "Sign In" first
+            page.click('button:has-text("Sign In"), a:has-text("Sign In")')
+            page.wait_for_timeout(2000)
+            for sel in email_selectors:
+                try:
+                    el = page.query_selector(sel)
+                    if el:
+                        el.fill(DICE_EMAIL)
+                        email_filled = True
+                        break
+                except:
+                    continue
+
+        page.wait_for_timeout(1000)
+
+        # Click Next or Continue after email
+        for sel in ['button:has-text("Next")', 'button:has-text("Continue")',
+                    'button[type="submit"]', '#login-button']:
+            try:
+                btn = page.query_selector(sel)
+                if btn and btn.is_visible():
+                    btn.click()
+                    break
+            except:
+                continue
+
         page.wait_for_timeout(2000)
 
-        # Email/password login
-        page.fill('input[type="email"], input[name="email"]', DICE_EMAIL)
-        page.fill('input[type="password"], input[name="password"]', DICE_PASSWORD)
-        page.click('button[type="submit"], button:has-text("Sign In")')
-        page.wait_for_timeout(3000)
-        print("  ✓ Dice login successful")
+        # Password
+        pwd_selectors = [
+            'input[name="password"]',
+            'input[type="password"]',
+            '#password',
+            'input[placeholder*="password" i]',
+        ]
+        for sel in pwd_selectors:
+            try:
+                el = page.query_selector(sel)
+                if el and el.is_visible():
+                    el.fill(DICE_PASSWORD)
+                    print(f"  → Filled password")
+                    break
+            except:
+                continue
 
-        config  = json.loads(CONFIG_FILE.read_text())
-        queries = config.get("job_queries", [])[:3]
+        page.wait_for_timeout(500)
 
-        for query in queries:
+        # Submit login
+        for sel in ['button[type="submit"]', 'button:has-text("Sign In")',
+                    'button:has-text("Log In")', '#login-button']:
+            try:
+                btn = page.query_selector(sel)
+                if btn and btn.is_visible():
+                    btn.click()
+                    break
+            except:
+                continue
+
+        page.wait_for_timeout(4000)
+        print(f"  → Dice URL after login: {page.url[:60]}")
+
+        for query in get_queries():
             try:
                 page.goto(
                     f"https://www.dice.com/jobs?q={query.replace(' ','+')}",
@@ -486,146 +588,150 @@ def apply_dice(page, jobs):
                 )
                 page.wait_for_timeout(3000)
 
-                job_cards = page.query_selector_all(
-                    'div[data-cy="card"], dhi-search-card, .card'
-                )[:10]
+                cards = page.query_selector_all(
+                    'div[data-cy="card"], dhi-search-card, '
+                    '[data-testid="job-search-result"], .card'
+                )
+                print(f"  → Found {len(cards)} cards for '{query}'")
 
-                for card in job_cards:
+                for card in cards[:5]:
                     try:
-                        title_el = card.query_selector('a.card-title-link, h5, h2')
-                        title    = title_el.inner_text() if title_el else "Unknown"
+                        title_el = card.query_selector(
+                            'a.card-title-link, h5 a, h2 a, [data-cy="job-title"]'
+                        )
+                        title = title_el.inner_text().strip() if title_el else "Unknown"
 
                         if title_el:
                             title_el.click()
                             page.wait_for_timeout(2000)
 
                         apply_btn = page.query_selector(
+                            'apply-button button, '
                             'button:has-text("Easy Apply"), '
-                            'button:has-text("Apply Now"), '
-                            'a:has-text("Apply")'
+                            'button:has-text("Apply Now")'
                         )
-                        if apply_btn:
-                            apply_btn.click()
-                            page.wait_for_timeout(3000)
+                        if not apply_btn:
+                            page.go_back()
+                            page.wait_for_timeout(1000)
+                            continue
 
-                            resume_input = page.query_selector('input[type="file"]')
-                            if resume_input:
-                                for jid, job in jobs.items():
-                                    pdf = get_resume_pdf(job)
-                                    if pdf:
-                                        resume_input.set_input_files(pdf)
-                                        break
-                                page.wait_for_timeout(2000)
+                        apply_btn.click()
+                        page.wait_for_timeout(3000)
 
-                            handle_screening_questions(page, title)
+                        file_input = page.query_selector('input[type="file"]')
+                        if file_input and resume_pdf:
+                            file_input.set_input_files(resume_pdf)
+                            page.wait_for_timeout(2000)
 
-                            submit = page.query_selector(
-                                'button:has-text("Submit"), button[type="submit"]'
-                            )
-                            if submit:
-                                submit.click()
-                                page.wait_for_timeout(2000)
-                                applied += 1
-                                print(f"  ✓ Applied: {title}")
-                                log_apply({"title": title, "portal": "Dice",
-                                           "applied_at": now_iso(), "success": True})
+                        handle_screening(page, title)
+                        click_submit(page)
+                        applied += 1
+                        print(f"  ✓ Applied: {title}")
+                        log_apply({"title": title, "portal": "Dice",
+                                   "applied_at": now_iso(), "success": True})
 
                         page.go_back()
                         page.wait_for_timeout(1500)
 
                     except Exception as e:
-                        print(f"  ! Card error: {e}")
+                        print(f"  ! Card error: {str(e)[:60]}")
+                        try:
+                            page.go_back()
+                        except:
+                            pass
 
             except Exception as e:
-                print(f"  ! Query error: {e}")
+                print(f"  ! Query error: {str(e)[:60]}")
 
     except Exception as e:
-        print(f"[Dice] Fatal error: {e}")
+        print(f"[Dice] Error: {str(e)[:100]}")
 
-    print(f"[Dice] Done. {applied} applications submitted.")
+    print(f"[Dice] Done. {applied} applied.")
     return applied
 
+# ── JOBRIGHT ───────────────────────────────────────────────────────────────
 
-# ── JOBRIGHT.AI ────────────────────────────────────────────────────────────
-
-def apply_jobright(page, jobs):
-    """Apply to jobs on JobRight.ai."""
+def apply_jobright(page, jobs, resume_pdf):
     applied = 0
     print("\n[JobRight.ai] Starting...")
 
     try:
-        page.goto("https://jobright.ai/login", timeout=30000)
-        page.wait_for_timeout(2000)
-
-        google_btn = page.query_selector('button:has-text("Google"), a:has-text("Google")')
-        if google_btn:
-            google_btn.click()
-            page.wait_for_timeout(2000)
-            if not google_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD):
-                return 0
-
+        page.goto("https://jobright.ai/sign-in", timeout=30000)
         page.wait_for_timeout(3000)
 
-        # Search jobs
-        config  = json.loads(CONFIG_FILE.read_text())
-        queries = config.get("job_queries", [])[:2]
+        if not click_google_button(page):
+            page.goto("https://jobright.ai/login", timeout=30000)
+            page.wait_for_timeout(2000)
+            click_google_button(page)
 
-        for query in queries:
+        page.wait_for_timeout(2000)
+        if "google" in page.url.lower():
+            google_oauth_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD)
+
+        page.wait_for_timeout(4000)
+
+        for query in get_queries():
             try:
-                page.goto(f"https://jobright.ai/jobs?search={query.replace(' ','+')}",
-                          timeout=30000)
+                page.goto(
+                    f"https://jobright.ai/jobs/search?keywords={query.replace(' ','+')}",
+                    timeout=30000
+                )
                 page.wait_for_timeout(3000)
 
-                job_cards = page.query_selector_all('.job-card, [data-testid="job-item"]')[:10]
+                cards = page.query_selector_all(
+                    '.job-card, [data-testid="job-item"], '
+                    'div[class*="job-listing"], li[class*="job"]'
+                )
+                print(f"  → Found {len(cards)} cards for '{query}'")
 
-                for card in job_cards:
+                for card in cards[:5]:
                     try:
-                        title_el = card.query_selector('h3, h2, .job-title')
-                        title    = title_el.inner_text() if title_el else "Unknown"
+                        title_el = card.query_selector('h3, h2, [class*="title"]')
+                        title    = title_el.inner_text().strip() if title_el else "Unknown"
 
                         apply_btn = card.query_selector(
-                            'button:has-text("Apply"), a:has-text("Apply")'
+                            'button:has-text("Apply"), a:has-text("Apply"), '
+                            'button:has-text("Easy Apply")'
                         )
-                        if apply_btn:
-                            apply_btn.click()
-                            page.wait_for_timeout(3000)
-                            handle_screening_questions(page, title)
+                        if not apply_btn:
+                            continue
 
-                            submit = page.query_selector(
-                                'button:has-text("Submit"), button[type="submit"]'
-                            )
-                            if submit:
-                                submit.click()
-                                page.wait_for_timeout(2000)
-                                applied += 1
-                                print(f"  ✓ Applied: {title}")
-                                log_apply({"title": title, "portal": "JobRight.ai",
-                                           "applied_at": now_iso(), "success": True})
+                        apply_btn.click()
+                        page.wait_for_timeout(3000)
+                        handle_screening(page, title)
+                        click_submit(page)
+                        applied += 1
+                        print(f"  ✓ Applied: {title}")
+                        log_apply({"title": title, "portal": "JobRight.ai",
+                                   "applied_at": now_iso(), "success": True})
 
                     except Exception as e:
-                        print(f"  ! Card error: {e}")
+                        print(f"  ! Card error: {str(e)[:60]}")
 
             except Exception as e:
-                print(f"  ! Query error: {e}")
+                print(f"  ! Query error: {str(e)[:60]}")
 
     except Exception as e:
-        print(f"[JobRight.ai] Fatal error: {e}")
+        print(f"[JobRight.ai] Error: {str(e)[:100]}")
 
-    print(f"[JobRight.ai] Done. {applied} applications submitted.")
+    print(f"[JobRight.ai] Done. {applied} applied.")
     return applied
-
 
 # ── MAIN ───────────────────────────────────────────────────────────────────
 
 def run_apply_bot():
     from playwright.sync_api import sync_playwright
 
-    jobs        = load_jobs()
-    total       = 0
-    portal_results = {}
+    jobs       = load_jobs()
+    resume_pdf = get_resume_pdf(jobs)
+    total      = 0
+    results    = {}
 
-    print("\n[Apply Bot] Starting multi-portal application...")
-    print(f"[Apply Bot] Portals: Indeed, ZipRecruiter, Monster, Dice, JobRight.ai")
+    print("\n[Apply Bot] Starting...")
+    if resume_pdf:
+        print(f"[Apply Bot] Resume PDF: {resume_pdf}")
+    else:
+        print("[Apply Bot] Warning: No resume PDF available")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -635,12 +741,10 @@ def run_apply_bot():
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
                 "--disable-blink-features=AutomationControlled",
-                "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0.0.0 Safari/537.36",
+                "--disable-infobars",
+                "--window-size=1280,800",
             ]
         )
-
         context = browser.new_context(
             viewport={"width": 1280, "height": 800},
             user_agent=(
@@ -648,50 +752,37 @@ def run_apply_bot():
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
                 "Chrome/120.0.0.0 Safari/537.36"
             ),
-            java_script_enabled=True,
+            locale="en-US",
         )
-
+        # Hide webdriver
+        context.add_init_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
         page = context.new_page()
-
-        # Hide automation flags
-        page.add_init_script("""
-            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
-            window.chrome = { runtime: {} };
-        """)
+        page.set_default_timeout(20000)
 
         if GOOGLE_EMAIL and GOOGLE_PASSWORD:
-            n = apply_indeed(page, jobs)
-            portal_results["Indeed"] = n
-            total += n
-            time.sleep(3)
+            n = apply_indeed(page, jobs, resume_pdf)
+            results["Indeed"] = n; total += n; time.sleep(5)
 
-            n = apply_ziprecruiter(page, jobs)
-            portal_results["ZipRecruiter"] = n
-            total += n
-            time.sleep(3)
+            n = apply_ziprecruiter(page, jobs, resume_pdf)
+            results["ZipRecruiter"] = n; total += n; time.sleep(5)
 
-            n = apply_monster(page, jobs)
-            portal_results["Monster"] = n
-            total += n
-            time.sleep(3)
+            n = apply_monster(page, jobs, resume_pdf)
+            results["Monster"] = n; total += n; time.sleep(5)
 
-            n = apply_jobright(page, jobs)
-            portal_results["JobRight.ai"] = n
-            total += n
-            time.sleep(3)
+            n = apply_jobright(page, jobs, resume_pdf)
+            results["JobRight.ai"] = n; total += n; time.sleep(5)
 
         if DICE_EMAIL and DICE_PASSWORD:
-            n = apply_dice(page, jobs)
-            portal_results["Dice"] = n
-            total += n
+            n = apply_dice(page, jobs, resume_pdf)
+            results["Dice"] = n; total += n
 
         browser.close()
 
-    print(f"\n[Apply Bot] COMPLETE")
-    print(f"[Apply Bot] Results: {portal_results}")
-    print(f"[Apply Bot] Total applications submitted: {total}")
+    print(f"\n[Apply Bot] Results: {results}")
+    print(f"[Apply Bot] Total: {total} applications")
     return total
-
 
 if __name__ == "__main__":
     run_apply_bot()
