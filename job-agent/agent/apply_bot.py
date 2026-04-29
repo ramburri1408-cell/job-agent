@@ -1,6 +1,7 @@
 """
 Multi-Portal Apply Bot
-- Dice: Fixed Easy Apply filter + proper apply flow
+- Dice: ✅ Fixed JS selector error
+- Others: blocked by bot detection
 """
 
 import json, os, time, traceback
@@ -134,7 +135,7 @@ def click_submit(page):
     return False
 
 def get_dice_jobs_js(page):
-    """Extract job titles + URLs via JavaScript before navigating."""
+    """Extract job titles + URLs via JavaScript — no has-text() in querySelector."""
     try:
         return page.evaluate("""
             () => {
@@ -142,37 +143,29 @@ def get_dice_jobs_js(page):
                 const cards = document.querySelectorAll('[data-testid="job-card"]');
                 cards.forEach(card => {
                     let title = '';
-                    let url = '';
+                    let url   = '';
+
                     const titleSels = [
                         'a[data-cy="card-title-link"]',
                         'h5 a', 'h2 a', 'h3 a',
-                        '[class*="title"] a',
                         'a[href*="/job-detail/"]',
                         'h5', 'h2', 'h3',
                     ];
                     for (const s of titleSels) {
                         const el = card.querySelector(s);
-                        if (el && el.innerText.trim()) {
+                        if (el && el.innerText && el.innerText.trim()) {
                             title = el.innerText.trim();
                             if (el.href) url = el.href;
                             break;
                         }
                     }
-                    // Get URL separately if not found above
+
                     if (!url) {
                         const link = card.querySelector('a[href*="/job-detail/"]');
                         if (link) url = link.href;
                     }
-                    // Check if this card has Easy Apply badge
-                    const easyApplyBadge = card.querySelector(
-                        '[class*="easy-apply"], [class*="easyApply"], ' +
-                        '[data-testid*="easy"], span:has-text("Easy Apply")'
-                    );
-                    results.push({
-                        title: title || 'Unknown',
-                        url: url,
-                        hasEasyApply: !!easyApplyBadge
-                    });
+
+                    results.push({ title: title || 'Unknown', url: url });
                 });
                 return results;
             }
@@ -190,7 +183,7 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
         page.goto(job_url, timeout=20000)
         page.wait_for_timeout(3000)
 
-        # Get real title from page if unknown
+        # Get real title from page h1 if unknown
         if title == "Unknown":
             try:
                 h1 = page.query_selector('h1')
@@ -199,7 +192,7 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
             except:
                 pass
 
-        # Check if Easy Apply button exists
+        # Check for Easy Apply button
         apply_btn = None
         for asel in [
             'button:has-text("Easy Apply")',
@@ -216,15 +209,15 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
                 pass
 
         if not apply_btn:
-            # Check if it's an external apply
+            # Check if external apply
             ext = page.query_selector('a:has-text("Apply on company site"), a:has-text("Apply externally")')
             if ext:
-                print(f"  → External apply only: {title}")
+                print(f"  → External only: {title}")
             else:
                 print(f"  ! No Easy Apply: {title}")
             return False
 
-        print(f"  → Easy Apply found for: {title}")
+        print(f"  → Easy Apply: {title}")
         apply_btn.click()
         page.wait_for_timeout(3000)
 
@@ -252,7 +245,7 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
             return False
 
     except Exception as e:
-        print(f"  ! Apply error ({title}): {str(e)[:80]}")
+        print(f"  ! Error ({title}): {str(e)[:80]}")
         return False
 
 # ── DICE ✅ ─────────────────────────────────────────────────────────────────
@@ -308,8 +301,6 @@ def apply_dice(page, jobs, resume_pdf):
 
         for query in get_queries():
             try:
-                # Use Dice API directly — more reliable than browser search
-                # This gets Easy Apply jobs via their actual search endpoint
                 search_url = (
                     f"https://www.dice.com/jobs"
                     f"?q={quote(query)}"
@@ -318,21 +309,18 @@ def apply_dice(page, jobs, resume_pdf):
                 )
                 page.goto(search_url, timeout=30000)
 
-                # Wait for cards
                 try:
                     page.wait_for_selector('[data-testid="job-card"]', timeout=12000)
                 except:
                     pass
                 page.wait_for_timeout(4000)
 
-                # Extract all jobs via JS
                 job_list = get_dice_jobs_js(page)
                 print(f"  → {len(job_list)} jobs for '{query}'")
 
                 if not job_list:
                     continue
 
-                # Apply to each job
                 for job_data in job_list[:10]:
                     title   = job_data.get("title", "Unknown")
                     job_url = job_data.get("url", "")
@@ -342,7 +330,7 @@ def apply_dice(page, jobs, resume_pdf):
                     if apply_to_dice_job(page, title, job_url, resume_pdf):
                         applied += 1
 
-                    # Go back to search results
+                    # Return to search list
                     try:
                         page.goto(search_url, timeout=20000)
                         page.wait_for_timeout(3000)
