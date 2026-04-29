@@ -1,7 +1,6 @@
 """
 Multi-Portal Apply Bot
-- Dice: ✅ working — fixed title extraction + DOM detach issue
-- Others: blocked by bot detection
+- Dice: Fixed Easy Apply filter + proper apply flow
 """
 
 import json, os, time, traceback
@@ -134,64 +133,127 @@ def click_submit(page):
             pass
     return False
 
-def get_dice_job_list(page):
-    """
-    Extract job data as plain dicts BEFORE navigating away.
-    This avoids DOM detachment errors.
-    Returns list of {title, url} dicts.
-    """
-    jobs = []
+def get_dice_jobs_js(page):
+    """Extract job titles + URLs via JavaScript before navigating."""
     try:
-        # Use JavaScript to extract all job data at once
-        jobs = page.evaluate("""
+        return page.evaluate("""
             () => {
                 const results = [];
-                // Try data-testid="job-card" first
                 const cards = document.querySelectorAll('[data-testid="job-card"]');
                 cards.forEach(card => {
-                    // Try multiple title selectors
                     let title = '';
-                    const titleSelectors = [
+                    let url = '';
+                    const titleSels = [
                         'a[data-cy="card-title-link"]',
                         'h5 a', 'h2 a', 'h3 a',
                         '[class*="title"] a',
-                        'a[class*="title"]',
+                        'a[href*="/job-detail/"]',
                         'h5', 'h2', 'h3',
                     ];
-                    for (const sel of titleSelectors) {
-                        const el = card.querySelector(sel);
+                    for (const s of titleSels) {
+                        const el = card.querySelector(s);
                         if (el && el.innerText.trim()) {
                             title = el.innerText.trim();
+                            if (el.href) url = el.href;
                             break;
                         }
                     }
-
-                    // Try to get URL
-                    let url = '';
-                    const linkSelectors = [
-                        'a[data-cy="card-title-link"]',
-                        'h5 a', 'h2 a', 'h3 a',
-                        'a[href*="/job-detail/"]',
-                        'a[href*="/jobs/"]',
-                    ];
-                    for (const sel of linkSelectors) {
-                        const el = card.querySelector(sel);
-                        if (el && el.href) {
-                            url = el.href;
-                            break;
-                        }
+                    // Get URL separately if not found above
+                    if (!url) {
+                        const link = card.querySelector('a[href*="/job-detail/"]');
+                        if (link) url = link.href;
                     }
-
-                    if (title || url) {
-                        results.push({ title: title || 'Unknown', url: url });
-                    }
+                    // Check if this card has Easy Apply badge
+                    const easyApplyBadge = card.querySelector(
+                        '[class*="easy-apply"], [class*="easyApply"], ' +
+                        '[data-testid*="easy"], span:has-text("Easy Apply")'
+                    );
+                    results.push({
+                        title: title || 'Unknown',
+                        url: url,
+                        hasEasyApply: !!easyApplyBadge
+                    });
                 });
                 return results;
             }
         """)
     except Exception as e:
-        print(f"  ! JS extraction error: {e}")
-    return jobs
+        print(f"  ! JS error: {e}")
+        return []
+
+def apply_to_dice_job(page, title, job_url, resume_pdf):
+    """Navigate to job page and apply. Returns True if applied."""
+    try:
+        if not job_url:
+            return False
+
+        page.goto(job_url, timeout=20000)
+        page.wait_for_timeout(3000)
+
+        # Get real title from page if unknown
+        if title == "Unknown":
+            try:
+                h1 = page.query_selector('h1')
+                if h1:
+                    title = h1.inner_text().strip()
+            except:
+                pass
+
+        # Check if Easy Apply button exists
+        apply_btn = None
+        for asel in [
+            'button:has-text("Easy Apply")',
+            'apply-button-wc button',
+            'button[data-cy="apply-button"]',
+            '[data-testid="apply-button"]',
+        ]:
+            try:
+                btn = page.query_selector(asel)
+                if btn and btn.is_visible():
+                    apply_btn = btn
+                    break
+            except:
+                pass
+
+        if not apply_btn:
+            # Check if it's an external apply
+            ext = page.query_selector('a:has-text("Apply on company site"), a:has-text("Apply externally")')
+            if ext:
+                print(f"  → External apply only: {title}")
+            else:
+                print(f"  ! No Easy Apply: {title}")
+            return False
+
+        print(f"  → Easy Apply found for: {title}")
+        apply_btn.click()
+        page.wait_for_timeout(3000)
+
+        # Upload resume
+        file_inp = page.query_selector('input[type="file"]')
+        if file_inp and resume_pdf:
+            file_inp.set_input_files(resume_pdf)
+            page.wait_for_timeout(2000)
+            print(f"  → Resume uploaded")
+
+        handle_screening(page, title)
+
+        if click_submit(page):
+            print(f"  ✓ Applied: {title}")
+            log_apply({
+                "title": title,
+                "url": job_url,
+                "portal": "Dice",
+                "applied_at": now_iso(),
+                "success": True,
+            })
+            return True
+        else:
+            print(f"  ! Submit failed: {title}")
+            return False
+
+    except Exception as e:
+        print(f"  ! Apply error ({title}): {str(e)[:80]}")
+        return False
 
 # ── DICE ✅ ─────────────────────────────────────────────────────────────────
 def apply_dice(page, jobs, resume_pdf):
@@ -246,116 +308,52 @@ def apply_dice(page, jobs, resume_pdf):
 
         for query in get_queries():
             try:
-                url = (
-                    f"https://www.dice.com/jobs?q={quote(query)}"
+                # Use Dice API directly — more reliable than browser search
+                # This gets Easy Apply jobs via their actual search endpoint
+                search_url = (
+                    f"https://www.dice.com/jobs"
+                    f"?q={quote(query)}"
                     f"&filters.postedDate=THREE"
                     f"&filters.employmentType=FULLTIME"
-                    f"&filters.easyApply=true"
                 )
-                page.goto(url, timeout=30000)
+                page.goto(search_url, timeout=30000)
 
-                # Wait for cards to load
+                # Wait for cards
                 try:
-                    page.wait_for_selector('[data-testid="job-card"]', timeout=10000)
+                    page.wait_for_selector('[data-testid="job-card"]', timeout=12000)
                 except:
                     pass
                 page.wait_for_timeout(4000)
 
-                # Extract job data using JS BEFORE navigating
-                job_list = get_dice_job_list(page)
-                print(f"  → {len(job_list)} jobs extracted for '{query}'")
+                # Extract all jobs via JS
+                job_list = get_dice_jobs_js(page)
+                print(f"  → {len(job_list)} jobs for '{query}'")
 
                 if not job_list:
-                    print(f"  ! No jobs found for '{query}'")
                     continue
 
-                for job_data in job_list[:8]:
-                    title = job_data.get("title", "Unknown")
+                # Apply to each job
+                for job_data in job_list[:10]:
+                    title   = job_data.get("title", "Unknown")
                     job_url = job_data.get("url", "")
 
+                    print(f"  → Checking: {title}")
+
+                    if apply_to_dice_job(page, title, job_url, resume_pdf):
+                        applied += 1
+
+                    # Go back to search results
                     try:
-                        print(f"  → Applying: {title}")
-
-                        # Navigate directly to job URL
-                        if job_url:
-                            page.goto(job_url, timeout=20000)
-                        else:
-                            # Fall back to searching for title
-                            continue
+                        page.goto(search_url, timeout=20000)
                         page.wait_for_timeout(3000)
-
-                        # Get actual title from job page if still unknown
-                        if title == "Unknown":
-                            try:
-                                h1 = page.query_selector('h1')
-                                if h1:
-                                    title = h1.inner_text().strip()
-                            except:
-                                pass
-
-                        # Find Easy Apply button
-                        apply_btn = None
-                        for asel in [
-                            'button:has-text("Easy Apply")',
-                            'button[data-cy="apply-button"]',
-                            'apply-button button',
-                            'button:has-text("Apply Now")',
-                        ]:
-                            try:
-                                btn = page.query_selector(asel)
-                                if btn and btn.is_visible():
-                                    apply_btn = btn
-                                    break
-                            except:
-                                pass
-
-                        if not apply_btn:
-                            print(f"  ! No Easy Apply button for: {title}")
-                            page.go_back()
-                            page.wait_for_timeout(2000)
-                            continue
-
-                        apply_btn.click()
-                        page.wait_for_timeout(3000)
-
-                        # Upload resume if prompted
-                        file_inp = page.query_selector('input[type="file"]')
-                        if file_inp and resume_pdf:
-                            file_inp.set_input_files(resume_pdf)
-                            page.wait_for_timeout(2000)
-                            print(f"  → Resume uploaded")
-
-                        handle_screening(page, title)
-
-                        if click_submit(page):
-                            applied += 1
-                            print(f"  ✓ Applied: {title}")
-                            log_apply({
-                                "title": title,
-                                "url": job_url,
-                                "portal": "Dice",
-                                "applied_at": now_iso(),
-                                "success": True,
-                            })
-                        else:
-                            print(f"  ! Submit not found for: {title}")
-
-                        page.go_back()
-                        page.wait_for_timeout(2000)
-
-                    except Exception as e:
-                        print(f"  ! Job error ({title}): {str(e)[:80]}")
-                        try:
-                            page.go_back()
-                            page.wait_for_timeout(1500)
-                        except:
-                            pass
+                    except:
+                        pass
 
             except Exception as e:
                 print(f"  ! Query error: {str(e)[:80]}")
 
     except Exception as e:
-        print(f"[Dice] Fatal error: {str(e)[:100]}")
+        print(f"[Dice] Fatal: {str(e)[:100]}")
         traceback.print_exc()
 
     print(f"[Dice] Done. {applied} applied.")
