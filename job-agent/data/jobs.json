@@ -5262,5 +5262,24 @@
     "email_sent": false,
     "email_sent_at": null,
     "fit_score": 35
+  },
+  "bfaae2145d10": {
+    "id": "bfaae2145d10",
+    "title": "Operations software assistant",
+    "company": "Bulldog Digital Media",
+    "location": "Remote",
+    "salary": "$12k - $19k (35 hrs/week, freelance)",
+    "description": "Operations software assistant\n\u00a0\nBulldog is a UK agency helping marketing and SEO teams increase their visibility on Google and AI through link building and digital PR. We're a team of 12, with expertise in SEO, content, link building, and PR, based in the UK, Serbia, and North Macedonia.\n\u00a0\nWe are looking for a process-driven and intuitive person to work alongside our Operations Manager in overhauling our internal processes into a modern, streamlined way of working. We've already started implementing this as a proof of concept, with incredible results. We now need an extra pair of creative hands to move faster and help execute improvements.\n\u00a0\nThe role\n\u00a0\n\n\nHelp review processes and improvements in ways of working.\n\n\nHelp build additional internal tools to improve delivery and efficiency.\n\n\nU",
+    "url": "https://remotive.com/remote-jobs/operations/operations-software-assistant-2090000",
+    "portal": "Remotive",
+    "scraped_at": "2026-04-29T14:18:34.818152+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
   }
 }
