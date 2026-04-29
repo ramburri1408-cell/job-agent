@@ -1,10 +1,6 @@
 """
-Multi-Portal Apply Bot — Fixed selectors based on live test results
-Dice: ✅ login works, fix card selectors
-Monster: ✅ Google found, fix card selectors  
-Indeed: fix login flow
-JobRight: found cards, fix apply button
-ZipRecruiter: fix Google login
+Multi-Portal Apply Bot — Debug Mode
+Dumps HTML snippets to identify correct selectors
 """
 
 import json, os, time, traceback
@@ -45,6 +41,23 @@ def log_apply(entry):
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
+def debug_page(page, label=""):
+    """Dump page info to identify correct selectors."""
+    try:
+        html  = page.content()
+        title = page.title()
+        url   = page.url
+        print(f"\n  ══ DEBUG [{label}] ══")
+        print(f"  Title: {title}")
+        print(f"  URL: {url[:100]}")
+        # Print 3 chunks to get good coverage
+        print(f"  HTML[1000:2000]: {html[1000:2000]}")
+        print(f"  HTML[2000:3000]: {html[2000:3000]}")
+        print(f"  HTML[3000:4000]: {html[3000:4000]}")
+        print(f"  ══ END DEBUG ══\n")
+    except Exception as e:
+        print(f"  ! Debug error: {e}")
+
 def ai_answer(question, job_title="", options=None):
     opts = f"\nOptions: {options}" if options else ""
     try:
@@ -71,7 +84,7 @@ def get_resume_pdf(jobs):
 
 def get_queries():
     config = json.loads(CONFIG_FILE.read_text())
-    return config.get("job_queries", ["full stack .NET developer"])[:4]
+    return config.get("job_queries", ["full stack .NET developer"])[:2]
 
 def google_login(page, email, password):
     try:
@@ -173,66 +186,46 @@ def apply_indeed(page, jobs, resume_pdf):
     applied = 0
     print("\n[Indeed] Starting...")
     try:
-        # Indeed blocks headless Google OAuth — use direct job search instead
-        # Search jobs directly without login for Easy Apply
-        for query in get_queries():
+        query = get_queries()[0]
+        page.goto(f"https://www.indeed.com/jobs?q={quote(query)}&l=Remote&sc=0kf%3Aattr%28DSQF7%29%3B&sort=date&fromage=3", timeout=30000)
+        page.wait_for_timeout(4000)
+        debug_page(page, "Indeed Search")
+
+        cards = page.query_selector_all('[data-jk]')
+        if not cards:
+            cards = page.query_selector_all('.job_seen_beacon')
+        print(f"  → {len(cards)} cards")
+
+        for card in cards[:5]:
             try:
-                page.goto(f"https://www.indeed.com/jobs?q={quote(query)}&l=Remote&sc=0kf%3Aattr%28DSQF7%29%3B&sort=date&fromage=3", timeout=30000)
-                page.wait_for_timeout(3000)
-
-                # Get all job cards
-                cards = page.query_selector_all('[data-jk]')
-                if not cards:
-                    cards = page.query_selector_all('.job_seen_beacon')
-                print(f"  → {len(cards)} cards for '{query}'")
-
-                for card in cards[:8]:
-                    try:
-                        title_el = card.query_selector('h2 span[title], .jobTitle span')
-                        title = title_el.get_attribute("title") or title_el.inner_text() if title_el else "Unknown"
-
-                        # Only process Easy Apply jobs
-                        easy = card.query_selector('.iaLabel, [aria-label*="Easily apply"], .indeedApply')
-                        if not easy:
-                            continue
-
-                        # Click job to open
-                        card.click()
-                        page.wait_for_timeout(2000)
-
-                        # Find apply button in right panel
-                        apply_btn = page.query_selector('#indeedApplyButton, button[id*="apply"], .ia-IndeedApplyButton')
-                        if not apply_btn:
-                            continue
-
-                        apply_btn.click()
-                        page.wait_for_timeout(3000)
-
-                        # Handle iframe
-                        for step in range(4):
-                            iframe = page.query_selector('iframe[id*="indeedapply"]')
-                            if iframe:
-                                frame = iframe.content_frame()
-                                if frame:
-                                    file_inp = frame.query_selector('input[type="file"]')
-                                    if file_inp and resume_pdf:
-                                        file_inp.set_input_files(resume_pdf)
-                                    handle_screening(frame, title)
-                                    sub = frame.query_selector('button[type="submit"], button:has-text("Continue")')
-                                    if sub: sub.click(); page.wait_for_timeout(2500)
-                                    else: break
-                            else:
-                                handle_screening(page, title)
-                                if not click_submit(page): break
-
-                        applied += 1
-                        print(f"  ✓ Applied: {title}")
-                        log_apply({"title": title, "portal": "Indeed", "applied_at": now_iso(), "success": True})
-                        page.wait_for_timeout(1500)
-                    except Exception as e:
-                        print(f"  ! Card: {str(e)[:60]}")
+                title_el = card.query_selector('h2 span[title], .jobTitle span')
+                title = title_el.get_attribute("title") or title_el.inner_text() if title_el else "Unknown"
+                easy = card.query_selector('.iaLabel, [aria-label*="Easily apply"], .indeedApply')
+                if not easy: continue
+                card.click(); page.wait_for_timeout(2000)
+                apply_btn = page.query_selector('#indeedApplyButton, button[id*="apply"], .ia-IndeedApplyButton')
+                if not apply_btn: continue
+                apply_btn.click(); page.wait_for_timeout(3000)
+                for step in range(4):
+                    iframe = page.query_selector('iframe[id*="indeedapply"]')
+                    if iframe:
+                        frame = iframe.content_frame()
+                        if frame:
+                            file_inp = frame.query_selector('input[type="file"]')
+                            if file_inp and resume_pdf: file_inp.set_input_files(resume_pdf)
+                            handle_screening(frame, title)
+                            sub = frame.query_selector('button[type="submit"], button:has-text("Continue")')
+                            if sub: sub.click(); page.wait_for_timeout(2500)
+                            else: break
+                    else:
+                        handle_screening(page, title)
+                        if not click_submit(page): break
+                applied += 1
+                print(f"  ✓ Applied: {title}")
+                log_apply({"title": title, "portal": "Indeed", "applied_at": now_iso(), "success": True})
+                page.wait_for_timeout(1500)
             except Exception as e:
-                print(f"  ! Query: {str(e)[:60]}")
+                print(f"  ! Card: {str(e)[:80]}")
     except Exception as e:
         print(f"[Indeed] Error: {str(e)[:100]}")
     print(f"[Indeed] Done. {applied} applied.")
@@ -245,10 +238,9 @@ def apply_ziprecruiter(page, jobs, resume_pdf):
     try:
         page.goto("https://www.ziprecruiter.com/login", timeout=30000)
         page.wait_for_timeout(3000)
-        print(f"  → URL: {page.url[:60]}")
+        debug_page(page, "ZipRecruiter Login")
 
         if not find_google_btn(page):
-            # Try clicking the email field area to find Google option
             page.goto("https://www.ziprecruiter.com/login?country=US", timeout=30000)
             page.wait_for_timeout(2000)
             find_google_btn(page)
@@ -258,39 +250,30 @@ def apply_ziprecruiter(page, jobs, resume_pdf):
 
         page.wait_for_timeout(3000)
 
-        for query in get_queries():
+        query = get_queries()[0]
+        page.goto(f"https://www.ziprecruiter.com/jobs-search?search={quote(query)}&location=Remote", timeout=30000)
+        page.wait_for_timeout(4000)
+        debug_page(page, "ZipRecruiter Search")
+
+        cards = page.query_selector_all('[class*="job_result_two_pane"], [data-testid="job-card"], article')
+        if not cards:
+            cards = page.query_selector_all('li[class*="job"]')
+        print(f"  → {len(cards)} cards")
+
+        for card in cards[:5]:
             try:
-                page.goto(f"https://www.ziprecruiter.com/jobs-search?search={quote(query)}&location=Remote", timeout=30000)
-                page.wait_for_timeout(3000)
-
-                # ZipRecruiter job card selectors
-                cards = page.query_selector_all('[class*="job_result_two_pane"], [data-testid="job-card"], article')
-                if not cards:
-                    cards = page.query_selector_all('li[class*="job"]')
-                print(f"  → {len(cards)} cards for '{query}'")
-
-                for card in cards[:8]:
-                    try:
-                        title_el = card.query_selector('h2, [class*="title"]')
-                        title = title_el.inner_text().strip() if title_el else "Unknown"
-
-                        # 1-Click Apply
-                        one_click = card.query_selector(
-                            '[class*="one_click"], [class*="quickApply"], '
-                            'button:has-text("1-Click"), button:has-text("Quick Apply")'
-                        )
-                        if one_click:
-                            one_click.click()
-                            page.wait_for_timeout(3000)
-                            handle_screening(page, title)
-                            click_submit(page)
-                            applied += 1
-                            print(f"  ✓ 1-Click: {title}")
-                            log_apply({"title": title, "portal": "ZipRecruiter", "applied_at": now_iso(), "success": True})
-                    except Exception as e:
-                        print(f"  ! Card: {str(e)[:60]}")
+                title_el = card.query_selector('h2, [class*="title"]')
+                title = title_el.inner_text().strip() if title_el else "Unknown"
+                one_click = card.query_selector('[class*="one_click"], [class*="quickApply"], button:has-text("1-Click"), button:has-text("Quick Apply")')
+                if one_click:
+                    one_click.click(); page.wait_for_timeout(3000)
+                    handle_screening(page, title)
+                    click_submit(page)
+                    applied += 1
+                    print(f"  ✓ 1-Click: {title}")
+                    log_apply({"title": title, "portal": "ZipRecruiter", "applied_at": now_iso(), "success": True})
             except Exception as e:
-                print(f"  ! Query: {str(e)[:60]}")
+                print(f"  ! Card: {str(e)[:60]}")
     except Exception as e:
         print(f"[ZipRecruiter] Error: {str(e)[:100]}")
     print(f"[ZipRecruiter] Done. {applied} applied.")
@@ -303,6 +286,7 @@ def apply_monster(page, jobs, resume_pdf):
     try:
         page.goto("https://www.monster.com/login", timeout=30000)
         page.wait_for_timeout(3000)
+        debug_page(page, "Monster Login")
 
         if not find_google_btn(page):
             page.goto("https://www.monster.com/profile/signin?ch=web", timeout=30000)
@@ -313,46 +297,32 @@ def apply_monster(page, jobs, resume_pdf):
             google_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD)
         page.wait_for_timeout(4000)
 
-        for query in get_queries():
+        query = get_queries()[0]
+        page.goto(f"https://www.monster.com/jobs/search?q={quote(query)}&where=remote", timeout=30000)
+        page.wait_for_timeout(4000)
+        debug_page(page, "Monster Search")
+
+        cards = page.query_selector_all('[data-testid="jobCard"], [class*="job-search-result-list-item"]')
+        if not cards:
+            cards = page.query_selector_all('section[class*="card"]')
+        print(f"  → {len(cards)} cards")
+
+        for card in cards[:5]:
             try:
-                page.goto(f"https://www.monster.com/jobs/search?q={quote(query)}&where=remote", timeout=30000)
-                page.wait_for_timeout(4000)
-
-                # Monster uses data-testid on cards
-                cards = page.query_selector_all('[data-testid="jobCard"], [class*="job-search-result-list-item"]')
-                if not cards:
-                    cards = page.query_selector_all('section[class*="card"]')
-                print(f"  → {len(cards)} cards for '{query}'")
-
-                for card in cards[:8]:
-                    try:
-                        title_el = card.query_selector('h2, h3, [data-testid="job-title"]')
-                        title = title_el.inner_text().strip() if title_el else "Unknown"
-
-                        apply_btn = card.query_selector(
-                            '[data-testid="apply-button-label"], '
-                            'button:has-text("Apply"), a:has-text("Apply")'
-                        )
-                        if not apply_btn: continue
-
-                        apply_btn.click()
-                        page.wait_for_timeout(3000)
-
-                        # Upload resume
-                        file_inp = page.query_selector('input[type="file"]')
-                        if file_inp and resume_pdf:
-                            file_inp.set_input_files(resume_pdf)
-                            page.wait_for_timeout(2000)
-
-                        handle_screening(page, title)
-                        click_submit(page)
-                        applied += 1
-                        print(f"  ✓ Applied: {title}")
-                        log_apply({"title": title, "portal": "Monster", "applied_at": now_iso(), "success": True})
-                    except Exception as e:
-                        print(f"  ! Card: {str(e)[:60]}")
+                title_el = card.query_selector('h2, h3, [data-testid="job-title"]')
+                title = title_el.inner_text().strip() if title_el else "Unknown"
+                apply_btn = card.query_selector('[data-testid="apply-button-label"], button:has-text("Apply"), a:has-text("Apply")')
+                if not apply_btn: continue
+                apply_btn.click(); page.wait_for_timeout(3000)
+                file_inp = page.query_selector('input[type="file"]')
+                if file_inp and resume_pdf: file_inp.set_input_files(resume_pdf); page.wait_for_timeout(2000)
+                handle_screening(page, title)
+                click_submit(page)
+                applied += 1
+                print(f"  ✓ Applied: {title}")
+                log_apply({"title": title, "portal": "Monster", "applied_at": now_iso(), "success": True})
             except Exception as e:
-                print(f"  ! Query: {str(e)[:60]}")
+                print(f"  ! Card: {str(e)[:60]}")
     except Exception as e:
         print(f"[Monster] Error: {str(e)[:100]}")
     print(f"[Monster] Done. {applied} applied.")
@@ -366,12 +336,10 @@ def apply_dice(page, jobs, resume_pdf):
         page.goto("https://www.dice.com/dashboard/login", timeout=30000)
         page.wait_for_timeout(3000)
 
-        # Login — tested and working
         for sel in ['input[name="email"]', 'input[type="email"]', '#email']:
             try:
                 el = page.query_selector(sel)
-                if el and el.is_visible():
-                    el.fill(DICE_EMAIL); break
+                if el and el.is_visible(): el.fill(DICE_EMAIL); break
             except: pass
         page.wait_for_timeout(500)
         for sel in ['button[type="submit"]', '#login-button', 'button:has-text("Sign In")']:
@@ -383,8 +351,7 @@ def apply_dice(page, jobs, resume_pdf):
         for sel in ['input[name="password"]', 'input[type="password"]', '#password']:
             try:
                 el = page.query_selector(sel)
-                if el and el.is_visible():
-                    el.fill(DICE_PASSWORD); break
+                if el and el.is_visible(): el.fill(DICE_PASSWORD); break
             except: pass
         page.wait_for_timeout(500)
         for sel in ['button[type="submit"]', '#login-button', 'button:has-text("Sign In")']:
@@ -395,57 +362,39 @@ def apply_dice(page, jobs, resume_pdf):
         page.wait_for_timeout(4000)
         print(f"  ✓ Dice logged in: {page.url[:50]}")
 
-        for query in get_queries():
+        query = get_queries()[0]
+        page.goto(f"https://www.dice.com/jobs?q={quote(query)}&location=Remote&filters.postedDate=THREE&filters.employmentType=FULLTIME", timeout=30000)
+        page.wait_for_timeout(5000)
+        debug_page(page, "Dice Search")
+
+        cards = page.query_selector_all('dhi-search-card')
+        if not cards:
+            cards = page.query_selector_all('[data-cy="card"], div[class*="card-title"]')
+        print(f"  → {len(cards)} cards")
+
+        for card in cards[:5]:
             try:
-                page.goto(f"https://www.dice.com/jobs?q={quote(query)}&location=Remote&filters.postedDate=ONE&filters.employmentType=FULLTIME", timeout=30000)
-                page.wait_for_timeout(4000)
-
-                # Dice uses dhi-search-card web component
-                cards = page.query_selector_all('dhi-search-card')
-                if not cards:
-                    cards = page.query_selector_all('[data-cy="card"], div[class*="card-title"]')
-                print(f"  → {len(cards)} cards for '{query}'")
-
-                for card in cards[:8]:
-                    try:
-                        # Get title and click it
-                        title_el = card.query_selector('a[data-cy="card-title-link"], h5 a, a[class*="card-title"]')
-                        title = title_el.inner_text().strip() if title_el else "Unknown"
-
-                        if title_el:
-                            title_el.click()
-                            page.wait_for_timeout(2500)
-
-                        # Easy Apply button on job detail page
-                        apply_btn = page.query_selector(
-                            'apply-button button, '
-                            'button[data-cy="apply-button"], '
-                            'button:has-text("Easy Apply"), '
-                            'button:has-text("Apply Now")'
-                        )
-                        if not apply_btn:
-                            page.go_back(); page.wait_for_timeout(1500); continue
-
-                        apply_btn.click()
-                        page.wait_for_timeout(3000)
-
-                        file_inp = page.query_selector('input[type="file"]')
-                        if file_inp and resume_pdf:
-                            file_inp.set_input_files(resume_pdf)
-                            page.wait_for_timeout(2000)
-
-                        handle_screening(page, title)
-                        click_submit(page)
-                        applied += 1
-                        print(f"  ✓ Applied: {title}")
-                        log_apply({"title": title, "portal": "Dice", "applied_at": now_iso(), "success": True})
-                        page.go_back(); page.wait_for_timeout(1500)
-                    except Exception as e:
-                        print(f"  ! Card: {str(e)[:60]}")
-                        try: page.go_back(); page.wait_for_timeout(1000)
-                        except: pass
+                title_el = card.query_selector('a[data-cy="card-title-link"], h5 a, a[class*="card-title"]')
+                title = title_el.inner_text().strip() if title_el else "Unknown"
+                if title_el:
+                    title_el.click(); page.wait_for_timeout(2500)
+                apply_btn = page.query_selector('apply-button button, button[data-cy="apply-button"], button:has-text("Easy Apply"), button:has-text("Apply Now")')
+                if not apply_btn:
+                    debug_page(page, "Dice Job Detail")
+                    page.go_back(); page.wait_for_timeout(1500); continue
+                apply_btn.click(); page.wait_for_timeout(3000)
+                file_inp = page.query_selector('input[type="file"]')
+                if file_inp and resume_pdf: file_inp.set_input_files(resume_pdf); page.wait_for_timeout(2000)
+                handle_screening(page, title)
+                click_submit(page)
+                applied += 1
+                print(f"  ✓ Applied: {title}")
+                log_apply({"title": title, "portal": "Dice", "applied_at": now_iso(), "success": True})
+                page.go_back(); page.wait_for_timeout(1500)
             except Exception as e:
-                print(f"  ! Query: {str(e)[:60]}")
+                print(f"  ! Card: {str(e)[:60]}")
+                try: page.go_back(); page.wait_for_timeout(1000)
+                except: pass
     except Exception as e:
         print(f"[Dice] Error: {str(e)[:100]}")
     print(f"[Dice] Done. {applied} applied.")
@@ -458,6 +407,7 @@ def apply_jobright(page, jobs, resume_pdf):
     try:
         page.goto("https://jobright.ai/sign-in", timeout=30000)
         page.wait_for_timeout(3000)
+        debug_page(page, "JobRight Login")
 
         if not find_google_btn(page):
             page.goto("https://jobright.ai/login", timeout=30000)
@@ -468,42 +418,31 @@ def apply_jobright(page, jobs, resume_pdf):
             google_login(page, GOOGLE_EMAIL, GOOGLE_PASSWORD)
         page.wait_for_timeout(4000)
 
-        for query in get_queries():
+        query = get_queries()[0]
+        page.goto(f"https://jobright.ai/jobs?search={quote(query)}", timeout=30000)
+        page.wait_for_timeout(5000)
+        debug_page(page, "JobRight Search")
+
+        cards = page.query_selector_all('[class*="job-card"], [data-testid*="job"]')
+        if not cards:
+            cards = page.query_selector_all('li[class*="job"], div[class*="listing"]')
+        print(f"  → {len(cards)} cards")
+
+        for card in cards[:5]:
             try:
-                page.goto(f"https://jobright.ai/jobs?search={quote(query)}", timeout=30000)
-                page.wait_for_timeout(4000)
-
-                cards = page.query_selector_all('[class*="job-card"], [data-testid*="job"]')
-                if not cards:
-                    cards = page.query_selector_all('li[class*="job"], div[class*="listing"]')
-                print(f"  → {len(cards)} cards for '{query}'")
-
-                for card in cards[:8]:
-                    try:
-                        title_el = card.query_selector('h3, h2, [class*="title"]')
-                        title = title_el.inner_text().strip() if title_el else "Unknown"
-
-                        # Click card to open
-                        card.click()
-                        page.wait_for_timeout(2000)
-
-                        apply_btn = page.query_selector(
-                            'button:has-text("Apply"), button:has-text("Easy Apply"), '
-                            'a:has-text("Apply Now"), [data-testid="apply-button"]'
-                        )
-                        if not apply_btn: continue
-
-                        apply_btn.click()
-                        page.wait_for_timeout(3000)
-                        handle_screening(page, title)
-                        click_submit(page)
-                        applied += 1
-                        print(f"  ✓ Applied: {title}")
-                        log_apply({"title": title, "portal": "JobRight.ai", "applied_at": now_iso(), "success": True})
-                    except Exception as e:
-                        print(f"  ! Card: {str(e)[:60]}")
+                title_el = card.query_selector('h3, h2, [class*="title"]')
+                title = title_el.inner_text().strip() if title_el else "Unknown"
+                card.click(); page.wait_for_timeout(2000)
+                apply_btn = page.query_selector('button:has-text("Apply"), button:has-text("Easy Apply"), a:has-text("Apply Now"), [data-testid="apply-button"]')
+                if not apply_btn: continue
+                apply_btn.click(); page.wait_for_timeout(3000)
+                handle_screening(page, title)
+                click_submit(page)
+                applied += 1
+                print(f"  ✓ Applied: {title}")
+                log_apply({"title": title, "portal": "JobRight.ai", "applied_at": now_iso(), "success": True})
             except Exception as e:
-                print(f"  ! Query: {str(e)[:60]}")
+                print(f"  ! Card: {str(e)[:60]}")
     except Exception as e:
         print(f"[JobRight.ai] Error: {str(e)[:100]}")
     print(f"[JobRight.ai] Done. {applied} applied.")
