@@ -6514,5 +6514,52 @@
     "email_sent": false,
     "email_sent_at": null,
     "fit_score": 72
+  },
+  "42f3c0a298fa": {
+    "id": "42f3c0a298fa",
+    "title": "Senior DotNet / Angular Developer",
+    "company": "Cynet Systems",
+    "location": "Grand Central, Manhattan",
+    "salary": "$125,026 - $125,026",
+    "description": "We are looking for Senior DotNet / Angular Developer for our client in New York City, NY Job Title: Senior DotNet / Angular Developer Job Location: New York City, NY Job Type: Contract Job Overview: Pay Range: $50hr - $55hr We are seeking a Senior .Net / Angular Developer to design, develop, and maintain geospatial applications. The role involves working with modern technologies to build scalable solutions, optimize performance, and collaborate with cross-functional teams to meet business requi\u2026",
+    "url": "https://www.adzuna.com/land/ad/5713758880?se=qgl28QJE8RGtfYqXd6LnHQ&utm_medium=api&utm_source=8b64f8b7&v=B8005A1137D961060BB8B33CF39C11E27201C10E",
+    "portal": "Adzuna",
+    "scraped_at": "2026-04-29T19:38:05.867195+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@cynetsystems.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18 (has React focus instead)\", \"Backend\": \"WCF, ERP Systems Integration experience\", \"Cloud / DevOps\": \"Azure DevOps pipeline configuration at scale\", \"Testing\": \"Geospatial testing frameworks, performance optimization testing\"}, \"priority_bullets\": [1, 2, 5, 6], \"extra_bullet\": \"Optimized geospatial query performance using spatial indexing in SQL Server, reducing map rendering latency by 40% for real-time location tracking applications\"}",
+    "email_draft": "Subject: Senior .NET/Angular Developer \u2013 Built SOX/PCI-Compliant Systems at Scale\n\nHi,\n\nI came across the Senior DotNet/Angular Developer role at Cynet Systems. Your focus on scalable application development caught my attention\u2014I've spent the last several years building exactly that kind of enterprise software where reliability and security can't be afterthoughts.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture on Azure, eliminating duplicate transactions and securing all APIs to SOX/PCI-DSS compliance. Full-stack .NET and Angular is where I work best.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? You can find more about my background here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-04-29T19:38:27.845588+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Cynet_Systems.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "ASP.NET Core",
+        "Angular 14/18",
+        "TypeScript",
+        "JavaScript",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "JWT",
+        "OAuth2",
+        "Git"
+      ],
+      "gaps": [
+        "Geospatial application development experience",
+        "GIS technologies (PostGIS, MapBox, Leaflet)",
+        "Specific .NET/Angular combined project examples"
+      ],
+      "angle": "Strong full-stack .NET developer with Angular expertise and Azure cloud experience, plus enterprise-grade security implementation aligns well with scalable application requirements",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@cynetsystems.com"
+    }
   }
 }
