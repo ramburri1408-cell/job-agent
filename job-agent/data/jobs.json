@@ -6561,5 +6561,43 @@
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@cynetsystems.com"
     }
+  },
+  "e6a0a9c5bbde": {
+    "id": "e6a0a9c5bbde",
+    "title": "Data engineer",
+    "company": "Siritech Solutions Corp",
+    "location": "Tallahassee, Leon County",
+    "salary": "$134,053 - $134,053",
+    "description": "Academic and Certification A bachelors degree from an accredited college or university and seven (7) years experience in computer systems analysis and/or computer programming; or A bachelors degree from an accredited college or university with a major in one of the computer science or management information systems. Knowledge, Skills, and Abilities: b. Skills and Abilities Knowledge of the principles, practices, and techniques of computer programming and systems design Ability to evaluate and i\u2026",
+    "url": "https://www.adzuna.com/details/5713827160?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-04-29T20:19:52.640375+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "b51597b01b0d": {
+    "id": "b51597b01b0d",
+    "title": "Business Analyst",
+    "company": "Siritech Solutions Corp",
+    "location": "Tallahassee, Leon County",
+    "salary": "$121,478 - $121,478",
+    "description": "Academic and Certification i. A bachelors degree from an accredited college or university and seven (7) years experience in computer systems analysis and/or computer programming; or ii. A bachelors degree from an accredited college or university with a major in one of the computer science or management information systems. Knowledge, Skills, and Abilities: b. Skills and Abilities Knowledge of the principles, practices and techniques of computer programming and systems design, Knowledge of busin\u2026",
+    "url": "https://www.adzuna.com/details/5713827159?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-04-29T20:19:52.640399+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
   }
 }
