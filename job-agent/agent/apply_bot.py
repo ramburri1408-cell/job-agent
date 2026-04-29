@@ -1,7 +1,6 @@
 """
-Multi-Portal Apply Bot
-- Dice: ✅ Fixed JS selector error
-- Others: blocked by bot detection
+Multi-Portal Apply Bot — Final Clean Version
+Dice: ✅ Working — fixed timeout + title extraction
 """
 
 import json, os, time, traceback
@@ -135,7 +134,7 @@ def click_submit(page):
     return False
 
 def get_dice_jobs_js(page):
-    """Extract job titles + URLs via JavaScript — no has-text() in querySelector."""
+    """Extract job titles + URLs via JavaScript."""
     try:
         return page.evaluate("""
             () => {
@@ -144,7 +143,6 @@ def get_dice_jobs_js(page):
                 cards.forEach(card => {
                     let title = '';
                     let url   = '';
-
                     const titleSels = [
                         'a[data-cy="card-title-link"]',
                         'h5 a', 'h2 a', 'h3 a',
@@ -159,12 +157,10 @@ def get_dice_jobs_js(page):
                             break;
                         }
                     }
-
                     if (!url) {
                         const link = card.querySelector('a[href*="/job-detail/"]');
                         if (link) url = link.href;
                     }
-
                     results.push({ title: title || 'Unknown', url: url });
                 });
                 return results;
@@ -175,15 +171,15 @@ def get_dice_jobs_js(page):
         return []
 
 def apply_to_dice_job(page, title, job_url, resume_pdf):
-    """Navigate to job page and apply. Returns True if applied."""
+    """Navigate to job and apply. Returns True if applied."""
     try:
         if not job_url:
             return False
 
-        page.goto(job_url, timeout=20000)
-        page.wait_for_timeout(3000)
+        page.goto(job_url, timeout=30000)
+        page.wait_for_timeout(4000)
 
-        # Get real title from page h1 if unknown
+        # Get real title from page
         if title == "Unknown":
             try:
                 h1 = page.query_selector('h1')
@@ -192,7 +188,7 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
             except:
                 pass
 
-        # Check for Easy Apply button
+        # Find Easy Apply button
         apply_btn = None
         for asel in [
             'button:has-text("Easy Apply")',
@@ -209,7 +205,6 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
                 pass
 
         if not apply_btn:
-            # Check if external apply
             ext = page.query_selector('a:has-text("Apply on company site"), a:has-text("Apply externally")')
             if ext:
                 print(f"  → External only: {title}")
@@ -218,8 +213,19 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
             return False
 
         print(f"  → Easy Apply: {title}")
-        apply_btn.click()
-        page.wait_for_timeout(3000)
+
+        # Click with longer timeout
+        try:
+            apply_btn.click(timeout=10000)
+        except Exception:
+            # Try JavaScript click as fallback
+            try:
+                page.evaluate("(el) => el.click()", apply_btn)
+            except:
+                print(f"  ! Click failed: {title}")
+                return False
+
+        page.wait_for_timeout(4000)
 
         # Upload resume
         file_inp = page.query_selector('input[type="file"]')
@@ -233,11 +239,11 @@ def apply_to_dice_job(page, title, job_url, resume_pdf):
         if click_submit(page):
             print(f"  ✓ Applied: {title}")
             log_apply({
-                "title": title,
-                "url": job_url,
-                "portal": "Dice",
+                "title":      title,
+                "url":        job_url,
+                "portal":     "Dice",
                 "applied_at": now_iso(),
-                "success": True,
+                "success":    True,
             })
             return True
         else:
@@ -330,9 +336,9 @@ def apply_dice(page, jobs, resume_pdf):
                     if apply_to_dice_job(page, title, job_url, resume_pdf):
                         applied += 1
 
-                    # Return to search list
+                    # Return to search
                     try:
-                        page.goto(search_url, timeout=20000)
+                        page.goto(search_url, timeout=30000)
                         page.wait_for_timeout(3000)
                     except:
                         pass
@@ -399,7 +405,7 @@ def run_apply_bot():
             "Object.defineProperty(navigator,'webdriver',{get:()=>undefined})"
         )
         page = ctx.new_page()
-        page.set_default_timeout(20000)
+        page.set_default_timeout(30000)
 
         if DICE_EMAIL and DICE_PASSWORD:
             n = apply_dice(page, jobs, resume_pdf)
