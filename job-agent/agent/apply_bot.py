@@ -1,6 +1,6 @@
 """
 Multi-Portal Apply Bot
-- Dice: ✅ working — 9 applied last run, fixing title + confirmation
+- Dice: ✅ working — fixed title extraction + DOM detach issue
 - Others: blocked by bot detection
 """
 
@@ -12,10 +12,8 @@ import anthropic
 
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-GOOGLE_EMAIL    = os.environ.get("GOOGLE_EMAIL", "")
-GOOGLE_PASSWORD = os.environ.get("GOOGLE_PASSWORD", "")
-DICE_EMAIL      = os.environ.get("DICE_EMAIL", "")
-DICE_PASSWORD   = os.environ.get("DICE_PASSWORD", "")
+DICE_EMAIL    = os.environ.get("DICE_EMAIL", "")
+DICE_PASSWORD = os.environ.get("DICE_PASSWORD", "")
 
 DATA_FILE   = Path("data/jobs.json")
 LOG_FILE    = Path("data/apply_log.jsonl")
@@ -30,9 +28,6 @@ PROFILE = {
 
 def load_jobs():
     return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
-
-def save_jobs(jobs):
-    DATA_FILE.write_text(json.dumps(jobs, indent=2))
 
 def log_apply(entry):
     LOG_FILE.parent.mkdir(exist_ok=True)
@@ -60,7 +55,11 @@ def get_resume_pdf(jobs):
             return pdf
     try:
         from ats_resume import generate_ats_resume
-        r = generate_ats_resume({"title": "Full Stack .NET Developer", "company": "Target", "description": ""}, "/tmp")
+        r = generate_ats_resume({
+            "title": "Full Stack .NET Developer",
+            "company": "Target",
+            "description": ""
+        }, "/tmp")
         return r["pdf_path"]
     except Exception as e:
         print(f"  ! PDF error: {e}")
@@ -89,7 +88,6 @@ def handle_screening(page, title):
                     answered += 1
             except:
                 pass
-
         for ta in page.query_selector_all("textarea"):
             try:
                 if ta.input_value():
@@ -100,7 +98,6 @@ def handle_screening(page, title):
                     answered += 1
             except:
                 pass
-
         for sel in page.query_selector_all("select"):
             try:
                 opts = [o.inner_text().strip() for o in sel.query_selector_all("option") if o.inner_text().strip()]
@@ -116,7 +113,6 @@ def handle_screening(page, title):
                 pass
     except Exception as e:
         print(f"  ! Screening err: {e}")
-
     if answered:
         print(f"  → Answered {answered} questions")
 
@@ -127,7 +123,6 @@ def click_submit(page):
         'button:has-text("Submit")',
         'button:has-text("Apply")',
         'button:has-text("Continue")',
-        '[data-testid="submit-btn"]',
     ]:
         try:
             btn = page.query_selector(sel)
@@ -139,25 +134,64 @@ def click_submit(page):
             pass
     return False
 
-def get_card_title(card, page):
-    """Extract job title from a Dice card."""
-    # First try getting title without clicking
-    for sel in [
-        '[data-testid="job-title"]',
-        'h5[class*="title"]',
-        'a[class*="title"]',
-        'h2', 'h3', 'h5', 'h4',
-        '[class*="job-title"]',
-    ]:
-        try:
-            el = card.query_selector(sel)
-            if el:
-                text = el.inner_text().strip()
-                if text and text != "Unknown":
-                    return text
-        except:
-            pass
-    return "Unknown"
+def get_dice_job_list(page):
+    """
+    Extract job data as plain dicts BEFORE navigating away.
+    This avoids DOM detachment errors.
+    Returns list of {title, url} dicts.
+    """
+    jobs = []
+    try:
+        # Use JavaScript to extract all job data at once
+        jobs = page.evaluate("""
+            () => {
+                const results = [];
+                // Try data-testid="job-card" first
+                const cards = document.querySelectorAll('[data-testid="job-card"]');
+                cards.forEach(card => {
+                    // Try multiple title selectors
+                    let title = '';
+                    const titleSelectors = [
+                        'a[data-cy="card-title-link"]',
+                        'h5 a', 'h2 a', 'h3 a',
+                        '[class*="title"] a',
+                        'a[class*="title"]',
+                        'h5', 'h2', 'h3',
+                    ];
+                    for (const sel of titleSelectors) {
+                        const el = card.querySelector(sel);
+                        if (el && el.innerText.trim()) {
+                            title = el.innerText.trim();
+                            break;
+                        }
+                    }
+
+                    // Try to get URL
+                    let url = '';
+                    const linkSelectors = [
+                        'a[data-cy="card-title-link"]',
+                        'h5 a', 'h2 a', 'h3 a',
+                        'a[href*="/job-detail/"]',
+                        'a[href*="/jobs/"]',
+                    ];
+                    for (const sel of linkSelectors) {
+                        const el = card.querySelector(sel);
+                        if (el && el.href) {
+                            url = el.href;
+                            break;
+                        }
+                    }
+
+                    if (title || url) {
+                        results.push({ title: title || 'Unknown', url: url });
+                    }
+                });
+                return results;
+            }
+        """)
+    except Exception as e:
+        print(f"  ! JS extraction error: {e}")
+    return jobs
 
 # ── DICE ✅ ─────────────────────────────────────────────────────────────────
 def apply_dice(page, jobs, resume_pdf):
@@ -220,45 +254,44 @@ def apply_dice(page, jobs, resume_pdf):
                 )
                 page.goto(url, timeout=30000)
 
-                # Wait for Next.js hydration
+                # Wait for cards to load
                 try:
                     page.wait_for_selector('[data-testid="job-card"]', timeout=10000)
                 except:
                     pass
                 page.wait_for_timeout(4000)
 
-                # Find cards
-                cards = []
-                for sel in [
-                    '[data-testid="job-card"]',
-                    'dhi-search-card',
-                    '[data-cy="card"]',
-                    '.search-card',
-                ]:
-                    cards = page.query_selector_all(sel)
-                    if cards:
-                        print(f"  → {len(cards)} cards for '{query}'")
-                        break
+                # Extract job data using JS BEFORE navigating
+                job_list = get_dice_job_list(page)
+                print(f"  → {len(job_list)} jobs extracted for '{query}'")
 
-                if not cards:
-                    print(f"  ! No cards found for '{query}'")
+                if not job_list:
+                    print(f"  ! No jobs found for '{query}'")
                     continue
 
-                for card in cards[:8]:
-                    try:
-                        # Get title BEFORE clicking
-                        title = get_card_title(card, page)
-                        print(f"  → Trying: {title}")
+                for job_data in job_list[:8]:
+                    title = job_data.get("title", "Unknown")
+                    job_url = job_data.get("url", "")
 
-                        # Click card to open detail
-                        card.click()
+                    try:
+                        print(f"  → Applying: {title}")
+
+                        # Navigate directly to job URL
+                        if job_url:
+                            page.goto(job_url, timeout=20000)
+                        else:
+                            # Fall back to searching for title
+                            continue
                         page.wait_for_timeout(3000)
 
-                        # Check if title is still unknown, try page title
+                        # Get actual title from job page if still unknown
                         if title == "Unknown":
-                            page_title = page.title()
-                            if page_title and "Dice" not in page_title:
-                                title = page_title.split("|")[0].strip()
+                            try:
+                                h1 = page.query_selector('h1')
+                                if h1:
+                                    title = h1.inner_text().strip()
+                            except:
+                                pass
 
                         # Find Easy Apply button
                         apply_btn = None
@@ -267,19 +300,17 @@ def apply_dice(page, jobs, resume_pdf):
                             'button[data-cy="apply-button"]',
                             'apply-button button',
                             'button:has-text("Apply Now")',
-                            '[class*="apply"] button',
                         ]:
                             try:
                                 btn = page.query_selector(asel)
                                 if btn and btn.is_visible():
                                     apply_btn = btn
-                                    print(f"  → Apply btn: {asel}")
                                     break
                             except:
                                 pass
 
                         if not apply_btn:
-                            print(f"  ! No apply button")
+                            print(f"  ! No Easy Apply button for: {title}")
                             page.go_back()
                             page.wait_for_timeout(2000)
                             continue
@@ -301,6 +332,7 @@ def apply_dice(page, jobs, resume_pdf):
                             print(f"  ✓ Applied: {title}")
                             log_apply({
                                 "title": title,
+                                "url": job_url,
                                 "portal": "Dice",
                                 "applied_at": now_iso(),
                                 "success": True,
@@ -312,7 +344,7 @@ def apply_dice(page, jobs, resume_pdf):
                         page.wait_for_timeout(2000)
 
                     except Exception as e:
-                        print(f"  ! Card error: {str(e)[:80]}")
+                        print(f"  ! Job error ({title}): {str(e)[:80]}")
                         try:
                             page.go_back()
                             page.wait_for_timeout(1500)
@@ -323,30 +355,28 @@ def apply_dice(page, jobs, resume_pdf):
                 print(f"  ! Query error: {str(e)[:80]}")
 
     except Exception as e:
-        print(f"[Dice] Error: {str(e)[:100]}")
+        print(f"[Dice] Fatal error: {str(e)[:100]}")
         traceback.print_exc()
 
     print(f"[Dice] Done. {applied} applied.")
     return applied
 
-
 # ── BLOCKED PORTALS ────────────────────────────────────────────────────────
 def apply_indeed(page, jobs, resume_pdf):
-    print("\n[Indeed] Skipped — blocked by bot detection (needs residential proxy)")
+    print("\n[Indeed] Skipped — blocked by bot detection")
     return 0
 
 def apply_ziprecruiter(page, jobs, resume_pdf):
-    print("\n[ZipRecruiter] Skipped — blocked by Cloudflare (needs residential proxy)")
+    print("\n[ZipRecruiter] Skipped — blocked by Cloudflare")
     return 0
 
 def apply_monster(page, jobs, resume_pdf):
-    print("\n[Monster] Skipped — blocked by DataDome CAPTCHA (needs residential proxy)")
+    print("\n[Monster] Skipped — blocked by DataDome CAPTCHA")
     return 0
 
 def apply_jobright(page, jobs, resume_pdf):
     print("\n[JobRight.ai] Skipped — Google OAuth fails headless")
     return 0
-
 
 # ── MAIN ───────────────────────────────────────────────────────────────────
 def run_apply_bot():
