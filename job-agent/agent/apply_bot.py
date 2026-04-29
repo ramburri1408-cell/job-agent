@@ -8,6 +8,7 @@ ZipRecruiter: fix Google login
 """
 
 import json, os, time, traceback
+from urllib.parse import quote
 from pathlib import Path
 from datetime import datetime, timezone
 import anthropic
@@ -176,7 +177,7 @@ def apply_indeed(page, jobs, resume_pdf):
         # Search jobs directly without login for Easy Apply
         for query in get_queries():
             try:
-                page.goto(f"https://www.indeed.com/jobs?q={query.replace(' ','+')}+remote&fromage=3&sort=date", timeout=30000)
+                page.goto(f"https://www.indeed.com/jobs?q={quote(query)}&l=Remote&sc=0kf%3Aattr%28DSQF7%29%3B&sort=date&fromage=3", timeout=30000)
                 page.wait_for_timeout(3000)
 
                 # Get all job cards
