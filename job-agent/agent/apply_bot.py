@@ -220,12 +220,19 @@ def apply_dice(page, jobs, resume_pdf):
                     try:
                         # Try multiple title selectors
                         title = "Unknown"
-                        for tsel in ['a[data-cy="card-title-link"]', 'h5 a', 'h2 a',
-                                     'a[class*="title"]', '[data-testid="job-title"]']:
-                            title_el = card.query_selector(tsel)
-                            if title_el:
-                                title = title_el.inner_text().strip()
-                                title_el.click()
+                                for tsel in [
+                                    '[data-testid="job-title"]',
+                                    'h5[class*="title"]',
+                                    'a[class*="title"]',
+                                    'h2', 'h3', 'h5',
+                                ]:
+                                    title_el = card.query_selector(tsel)
+                                    if title_el and title_el.inner_text().strip():
+                                        title = title_el.inner_text().strip()
+                                        break
+                                
+                                # Click the card to open job detail
+                                card.click()
                                 page.wait_for_timeout(3000)
                                 break
 
