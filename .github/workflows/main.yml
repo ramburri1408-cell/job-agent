@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r job-agent/requirements.txt
           playwright install chromium
 
       - name: Run pipeline
