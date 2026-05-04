@@ -8,6 +8,9 @@ on:
 jobs:
   run-agent:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write        # Required to push data back to repo
+
     steps:
       - uses: actions/checkout@v4
 
