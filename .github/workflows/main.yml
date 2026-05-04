@@ -1,54 +1,46 @@
-name: Job Agent 🤖
+name: Job Agent Pipeline
 
 on:
   schedule:
-    - cron: "0 */4 * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: write
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:         # Manual trigger
 
 jobs:
   run-agent:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: '3.11'
+          cache: 'pip'
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-
-      - name: Install Python dependencies
-        run: pip install -r job-agent/requirements.txt
-
-      - name: Install Playwright browsers
-        run: playwright install chromium --with-deps
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
 
       - name: Run pipeline
+        working-directory: job-agent
         env:
           ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
           GMAIL_USER:         ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ADZUNA_APP_ID:      ${{ secrets.ADZUNA_APP_ID }}
           ADZUNA_APP_KEY:     ${{ secrets.ADZUNA_APP_KEY }}
-          GOOGLE_EMAIL:       ${{ secrets.GOOGLE_EMAIL }}
-          GOOGLE_PASSWORD:    ${{ secrets.GOOGLE_PASSWORD }}
           DICE_EMAIL:         ${{ secrets.DICE_EMAIL }}
           DICE_PASSWORD:      ${{ secrets.DICE_PASSWORD }}
-        working-directory: job-agent
+          GOOGLE_EMAIL:       ${{ secrets.GOOGLE_EMAIL }}
+          GOOGLE_PASSWORD:    ${{ secrets.GOOGLE_PASSWORD }}
+          APIFY_API_KEY:      ${{ secrets.APIFY_API_KEY }}
         run: python agent/pipeline.py
 
-      - name: Commit updated job data
+      - name: Commit updated data
         run: |
           git config --global user.name "Job Agent Bot"
-          git config --global user.email "bot@job-agent"
-          git add job-agent/data/ || true
-          git diff --staged --quiet || git commit -m "📊 Agent run $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git config --global user.email "bot@jobagent.ai"
+          git add job-agent/data/
+          git diff --staged --quiet || git commit -m "📊 Agent run $(date -u +'%Y-%m-%d %H:%M') UTC"
           git push
