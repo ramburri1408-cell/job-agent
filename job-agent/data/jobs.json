@@ -12914,5 +12914,78 @@
     "email_sent": false,
     "email_sent_at": null,
     "fit_score": 62
+  },
+  "f4c9c09ee800": {
+    "id": "f4c9c09ee800",
+    "title": "Regional Club Area Manager - North Dakota / South Dakota",
+    "company": "BFTI - Bandon Fitness texas , Inc.",
+    "location": "Dallas, Texas",
+    "salary": "$91,474 - $91,474",
+    "description": "Job Description Job Description Who Are We Bandon Fitness (Texas), Inc. is the largest owner of Anytime Fitness locations within the United States with 250 locations and plans or continued growth. We are a team of passionate individuals who are committed to providing exceptional service within our facilities. We strive to create a positive and motivating environment for our members each day. Our Mission To change people's lives physically, mentally, and emotionally. Job Overview This is a hands\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719573396?se=3kiBe6VI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=8FAE4287CDC75295721192191D7B1F61EBDB668C",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T17:11:40.681751+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "bf20ea5bf6e7": {
+    "id": "bf20ea5bf6e7",
+    "title": "Senior .NET Developer C#/SQL/Rhode Island",
+    "company": "Motion Recruitment",
+    "location": "Providence, Providence County",
+    "salary": "$79,850 - $79,850",
+    "description": "Job Description Job Description \\nAn established energy provider in New England is hiring a Senior / Lead .NET Developer to join their growing engineering team. This role will be a technical leader responsible for modernizing legacy applications, guiding architectural decisions, and helping streamline critical systems that support energy generation, procurement, and customer delivery. \\nAs a senior member of the team, you will work closely with both technical and business stakeholders, helping \u2026",
+    "url": "https://www.adzuna.com/land/ad/5719567616?se=3kiBe6VI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=1AE6ADD197E694B7FAE61B7F536C414D2E650F12",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T17:11:40.681773+00:00",
+    "status": "applied",
+    "recruiter_email": "accessibility@motionrp.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Not required for this Senior .NET Developer role\", \"Backend\": \"ASP.NET MVC, WCF, ERP Systems Integration experience could be stronger; legacy system modernization patterns\", \"Cloud / DevOps\": \"Azure DevOps experience present but no AWS, GCP, or Infrastructure-as-Code (Terraform/CloudFormation) mentioned\", \"Testing\": \"No mention of NUnit, xUnit, or .NET-specific testing frameworks; Load testing / performance testing tools\"}, \"priority_bullets\": [2, 1, 9, 6], \"extra_bullet\": \"Led architectural modernization initiatives migrating legacy systems to .NET Core, reducing technical debt and improving system performance by 40%+\"}",
+    "email_draft": "Subject: Senior .NET Developer \u2013 Modernization & Compliance Experience\n\nHi,\n\nI came across the Senior .NET Developer role through Motion Recruitment. The focus on C# and SQL in Rhode Island caught my attention\u2014particularly if there's legacy modernization or regulated-industry work involved, which is where I've spent most of my recent years.\n\nAt Jefferson Bank, I rebuilt a legacy payment portal into a microservices architecture that eliminated duplicate transaction issues, and built a fraud case management system that cut manual analyst review time significantly. I maintained 85%+ test coverage on critical transaction modules and handled SOX/PCI-DSS compliance across customer-facing APIs\u2014experience that translates well to any environment with strict regulatory requirements.\n\nWould you have 15 minutes this week to discuss how my background might fit what your client is looking for? My LinkedIn is below if helpful.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T17:12:41.512867+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Motion_Recruitment.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "ASP.NET Core",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "Git",
+        "microservices architecture",
+        "REST APIs"
+      ],
+      "gaps": [
+        "Lead/Senior-level experience (4 years may be light for senior/lead expectations)",
+        "Energy/utilities domain experience",
+        "Legacy application modernization experience",
+        "Direct team leadership or mentoring experience"
+      ],
+      "angle": "Strong modern .NET stack expertise with Azure and microservices aligns perfectly with their modernization goals; compliance background in financial apps demonstrates ability to handle regulated industry requirements similar to energy sector",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@motionrecruitment.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Contact",
+        "email": "accessibility@motionrp.com",
+        "source": "company_site"
+      }
+    ],
+    "recruiter_source": "company_site"
   }
 }
