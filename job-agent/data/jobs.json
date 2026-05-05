@@ -13135,8 +13135,8 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, Go\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform\", \"Testing\": \"Selenium, Cypress, NUnit, xUnit, Performance/Load Testing\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Architected and deployed microservices on Kubernetes clusters, reducing deployment time by 40% and improving system scalability\"}",
     "email_draft": "Subject: .NET Developer with Financial Services Security Background\n\nAvery,\n\nIrvine Technology Corporation's enterprise client work caught my attention\u2014particularly the need for developers who understand both modern .NET architecture and the compliance requirements that come with financial systems.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across transaction-critical modules. I also migrated a legacy payment portal to microservices (eliminating duplicate transaction issues) and secured APIs to SOX/PCI-DSS standards. Happy to bring that same rigor to your on-site team.\n\nWould you have 15 minutes this week to discuss the Senior .NET Developer role?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T19:03:45.174841+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:38:35.629957+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Irvine_Technology_Co.pdf",
     "fit_analysis": {
@@ -13226,8 +13226,8 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Tailwind CSS, Web accessibility (WCAG), CSS-in-JS libraries\", \"Backend\": \"Java, Python, gRPC, message queuing (RabbitMQ, Kafka), caching strategies (Redis)\", \"Cloud / DevOps\": \"AWS services, Docker containerization, Kubernetes, Infrastructure as Code (Terraform)\", \"Testing\": \"Integration testing frameworks, E2E testing (Cypress, Selenium), performance testing, load testing\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Implemented automated testing pipeline achieving 85%+ coverage, reducing production bugs by 40% and enabling confident continuous deployments\"}",
     "email_draft": "Subject: .NET Developer with Enterprise Banking Experience\n\nHi,\n\nI came across the Entry Level .NET Developer role at EAi Technologies. Your focus on web application development caught my attention, and I wanted to reach out directly.\n\nAt Jefferson Bank, I built a fraud case management system using ASP.NET Core and React that cut manual analyst review time significantly. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, maintained 85%+ test coverage on critical modules, and secured APIs to SOX/PCI-DSS standards.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team? My LinkedIn is linkedin.com/in/ram-b-650769397.\n\nThanks,\nRam Burri",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T19:03:49.922156+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:38:39.587083+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_EAi_Technologies.pdf",
     "fit_analysis": {
@@ -13324,8 +13324,8 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"WCF, ERP Systems Integration\", \"Cloud / DevOps\": \"Azure DevOps (pipeline configuration), Azure Event Hub\", \"Testing\": \"Test planning, test procedures, test data creation, use case development\"}, \"priority_bullets\": [1, 2, 5, 6], \"extra_bullet\": \"Participated in technical requirements definition and test planning processes for VA systems compliance and security protocols\"}",
     "email_draft": "Subject: C#/.NET Developer with SOX/PCI-DSS Compliance Background\n\nHi,\n\nI noticed Syms Strategic Group works on VA contracts requiring Public Trust clearance. My background building compliant systems in regulated financial environments\u2014where audit trails and security controls aren't optional\u2014maps directly to that kind of work.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. All of this under SOX/PCI-DSS requirements, so I'm used to building software where compliance is baked in from day one.\n\nWould you have 15 minutes this week to discuss how I might contribute to your team? My LinkedIn is below if helpful: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T19:03:54.485062+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:38:43.860056+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Syms_Strategic_Group.pdf",
     "fit_analysis": {
