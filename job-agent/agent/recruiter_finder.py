@@ -1,27 +1,26 @@
 """
-Recruiter Finder — Playwright scrapes LinkedIn company page
-to find real HR/Recruiter profiles and their contact info.
-Standard job search outreach practice.
+Recruiter Finder — Uses Apify LinkedIn Company Employees Scraper
+Actor: automation-lab/linkedin-company-employees-scraper
+- Cookie-free mode (no LinkedIn login needed)
+- Finds HR/Recruiter employees at each company
+- Builds likely email from name + domain
 """
 
 import os, json, re, time
 from pathlib import Path
+from apify_client import ApifyClient
 import anthropic
 
-client_ai = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-DATA_FILE = Path("data/jobs.json")
-
-EMAIL_RE = re.compile(r'[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}')
-SKIP     = {"noreply", "no-reply", "support", "info", "help",
-            "privacy", "legal", "press", "security", "abuse",
-            "postmaster", "webmaster", "admin"}
+client_ai   = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+apify_token = os.environ.get("APIFY_API_KEY", "")
+DATA_FILE   = Path("data/jobs.json")
 
 RECRUITER_TITLES = [
     "recruiter", "talent acquisition", "hr manager", "human resources",
     "hiring manager", "talent partner", "people operations",
     "technical recruiter", "engineering recruiter", "hr business partner",
+    "head of talent", "director of recruiting", "sourcer", "staffing",
 ]
-
 
 def load_jobs():
     return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
@@ -29,186 +28,103 @@ def load_jobs():
 def save_jobs(jobs):
     DATA_FILE.write_text(json.dumps(jobs, indent=2))
 
-def extract_emails(text: str) -> list:
-    found = EMAIL_RE.findall(text)
-    return [e for e in found
-            if not any(s in e.lower() for s in SKIP)
-            and len(e) < 100]
-
-def is_recruiter_title(title: str) -> bool:
-    t = title.lower()
-    return any(r in t for r in RECRUITER_TITLES)
-
-def guess_email_from_name(name: str, domain: str) -> str:
-    """Generate likely email from name + domain."""
-    parts = name.lower().strip().split()
-    if len(parts) >= 2:
-        first, last = parts[0], parts[-1]
-        # Most common corporate patterns
-        return f"{first}.{last}@{domain}"
-    return f"careers@{domain}"
+def is_recruiter(title: str) -> bool:
+    return any(r in title.lower() for r in RECRUITER_TITLES)
 
 def company_to_domain(company: str) -> str:
     clean = re.sub(
         r'\s*\b(inc|llc|ltd|corp|co|company|technologies|tech|'
         r'solutions|services|group|global|systems|consulting|'
-        r'staffing|professionals|bank|na)\b\s*', ' ', company.lower()
+        r'staffing|professionals|bank|na|the)\b\s*',
+        ' ', company.lower()
     )
     clean = re.sub(r'[^a-z0-9\s]', '', clean).strip().replace(' ', '')
     if not clean:
         clean = re.sub(r'[^a-z0-9]', '', company.lower())
     return f"{clean}.com"
 
+def guess_email(name: str, domain: str) -> str:
+    parts = name.lower().strip().split()
+    if len(parts) >= 2:
+        return f"{parts[0]}.{parts[-1]}@{domain}"
+    elif parts:
+        return f"{parts[0]}@{domain}"
+    return f"careers@{domain}"
 
-def find_recruiters_on_linkedin(page, company: str, domain: str) -> list:
+def find_recruiters_apify(company: str, domain: str) -> list:
     """
-    Search LinkedIn for HR/Recruiter people at the company.
-    Returns list of {name, title, email} dicts.
+    Use Apify LinkedIn Company Employees Scraper to find
+    HR/Recruiter employees at the company.
+    Cookie-free mode — no LinkedIn login needed.
     """
+    if not apify_token:
+        print(f"  ! No Apify token")
+        return []
+
     recruiters = []
     try:
-        # Search LinkedIn for recruiters at this company
-        query = f"{company} recruiter HR talent acquisition United States"
-        search_url = f"https://www.linkedin.com/search/results/people/?keywords={query.replace(' ', '%20')}&origin=GLOBAL_SEARCH_HEADER"
+        apify  = ApifyClient(apify_token)
 
-        print(f"  → Searching LinkedIn for recruiters at {company}")
-        page.goto(search_url, timeout=25000, wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
+        print(f"  → Searching LinkedIn employees at {company} via Apify...")
 
-        # Check if we need to handle login wall
-        if "authwall" in page.url or "login" in page.url:
-            print(f"  ! LinkedIn requires login — trying public search")
-            # Try Google search instead
-            return find_recruiters_via_google(page, company, domain)
-
-        # Extract people cards from LinkedIn search results
-        cards = page.query_selector_all(
-            '.reusable-search__result-container, '
-            '[data-view-name="search-entity-result-universal-template"]'
+        run = apify.actor("automation-lab/linkedin-company-employees-scraper").call(
+            run_input={
+                "companyName":   company,
+                "cookieFree":    True,       # No LinkedIn login needed
+                "filterByTitle": "recruiter,HR,talent acquisition,hiring,people",
+                "maxResults":    10,
+                "country":       "United States",
+            },
+            timeout_secs=120,
         )
 
-        print(f"  → Found {len(cards)} LinkedIn profiles")
+        # Get results
+        items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
+        print(f"  → Apify returned {len(items)} employees")
 
-        for card in cards[:10]:
-            try:
-                # Get name
-                name_el = card.query_selector(
-                    '.entity-result__title-text, '
-                    'span[aria-hidden="true"], '
-                    '.actor-name'
-                )
-                name = name_el.inner_text().strip() if name_el else ""
+        for item in items:
+            name  = item.get("name", "") or item.get("fullName", "")
+            title = item.get("title", "") or item.get("headline", "")
+            loc   = item.get("location", "")
 
-                # Get title/position
-                title_el = card.query_selector(
-                    '.entity-result__primary-subtitle, '
-                    '.subline-level-1'
-                )
-                title = title_el.inner_text().strip() if title_el else ""
-
-                # Only include HR/Recruiter titles
-                if name and is_recruiter_title(title):
-                    email = guess_email_from_name(name, domain)
-                    recruiters.append({
-                        "name":   name,
-                        "title":  title,
-                        "email":  email,
-                        "source": "linkedin_search",
-                    })
-                    print(f"  ✓ Found recruiter: {name} — {title}")
-
-                if len(recruiters) >= 6:
-                    break
-
-            except Exception:
+            if not name:
                 continue
 
-    except Exception as e:
-        print(f"  ! LinkedIn search error: {str(e)[:60]}")
-        return find_recruiters_via_google(page, company, domain)
+            # Filter to US-based HR/Recruiter people
+            is_us = not loc or any(k in loc.lower() for k in
+                                   ["united states", "us", "usa", ", tx", ", ny",
+                                    ", ca", ", fl", ", wa", ", il", ", ga"])
 
-    return recruiters
-
-
-def find_recruiters_via_google(page, company: str, domain: str) -> list:
-    """
-    Fallback — Google search for company recruiters.
-    Finds publicly listed HR contacts.
-    """
-    recruiters = []
-    try:
-        query = f'site:linkedin.com "{company}" recruiter OR "talent acquisition" OR "HR manager"'
-        url   = f"https://www.google.com/search?q={query.replace(' ', '+')}"
-
-        page.goto(url, timeout=20000, wait_until="domcontentloaded")
-        page.wait_for_timeout(2000)
-
-        text = page.inner_text("body")
-
-        # Extract names and emails from Google results
-        emails = extract_emails(text)
-        if emails:
-            for email in emails[:6]:
+            if is_recruiter(title) and is_us:
+                email = guess_email(name, domain)
                 recruiters.append({
-                    "name":   "",
-                    "title":  "HR/Recruiter",
-                    "email":  email,
-                    "source": "google_search",
+                    "name":    name,
+                    "title":   title,
+                    "email":   email,
+                    "source":  "apify_linkedin",
+                    "linkedin": item.get("profileUrl", ""),
                 })
+                print(f"  ✓ {name} — {title} → {email}")
 
-    except Exception as e:
-        print(f"  ! Google search error: {str(e)[:60]}")
-
-    return recruiters
-
-
-def find_recruiters_on_company_site(page, domain: str) -> list:
-    """Scrape company website for HR/recruiter emails."""
-    recruiters = []
-    urls = [
-        f"https://{domain}/careers",
-        f"https://{domain}/about",
-        f"https://{domain}/contact",
-        f"https://www.{domain}/careers",
-    ]
-
-    for url in urls:
-        try:
-            page.goto(url, timeout=15000, wait_until="domcontentloaded")
-            page.wait_for_timeout(1500)
-            text   = page.inner_text("body")
-            emails = extract_emails(text)
-            for email in emails[:3]:
-                recruiters.append({
-                    "name":   "",
-                    "title":  "HR Contact",
-                    "email":  email,
-                    "source": "company_site",
-                })
-            if recruiters:
+            if len(recruiters) >= 6:
                 break
-        except Exception:
-            continue
+
+    except Exception as e:
+        print(f"  ! Apify error: {str(e)[:100]}")
 
     return recruiters
 
 
 def run_recruiter_finder():
-    """
-    Main function — finds real recruiter contacts for all
-    high-score jobs and saves to jobs.json.
-    """
-    from playwright.sync_api import sync_playwright
-
+    """Find real recruiter contacts for all high-score uncontacted jobs."""
     jobs    = load_jobs()
     updated = 0
 
-    # Get jobs that need recruiter finding
     targets = [
         (jid, job) for jid, job in jobs.items()
         if (job.get("fit_score") or 0) >= 80
         and not job.get("email_sent")
-        and job.get("recruiter_source") != "linkedin_search"
+        and job.get("recruiter_source") != "apify_linkedin"
     ]
 
     if not targets:
@@ -217,68 +133,38 @@ def run_recruiter_finder():
 
     print(f"[Recruiter Finder] Finding recruiters for {len(targets)} jobs...")
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
-                "--no-sandbox", "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-blink-features=AutomationControlled",
-            ]
-        )
-        ctx = browser.new_context(
-            viewport={"width": 1280, "height": 800},
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0.0.0 Safari/537.36"
-            ),
-            locale="en-US",
-        )
-        ctx.add_init_script(
-            "Object.defineProperty(navigator,'webdriver',{get:()=>undefined})"
-        )
-        page = ctx.new_page()
-        page.set_default_timeout(20000)
+    for jid, job in targets[:15]:
+        company = job.get("company", "")
+        domain  = company_to_domain(company)
 
-        for jid, job in targets[:15]:  # Process max 15 per run
-            company = job.get("company", "")
-            domain  = company_to_domain(company)
+        print(f"\n  [{company}] → {domain}")
 
-            print(f"\n  [{company}]")
+        # Use Apify to find real recruiters
+        recruiters = find_recruiters_apify(company, domain)
 
-            # Try LinkedIn first
-            recruiters = find_recruiters_on_linkedin(page, company, domain)
+        # Fall back to careers@ if nothing found
+        if not recruiters:
+            print(f"  ! No recruiters found — using careers@ fallback")
+            recruiters = [{
+                "name":   "",
+                "title":  "HR Team",
+                "email":  f"careers@{domain}",
+                "source": "pattern_guess",
+            }]
 
-            # Fall back to company website
-            if not recruiters:
-                recruiters = find_recruiters_on_company_site(page, domain)
+        # Save to job
+        jobs[jid]["recruiters"]       = recruiters
+        jobs[jid]["recruiter_email"]  = recruiters[0]["email"]
+        jobs[jid]["recruiter_name"]   = recruiters[0].get("name", "")
+        jobs[jid]["recruiter_source"] = recruiters[0]["source"]
 
-            # Fall back to careers@ guess
-            if not recruiters:
-                recruiters = [{
-                    "name":   "",
-                    "title":  "HR Team",
-                    "email":  f"careers@{domain}",
-                    "source": "pattern_guess",
-                }]
+        print(f"  → {len(recruiters)} contact(s) saved")
+        for r in recruiters:
+            label = f" ({r['name']})" if r.get("name") else ""
+            print(f"     • {r['email']}{label}")
 
-            # Save all found recruiters to job
-            jobs[jid]["recruiters"]       = recruiters
-            jobs[jid]["recruiter_email"]  = recruiters[0]["email"]
-            jobs[jid]["recruiter_name"]   = recruiters[0]["name"]
-            jobs[jid]["recruiter_source"] = recruiters[0]["source"]
-
-            source = recruiters[0]["source"]
-            count  = len(recruiters)
-            print(f"  → {count} contact(s) found via {source}")
-            for r in recruiters:
-                print(f"     • {r['name']} {r['email']}")
-
-            updated += 1
-            time.sleep(2)  # Be respectful between requests
-
-        browser.close()
+        updated += 1
+        time.sleep(2)
 
     save_jobs(jobs)
     print(f"\n[Recruiter Finder] Done. {updated} jobs updated.")
