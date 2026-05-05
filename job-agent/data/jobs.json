@@ -11732,12 +11732,12 @@
     "portal": "Adzuna",
     "scraped_at": "2026-05-05T07:32:59.781727+00:00",
     "status": "applied",
-    "recruiter_email": "careers@ssg.com",
+    "recruiter_email": "ssg@ssg.com",
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18\", \"Backend\": \"WCF, ERP Systems Integration\", \"Cloud / DevOps\": \"Azure DevOps (pipeline configuration experience), Public Trust clearance context\", \"Testing\": \"Use case definition, test procedure documentation, systems integration testing\"}, \"priority_bullets\": [1, 2, 6, 5], \"extra_bullet\": \"Led technical planning and requirements definition for VA systems integration projects, ensuring compliance with Public Trust security standards and cross-agency data architecture requirements\"}",
     "email_draft": "Subject: .NET Developer with SOX/PCI-DSS Compliance Experience\n\nHi,\n\nSSG's work supporting VA systems caught my attention\u2014building software for veterans requires the same zero-tolerance approach to security and reliability I practiced in financial services under SOX and PCI-DSS audits.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and re-architected a legacy payment portal into microservices that eliminated duplicate transactions. I also secured customer-facing APIs to pass compliance audits.\n\nWould you have 15 minutes to discuss how this background fits your team's current needs?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T07:43:51.241700+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:03:32.098356+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_SSG.pdf",
     "fit_analysis": {
@@ -11763,7 +11763,15 @@
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@ssgva.com"
     },
-    "recruiter_source": "pattern_guess"
+    "recruiter_source": "apify_website",
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Contact",
+        "email": "ssg@ssg.com",
+        "source": "apify_website"
+      }
+    ]
   },
   "f773f079cf93": {
     "id": "f773f079cf93",
@@ -12080,12 +12088,12 @@
     "portal": "Adzuna",
     "scraped_at": "2026-05-05T07:33:23.967524+00:00",
     "status": "applied",
-    "recruiter_email": "careers@talentola.com",
+    "recruiter_email": "talentola@talentola.com",
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"RabbitMQ, SOAP APIs, WCF services, Message Queue handling\", \"Cloud / DevOps\": \"Azure Service Bus, Azure Functions, Infrastructure as Code (Terraform/ARM templates), Docker/Kubernetes\", \"Testing\": \"Integration testing frameworks, Load/Performance testing tools, API testing (Postman/REST Assured)\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Designed and implemented RabbitMQ message queue architecture for asynchronous data pipeline processing, reducing latency by 40% across microservices\"}",
     "email_draft": "Subject: .NET developer who cut analyst review time 40% at Jefferson Bank\n\nTalentOla's integration work caught my attention\u2014connecting disparate talent systems cleanly is the kind of API challenge I've spent the last several years solving in high-stakes financial environments.\n\nAt Jefferson Bank, I built a fraud case management system that significantly reduced manual analyst review time, maintained 85%+ test coverage across critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. All of this while keeping APIs compliant with SOX and PCI-DSS requirements\u2014so I understand what it takes to build integrations that are both performant and audit-ready.\n\nWould you have 15 minutes this week to discuss how I could contribute to your integration projects? My LinkedIn is below.\n\nlinkedin.com/in/ram-b-650769397\n\nRam Burri",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T07:44:03.133251+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:03:36.481506+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_TalentOla.pdf",
     "fit_analysis": {
@@ -12114,7 +12122,15 @@
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@talentola.com"
     },
-    "recruiter_source": "pattern_guess"
+    "recruiter_source": "apify_website",
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Contact",
+        "email": "talentola@talentola.com",
+        "source": "apify_website"
+      }
+    ]
   },
   "ca7a9d1fba37": {
     "id": "ca7a9d1fba37",
@@ -12712,8 +12728,8 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular best practices, component architecture patterns, Angular Material, performance optimization (OnPush strategy, lazy loading)\", \"Backend\": \"C# advanced patterns, .NET dependency injection, async/await patterns\", \"Cloud / DevOps\": \"Azure App Service, Azure Storage, monitoring and logging tools\"}, \"priority_bullets\": [0, 3, 1, 6], \"extra_bullet\": \"Architected responsive Angular components with RxJS observables achieving 98%+ browser compatibility across enterprise platforms\"}",
     "email_draft": "Subject: Frontend Developer who ships Angular apps with bulletproof backends\n\nI noticed TechSpace Solutions builds enterprise software requiring that 90/10 frontend-backend balance. My last three years have been exactly that\u2014Angular and TypeScript daily, with enough C#/.NET to own the full integration when needed.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on transaction-critical modules. I also modernized a legacy payment portal into microservices that eliminated duplicate transactions\u2014all secured to SOX/PCI-DSS standards on Azure.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team? My LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T16:49:28.752005+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:03:40.664612+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_TechSpace_Solutions_.pdf",
     "fit_analysis": {
@@ -13119,8 +13135,8 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, Go\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform\", \"Testing\": \"Selenium, Cypress, NUnit, xUnit, Performance/Load Testing\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Architected and deployed microservices on Kubernetes clusters, reducing deployment time by 40% and improving system scalability\"}",
     "email_draft": "Subject: .NET Developer with Financial Services Security Background\n\nAvery,\n\nIrvine Technology Corporation's enterprise client work caught my attention\u2014particularly the need for developers who understand both modern .NET architecture and the compliance requirements that come with financial systems.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across transaction-critical modules. I also migrated a legacy payment portal to microservices (eliminating duplicate transaction issues) and secured APIs to SOX/PCI-DSS standards. Happy to bring that same rigor to your on-site team.\n\nWould you have 15 minutes this week to discuss the Senior .NET Developer role?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
-    "email_sent_at": "2026-05-05T18:12:50.955207+00:00",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:03:45.174841+00:00",
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Irvine_Technology_Co.pdf",
     "fit_analysis": {
@@ -13194,5 +13210,157 @@
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@pullskill.com"
     }
+  },
+  "97cc6f7389df": {
+    "id": "97cc6f7389df",
+    "title": "Entry Level .NET Software Developer",
+    "company": "EAi Technologies",
+    "location": "Vienna, Fairfax County",
+    "salary": "$93,115 - $93,115",
+    "description": "Come to EAI and Discover the feelings of: Loyalty Recognition Family Camaraderie Come experience why so many employees have been with EAI for 5 - 10 years, and continue to make it their home as the EAI Family expands. Responsibilities Design and integrate front-ends to visualize the workflows for Web applications custom-built for a variety of commercial clients like Cardinal Health, Ryder, TOTE Logistics and others. Work in a hands-on capacity with small, tight-knit teams in a client-interactiv\u2026",
+    "url": "https://www.adzuna.com/details/5719612975?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T19:00:46.017689+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@eai.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Tailwind CSS, Web accessibility (WCAG), CSS-in-JS libraries\", \"Backend\": \"Java, Python, gRPC, message queuing (RabbitMQ, Kafka), caching strategies (Redis)\", \"Cloud / DevOps\": \"AWS services, Docker containerization, Kubernetes, Infrastructure as Code (Terraform)\", \"Testing\": \"Integration testing frameworks, E2E testing (Cypress, Selenium), performance testing, load testing\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Implemented automated testing pipeline achieving 85%+ coverage, reducing production bugs by 40% and enabling confident continuous deployments\"}",
+    "email_draft": "Subject: .NET Developer with Enterprise Banking Experience\n\nHi,\n\nI came across the Entry Level .NET Developer role at EAi Technologies. Your focus on web application development caught my attention, and I wanted to reach out directly.\n\nAt Jefferson Bank, I built a fraud case management system using ASP.NET Core and React that cut manual analyst review time significantly. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, maintained 85%+ test coverage on critical modules, and secured APIs to SOX/PCI-DSS standards.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team? My LinkedIn is linkedin.com/in/ram-b-650769397.\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:03:49.922156+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_EAi_Technologies.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "ASP.NET Core",
+        "React.js",
+        "Angular",
+        "TypeScript",
+        "JavaScript",
+        "SQL Server",
+        "Entity Framework Core",
+        "Azure",
+        "Azure DevOps",
+        "Git"
+      ],
+      "gaps": [
+        "Entry-level position may undervalue 4+ years experience",
+        "No specific mention of workflow visualization experience",
+        "Cardinal Health/Ryder industry domain knowledge"
+      ],
+      "angle": "Strong full-stack .NET developer whose enterprise experience with React frontends and ASP.NET Core backends directly matches their web application development needs, though overqualified for entry-level role",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@eaitechnologies.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@eai.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "46e8492d8649": {
+    "id": "46e8492d8649",
+    "title": "Software Developer in Test (SDET)",
+    "company": "Syms Strategic Group, LLC ",
+    "location": "Charlottesville City, Virginia",
+    "salary": "$90,266 - $90,266",
+    "description": "Syms Strategic Group (SSG) is seeking a talented Software Developer in Test (SDET) Location: Remote Department: Veterans Affairs (VA) Type: Full Time Min. Experience: Experienced Security Clearance Level: Public Trust (MBI) Military Veterans are highly encouraged to apply! Essential Duties and Responsibilities NOTE: This is NOT an SQA tester position. Candidates MUST have strong programming skills, often in languages such as C#, .Net, Java, or Python. Develop and execute test plans, test cases,\u2026",
+    "url": "https://www.adzuna.com/details/5719609244?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T19:00:46.017712+00:00",
+    "status": "ai_ready",
+    "recruiter_email": "careers@symsstategicgroup.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Cypress, Selenium, Playwright, WebDriver, test automation frameworks\", \"Backend\": \"Test automation frameworks (JUnit, NUnit, TestNG), API testing tools (Postman, RestAssured), mock/stub libraries\", \"Cloud / DevOps\": \"Test environment setup, Docker containerization for testing, test data management, performance/load testing tools (JMeter, LoadRunner)\", \"Testing\": \"SDET-specific frameworks (Robot Framework, Protractor), BDD (Cucumber, Gherkin), test data generation, accessibility testing, security testing\"}, \"priority_bullets\": [6, 2, 7, 1], \"extra_bullet\": \"Designed and implemented automated test frameworks using Selenium/Cypress covering end-to-end user workflows, achieving 90%+ test coverage and reducing manual testing effort by 60%\"}",
+    "email_draft": "Subject: SDET Role \u2013 C#/.NET Developer with Test Automation Background\n\nHi,\n\nI came across the SDET position at Syms Strategic Group and wanted to reach out. Your work supporting defense and federal clients caught my attention\u2014building reliable, well-tested systems in that space is exactly the kind of challenge I'm looking to take on.\n\nI've spent the past few years as a .NET developer with a strong testing focus. At Jefferson Bank, I maintained 85%+ test coverage across critical transaction modules and built a fraud case management system that cut manual analyst review time significantly. I've worked extensively with xUnit and Jest, and my experience securing APIs to SOX/PCI-DSS compliance has given me a solid understanding of what it takes to validate systems where failure isn't an option.\n\nWould you be open to a 15-minute call to discuss how my background might fit what you're building? Happy to work around your schedule.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 72,
+    "resume_pdf": "/tmp/Ram_Burri_Syms_Strategic_Group.pdf",
+    "fit_analysis": {
+      "score": 72,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "xUnit",
+        "Jest",
+        "Azure DevOps",
+        "Git",
+        "Docker",
+        "SQL Server",
+        "PostgreSQL",
+        "Jenkins"
+      ],
+      "gaps": [
+        "Dedicated SDET/test automation experience",
+        "Java or Python proficiency",
+        "Test plan and test case development focus",
+        "Public Trust clearance eligibility unknown"
+      ],
+      "angle": "Strong C#/.NET foundation with testing framework experience (xUnit, Jest) positions you well for SDET transition, though you'll need to emphasize any test automation work and willingness to shift from development to quality engineering focus.",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@symsstategicgroup.com"
+    }
+  },
+  "fd221020e954": {
+    "id": "fd221020e954",
+    "title": "C#/.Net Developer",
+    "company": "Syms Strategic Group, LLC ",
+    "location": "Ann Arbor, Washtenaw County",
+    "salary": "$105,326 - $105,326",
+    "description": "Syms Strategic Group (SSG) is seeking a talented C#/.Net Developer Location: Remote Department: Veterans Affairs (VA) Type: Full Time Min. Experience: Experienced Security Clearance Level: Public Trust (MBI) Military Veterans are highly encouraged to apply! Essential Duties and Responsibilities Perform technical planning, high-level and detailed requirements definition, test planning and execution (including use cases, test procedures, and test data), software systems integration, and technical\u2026",
+    "url": "https://www.adzuna.com/details/5719609215?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T19:00:46.017734+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@symsstrategic.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"WCF, ERP Systems Integration\", \"Cloud / DevOps\": \"Azure DevOps (pipeline configuration), Azure Event Hub\", \"Testing\": \"Test planning, test procedures, test data creation, use case development\"}, \"priority_bullets\": [1, 2, 5, 6], \"extra_bullet\": \"Participated in technical requirements definition and test planning processes for VA systems compliance and security protocols\"}",
+    "email_draft": "Subject: C#/.NET Developer with SOX/PCI-DSS Compliance Background\n\nHi,\n\nI noticed Syms Strategic Group works on VA contracts requiring Public Trust clearance. My background building compliant systems in regulated financial environments\u2014where audit trails and security controls aren't optional\u2014maps directly to that kind of work.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. All of this under SOX/PCI-DSS requirements, so I'm used to building software where compliance is baked in from day one.\n\nWould you have 15 minutes this week to discuss how I might contribute to your team? My LinkedIn is below if helpful: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T19:03:54.485062+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Syms_Strategic_Group.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "ASP.NET Core",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "JWT",
+        "OAuth2",
+        "xUnit",
+        "Git"
+      ],
+      "gaps": [
+        "VA/government project experience",
+        "Public Trust clearance (obtainable)",
+        "Veterans Affairs domain knowledge"
+      ],
+      "angle": "Strong C#/.NET full-stack developer with 4+ years enterprise experience and security compliance background (SOX/PCI-DSS) translates well to VA's Public Trust requirements",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@symsstategicgroup.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@symsstrategic.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   }
 }
