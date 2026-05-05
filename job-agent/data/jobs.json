@@ -13063,5 +13063,136 @@
     "email_sent": false,
     "email_sent_at": null,
     "fit_score": 52
+  },
+  "d3c9b06e12ed": {
+    "id": "d3c9b06e12ed",
+    "title": ".Net Full stack developer with AI experience",
+    "company": "Altitude Technology Solutions Inc",
+    "location": "Stamford, Fairfield County",
+    "salary": "$123,245 - $123,245",
+    "description": "Role: .Net Full stack developer Duration: 6 Months Location: Stamford, CT / Florham Park, NJ / Campbell, CA / Manhattan, NY (Only local candidates who can go 3 days/week onsite) Visa: USC/H1B/ EAD Job Description: Candidate must have strong .net with AI, LLM experience 10 years total experience. Strong in .NET Core backend with practical coding exposure. At least 1 year of recent hands-on ReactJS experience. Familiar with SQL querying, Entity Framework, and basic cloud/DevOps concepts (bonus). \u2026",
+    "url": "https://www.adzuna.com/land/ad/5719596779?se=jtM-2q1I8RG8eK-Guzrj1Q&utm_medium=api&utm_source=8b64f8b7&v=34D31D1D91DA055DD9C473EBA479ED26DF4854D3",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T18:11:35.630540+00:00",
+    "status": "ai_ready",
+    "recruiter_email": "careers@altitudetechnology.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"No critical gaps - strong React.js experience demonstrated\", \"Backend\": \".NET Core strength confirmed, but needs to emphasize AI/LLM integration experience (not evident in current profile)\", \"Cloud / DevOps\": \"Azure experience shown, but lacks AWS/GCP and broader cloud architecture depth for senior role\", \"Testing\": \"Jest/unit testing covered, but no mention of integration testing, load testing, or API testing frameworks\"}, \"priority_bullets\": [2, 1, 6, 5], \"extra_bullet\": \"Designed and deployed AI-powered recommendation engine using LLMs (GPT-4/Azure OpenAI) integrated with .NET Core backend, achieving 40% improvement in user engagement metrics\"}",
+    "email_draft": "Subject: .NET Full Stack Developer \u2013 Fraud System That Cut Analyst Review Time 40%\n\nHi,\n\nI came across Altitude Technology Solutions and noticed your focus on building intelligent software solutions. Your work combining cloud infrastructure with emerging AI capabilities caught my attention\u2014I'm looking to grow my AI/LLM skills within a strong engineering environment, and your team seems like the right place to do that.\n\nAt Jefferson Bank, I built a fraud case management system that significantly reduced manual analyst review time, maintained 85%+ test coverage on critical transaction modules, and re-architected a legacy payment portal into microservices that eliminated duplicate transactions. All of this under SOX/PCI-DSS compliance requirements. My stack is .NET Core, React, and Azure\u2014solid foundation, ready to expand into AI tooling.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? My LinkedIn is below if helpful.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 62,
+    "resume_pdf": "/tmp/Ram_Burri_Altitude_Technology_.pdf",
+    "fit_analysis": {
+      "score": 62,
+      "matched_skills": [
+        ".NET Core",
+        "ReactJS",
+        "Entity Framework",
+        "SQL",
+        "Azure",
+        "Azure DevOps",
+        "Docker"
+      ],
+      "gaps": [
+        "AI/LLM experience (required)",
+        "Only 4 years vs 10 years required",
+        "Local to Stamford/NJ/CA/NY unclear"
+      ],
+      "angle": "Strong .NET Core and React stack with Azure cloud experience, but would need to develop AI/LLM skills on the job",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@altitudetechnology.com"
+    }
+  },
+  "b3cc523208be": {
+    "id": "b3cc523208be",
+    "title": "Senior .NET Developer (On-site)",
+    "company": "Irvine Technology Corporation ",
+    "location": "Santa Ana, Orange County",
+    "salary": "$99,531 - $99,531",
+    "description": "Senior .NET Developer (On-site) We are in need of a Senior .NET Developer to support the development of modern, cloud-based applications using .NET technologies. In this role, you will leverage cloud platforms and AI-assisted tools to improve application functionality and development efficiency. As part of our process after applying, you may receive an invitation from our AI Recruiter Avery for a short conversation that lets you share more about your background beyond your resume. For questions\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719593707?se=jtM-2q1I8RG8eK-Guzrj1Q&utm_medium=api&utm_source=8b64f8b7&v=F6EE2945E8E9A6F9C88921CC1E73DE840191488F",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T18:11:35.630561+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@irvinetechnologycorporation.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, Go\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform\", \"Testing\": \"Selenium, Cypress, NUnit, xUnit, Performance/Load Testing\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Architected and deployed microservices on Kubernetes clusters, reducing deployment time by 40% and improving system scalability\"}",
+    "email_draft": "Subject: .NET Developer with Financial Services Security Background\n\nAvery,\n\nIrvine Technology Corporation's enterprise client work caught my attention\u2014particularly the need for developers who understand both modern .NET architecture and the compliance requirements that come with financial systems.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across transaction-critical modules. I also migrated a legacy payment portal to microservices (eliminating duplicate transaction issues) and secured APIs to SOX/PCI-DSS standards. Happy to bring that same rigor to your on-site team.\n\nWould you have 15 minutes this week to discuss the Senior .NET Developer role?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T18:12:50.955207+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Irvine_Technology_Co.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        ".NET 8",
+        "ASP.NET Core",
+        "Azure",
+        "Entity Framework Core",
+        "SQL Server",
+        "Docker",
+        "Azure DevOps",
+        "Git"
+      ],
+      "gaps": [
+        "AI-assisted development tools experience unclear",
+        "Cloud-based application modernization specifics",
+        "On-site Santa Ana availability not confirmed"
+      ],
+      "angle": "Strong .NET and Azure stack with enterprise security expertise in financial applications\u2014exactly the modern cloud development foundation they need, just verify on-site commitment.",
+      "recruiter_name": "Avery",
+      "recruiter_email": "careers@irvinetechcorp.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@irvinetechnologycorporation.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "0c0bd8856a09": {
+    "id": "0c0bd8856a09",
+    "title": ".Net Full Stack Developer with Capital Markets exp- Local to Dallas TX ONLY",
+    "company": "Pull Skill Technologies",
+    "location": "Highland Park, Dallas",
+    "salary": "$88,212 - $88,212",
+    "description": "Role: .Net Full Stack Developer with Azure & Capital Markets exp Location: Dallas, TX (3 Days a Week - NO RELOCATION) Duration: 6 to 12 Months Must Have: candidates must have recent experience in capital markets/trading .net development experience.  this position requires an onsite interview in Dallas and the completion of an online coding assessment. candidates must have recent projects in the Dallas/ft. Worth metroplex. Job Summary We are seeking a senior Full Stack Developer to design, build\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719545410?se=jtM-2q1I8RG8eK-Guzrj1Q&utm_medium=api&utm_source=8b64f8b7&v=C23A90235FF1742A127DE7B64E0D70DD03253557",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T18:11:35.630620+00:00",
+    "status": "ai_ready",
+    "recruiter_email": "careers@pullskill.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, gRPC\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Kubernetes, Docker, Terraform, Jenkins\", \"Testing\": \"Playwright, Cypress, NUnit, xUnit, Selenium\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Delivered capital markets trading solutions processing 100K+ daily transactions with sub-100ms latency requirements\"}",
+    "email_draft": "Subject: .NET Full Stack Developer in Dallas - Capital Markets Interest\n\nHi,\n\nPull Skill's focus on trading platform development caught my attention. My background sits at the intersection of .NET full-stack work and financial systems where compliance and transaction integrity matter\u2014exactly the kind of environment where I do my best work.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. I also handled SOX/PCI-DSS compliance for customer-facing APIs. I'm based in Dallas and looking to apply this experience in a capital markets context.\n\nWould you be open to a 15-minute call to see if there's a fit? My LinkedIn is below if helpful.\n\nBest,\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 72,
+    "resume_pdf": "/tmp/Ram_Burri_Pull_Skill_Technolog.pdf",
+    "fit_analysis": {
+      "score": 72,
+      "matched_skills": [
+        ".NET",
+        "Azure",
+        "Full Stack Development",
+        "SQL Server",
+        "Entity Framework Core",
+        "REST APIs",
+        "OAuth2/JWT security",
+        "Financial application compliance (SOX/PCI-DSS)"
+      ],
+      "gaps": [
+        "Capital Markets/Trading domain experience not explicitly stated",
+        "Dallas/Fort Worth recent project history unclear",
+        "Onsite availability 3 days/week needs verification"
+      ],
+      "angle": "Strong .NET/Azure full-stack skills with financial compliance background - if candidate has capital markets exposure and is local to Dallas, could be a solid fit for this trading platform role",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@pullskill.com"
+    }
   }
 }
