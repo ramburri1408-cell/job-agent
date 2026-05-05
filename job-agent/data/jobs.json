@@ -12392,5 +12392,527 @@
       }
     ],
     "recruiter_source": "pattern_guess"
+  },
+  "915c6166dce8": {
+    "id": "915c6166dce8",
+    "title": "Full stack Net Developer",
+    "company": "National Computer Systems",
+    "location": "US",
+    "salary": "$80,221 - $80,221",
+    "description": "Qualifications Bachelor\u2019s degree in Computer Science or equivalent. Experience in complex, technically challenging, cross-functional software projects. 5 years professional experience in Software Engineering. 5 years professional experience in MSSQL including complex T-SQL stored procedures. 3 years experience with .NET Core. Experience with Git source control. Experience with unit/integration testing. Working experience with CI/CD methodologies. Skills Required .NET C# .NET Core Angular (prefe\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719545414?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=AB16E98D203AC00454A4EBF351AC5D121B2651AE",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425498+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 78
+  },
+  "1cc21733a081": {
+    "id": "1cc21733a081",
+    "title": "UI Angular Developer",
+    "company": "TechSpace Solutions Inc.",
+    "location": "Holmdel, Monmouth County",
+    "salary": "$105,390 - $105,390",
+    "description": "Role Overview We are seeking a highly skilled UI Angular Engineer to join our technology team. This role is front-end focused (approximately 90%), with primary responsibility for building modern, scalable, and high-performance web applications using Angular. The engineer will also collaborate with backend services developed in C#/.NET, ensuring seamless integration between UI and APIs. Key Responsibilities Design, develop, and maintain responsive and reusable UI components using Angular (latest\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719545392?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=BE4DC7278CD8FD37307B740D71CFDDA5AE76826A",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425520+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@techspace.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular best practices, Angular Material, lazy loading, change detection optimization, Angular testing (Jasmine/Karma)\", \"Backend\": \"C# advanced patterns, .NET dependency injection, middleware development\", \"Cloud / DevOps\": \"Azure App Service deployment, Azure monitoring/logging, container orchestration\"}, \"priority_bullets\": [0, 3, 6, 7], \"extra_bullet\": \"Architected responsive Angular component library with reusable patterns, reducing development time across multiple teams by 40%\"}",
+    "email_draft": "Subject: Angular developer who's built compliant financial UIs at scale\n\nHi,\n\nI noticed TechSpace Solutions works on enterprise applications where frontend polish meets backend reliability. That 90/10 split you're looking for caught my attention\u2014I've been living in that exact space, building Angular interfaces backed by C#/.NET services for banking systems that can't afford to break.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on transaction-critical modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, with APIs secured to SOX/PCI-DSS standards.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:10.697539+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_TechSpace_Solutions_.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "Angular 14/18",
+        "TypeScript",
+        "JavaScript",
+        "C#",
+        ".NET 8",
+        "Azure",
+        "Azure DevOps",
+        "Git",
+        "Jest"
+      ],
+      "gaps": [
+        "Angular as primary focus (candidate leans React)",
+        "RxJS/NgRx state management depth",
+        "UI/UX design collaboration experience"
+      ],
+      "angle": "Strong Angular and TypeScript skills with proven C#/.NET backend integration experience\u2014exactly the 90/10 frontend-backend split this role needs, plus enterprise-grade Azure and security expertise",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@techspacesolutions.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@techspace.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "53b5a50672d3": {
+    "id": "53b5a50672d3",
+    "title": ".Net Full Stack Developer with Azure & Capital Markets exp",
+    "company": "Pull Skill Technologies",
+    "location": "Highland Park, Dallas",
+    "salary": "$107,091 - $107,091",
+    "description": "Role: .Net Full Stack Developer with Azure & Capital Markets exp Location: Dallas, TX (3 Days a Week - NO RELOCATION) Duration: 6 to 12 Months Must Have: candidates must have recent experience in capital markets/trading .net development experience.  this position requires an onsite interview in Dallas and the completion of an online coding assessment. candidates must have recent projects in the Dallas/ft. Worth metroplex. Job Summary We are seeking a senior Full Stack Developer to design, build\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719545410?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=C23A90235FF1742A127DE7B64E0D70DD03253557",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425527+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 72
+  },
+  "c00606ccd701": {
+    "id": "c00606ccd701",
+    "title": ".NET Developers",
+    "company": "Compunnel Inc.",
+    "location": "Richmond, Richmond County",
+    "salary": "$78,262 - $78,262",
+    "description": "Job Summary The .NET Developer will be responsible for full-stack development, maintenance, and modernization of enterprise applications. This role focuses on building and supporting applications using .NET technologies while contributing to the migration of legacy systems to modern platforms. The ideal candidate will have experience in C#, Angular, and SQL Server, along with strong knowledge of the software development lifecycle and system integration. Key Responsibilities Design, develop, and\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719545032?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=F72FEE0359E464766CDFFD6E868117973E1B4BD7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425534+00:00",
+    "status": "applied",
+    "recruiter_email": "contact@compunnel.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18 specific experience (have React expertise but limited Angular demonstrated)\", \"Backend\": \"WCF, legacy system modernization patterns, ERP Systems Integration depth\", \"Cloud / DevOps\": \"Azure DevOps pipelines demonstrated but could strengthen cloud infrastructure knowledge\"}, \"priority_bullets\": [1, 2, 5, 6], \"extra_bullet\": \"Led modernization of legacy .NET systems to .NET Core/8 architecture, improving performance by X% and reducing technical debt\"}",
+    "email_draft": "Subject: .NET Developer with Enterprise Security & Regulated Environment Experience\n\nHi,\n\nI noticed Compunnel works with enterprise clients where compliance and security aren't optional\u2014they're table stakes. That's the environment I've spent the last several years building in, specifically across financial services systems handling sensitive transaction data.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also led the migration of a legacy payment portal to microservices, eliminating duplicate transaction issues, and secured APIs to meet SOX and PCI-DSS requirements across customer-facing systems.\n\nWould you have 15 minutes this week to discuss how my background maps to your current .NET needs? My LinkedIn is below if helpful.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nBest,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:15.522497+00:00",
+    "fit_score": 88,
+    "resume_pdf": "/tmp/Ram_Burri_Compunnel_Inc_.pdf",
+    "fit_analysis": {
+      "score": 88,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "Angular",
+        "SQL Server",
+        "Entity Framework Core",
+        "Azure",
+        "Azure DevOps",
+        "TypeScript",
+        "JavaScript",
+        "Git",
+        "full-stack development"
+      ],
+      "gaps": [
+        "Legacy system migration experience not explicitly stated",
+        "Specific system integration experience unclear"
+      ],
+      "angle": "Strong full-stack .NET developer with exact tech stack match plus enterprise security experience in regulated environments",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@compunnel.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Contact",
+        "email": "contact@compunnel.com",
+        "source": "company_site"
+      }
+    ],
+    "recruiter_source": "company_site"
+  },
+  "53b9839fac4b": {
+    "id": "53b9839fac4b",
+    "title": ".NET Software Developer with Top Secret Clearance",
+    "company": "NasTech Global, Inc.",
+    "location": "US",
+    "salary": "$106,534 - $106,534",
+    "description": "Role: Software Developer (3 openings) Location: Fully Remote Duration: Contract (long term at least 18 months) Citizenship: with active Top Secret Clearance Rate: $ 40 an hour (not much flex) Top Skills: TS Clearance Angular .NET 5 years of total work experience (does not need to be all development) This role is ideal for a developer with strong experience in full-stack development and data engineering working in an Agile development environment. You will design, develop, and optimize web and d\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719544940?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=F32957DA228AC6916DCE92B8C5D03BDA6BAF5005",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425540+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 62
+  },
+  "7e592fd53886": {
+    "id": "7e592fd53886",
+    "title": ".NET Developer",
+    "company": "Rezult Group, Inc",
+    "location": "US",
+    "salary": "$96,257 - $96,257",
+    "description": "Rezult continues to make great strides toward enhancing the technology community nationwide. We are consistently looking for qualified professionals to join us in achieving success. Currently, we are searching for a C#/.NET Developer to fulfill an immediate vacancy. This individual will be responsible for: This contractor will be responsible for production support for various applications, designing and developing the application services for an enterprise application solution Create unit test \u2026",
+    "url": "https://www.adzuna.com/land/ad/5719544919?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=009DCC284AA103E9903938EB5F38F323EA67C7B0",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425545+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@rezult.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"Windows Forms, WPF, LINQ to SQL\", \"Cloud / DevOps\": \"AWS services, GCP, on-premises deployment strategies\", \"Testing\": \"NUnit, xUnit, Moq, Integration testing frameworks\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Implemented comprehensive unit and integration tests achieving 85%+ code coverage using xUnit and Moq for ASP.NET Core microservices\"}",
+    "email_draft": "Subject: .NET Developer \u2013 Financial Systems & Compliance Experience\n\nHi,\n\nRezult Group's focus on application services and production support for enterprise clients caught my attention. Supporting critical systems in regulated environments is exactly where I've spent the last four years, and I understand what it takes to keep production stable while still moving development forward.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on transaction-critical modules, and modernized a legacy payment portal into microservices to eliminate duplicate transactions. I've also secured APIs to SOX and PCI-DSS standards across customer-facing systems.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:19.834761+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Rezult_Group__Inc.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "ASP.NET Core",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "xUnit",
+        "Git"
+      ],
+      "gaps": [
+        "Production support experience not explicitly stated",
+        "Enterprise application services design experience unclear"
+      ],
+      "angle": "Strong .NET full-stack developer with 4+ years enterprise experience and proven track record in secure, compliant financial applications - ideal for production support and application services development.",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@rezultgroup.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@rezult.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "2a6a6b7d4a73": {
+    "id": "2a6a6b7d4a73",
+    "title": ".NET Full stack Developer",
+    "company": "StackNexus Inc.",
+    "location": "Park Ridge, Bergen County",
+    "salary": "$92,100 - $92,100",
+    "description": "LOCAL TO MONTVALE NJ \u2013 Full Stack Developer Role (Montvale, NJ) Location & Work Setup Role is based in Montvale, NJ (no alternate locations). In-person interview required (single round, ~1.5 hours). Hybrid expectation: 2 days/week onsite after selection. Candidates must be willing to: Attend onsite interview Work onsite regularly if hired Interview Process Single round, in-person only No initial virtual/Teams screening by hiring manager Suppliers may conduct pre-screening Concern noted about AI\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719544246?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=4DB42FBB5DC37169F611F730D570E45FF083C984",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425555+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@stacknexus.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (WCAG)\", \"Backend\": \"Java, Python, GraphQL, gRPC, Domain-Driven Design\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Docker, Kubernetes, Terraform, Jenkins\", \"Testing\": \"Cypress, Playwright, NUnit, xUnit, Load Testing (JMeter)\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Architected and deployed containerized .NET 8 microservices using Docker and Azure Container Registry with zero-downtime deployments\"}",
+    "email_draft": "Subject: .NET Full Stack Developer - Fraud Systems & Azure Microservices Background\n\nHi,\n\nI came across StackNexus and noticed you're building business applications on the .NET/Azure stack. Given your focus on enterprise solutions, I wanted to reach out directly.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across transaction modules. I also migrated a legacy payment portal to a microservices architecture on Azure, eliminating duplicate transaction issues and meeting SOX/PCI-DSS compliance requirements.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? My LinkedIn is here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:24.067536+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_StackNexus_Inc_.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "ASP.NET Core",
+        "React.js",
+        "Angular",
+        "TypeScript",
+        "JavaScript",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "JWT",
+        "OAuth2",
+        "Git"
+      ],
+      "gaps": [
+        "Local to Montvale NJ requirement unclear if candidate is local",
+        "Specific hybrid commitment 2 days/week onsite needs verification"
+      ],
+      "angle": "Strong full-stack .NET developer with exact tech stack match including ASP.NET Core, React, Angular, and Azure - enterprise financial background adds credibility for business applications",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@stacknexus.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@stacknexus.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "acad88fc7a6c": {
+    "id": "acad88fc7a6c",
+    "title": "Application Development Engineer/Architect / Tech Lead",
+    "company": "Mahantech Corporation",
+    "location": "Santa Clara, Santa Clara County",
+    "salary": "$346,971 - $346,971",
+    "description": "POSITION DETAILS: Role: Application Development Engineer/Architect (Tech Lead) Location: Santa Clara, CA ONSITE Duration: Long Term Contract MUST HAVE SKILLS: 6-12 years hands-on software development MANDATORY Python & .NET application development MANDATORY Tech Lead / Senior Developer experience guiding teams GenAI code generation tools MANDATORY Copilot | Cursor | Claude | Windsurf Prompt engineering hands-on experience Agentic AI workflows for software development Application tech stack conv\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719542217?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=C39055F52602C4C75C46713A3143BC4C0D1AED9A",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425566+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 42
+  },
+  "d556f4b66e08": {
+    "id": "d556f4b66e08",
+    "title": ".Net Core Technical Lead",
+    "company": "aptlogix LLC",
+    "location": "Charlotte, Mecklenburg County",
+    "salary": "$168,394 - $168,394",
+    "description": ".Net Core - Google Cloud Platform Technical Lead Duration: 6 to 12 months contract Location: Fort Mill, SC/Charlotte, NC The client is looking for a candidate with a very good Google Cloud Platform skillset. Mandatory Skills: Candidate must Have 10 years of relevant experience on developing enterprise applications with .NET Core. Designing and developing highly scalable, robust and secure backend services using c# and .Net framework. Experience on C#.net, Dot net Core and Entity Framework. Expe\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719542198?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=EBC836A371562254AE31DCD2CEC79D4EA8EABCE8",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425575+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 42
+  },
+  "c0d6c3ee366b": {
+    "id": "c0d6c3ee366b",
+    "title": "Front end Developer",
+    "company": "TechSpace Solutions Inc.",
+    "location": "Five Corners, Hudson County",
+    "salary": "$103,169 - $103,169",
+    "description": "Role Overview We are seeking a highly skilled UI Angular Engineer to join our technology team. This role is front-end focused (approximately 90%), with primary responsibility for building modern, scalable, and high-performance web applications using Angular. The engineer will also collaborate with backend services developed in C#/.NET, ensuring seamless integration between UI and APIs. Key Responsibilities Design, develop, and maintain responsive and reusable UI components using Angular (latest\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719542135?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=72438AC327B1C5B692B945889AC755314C663019",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425584+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@techspace.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular best practices, component architecture patterns, Angular Material, performance optimization (OnPush strategy, lazy loading)\", \"Backend\": \"C# advanced patterns, .NET dependency injection, async/await patterns\", \"Cloud / DevOps\": \"Azure App Service, Azure Storage, monitoring and logging tools\"}, \"priority_bullets\": [0, 3, 1, 6], \"extra_bullet\": \"Architected responsive Angular components with RxJS observables achieving 98%+ browser compatibility across enterprise platforms\"}",
+    "email_draft": "Subject: Frontend Developer who ships Angular apps with bulletproof backends\n\nI noticed TechSpace Solutions builds enterprise software requiring that 90/10 frontend-backend balance. My last three years have been exactly that\u2014Angular and TypeScript daily, with enough C#/.NET to own the full integration when needed.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on transaction-critical modules. I also modernized a legacy payment portal into microservices that eliminated duplicate transactions\u2014all secured to SOX/PCI-DSS standards on Azure.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team? My LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:28.752005+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_TechSpace_Solutions_.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "Angular 14/18",
+        "TypeScript",
+        "JavaScript",
+        "C#",
+        ".NET 8",
+        "Azure",
+        "Azure DevOps",
+        "Git",
+        "Jest"
+      ],
+      "gaps": [
+        "Angular as primary focus (candidate stronger in React/backend)",
+        "UI/UX design experience not highlighted",
+        "Frontend-first mindset (candidate is full-stack leaning backend)"
+      ],
+      "angle": "Strong Angular and TypeScript skills with proven C#/.NET backend integration experience\u2014exactly the 90/10 frontend-backend split this role needs, plus enterprise-grade Azure expertise",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@techspacesolutions.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@techspace.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "d0296977fd05": {
+    "id": "d0296977fd05",
+    "title": ".Net Full Stack Developer/Azure/Capital Markets-Hybrid/Dallas, TX - Need Locals",
+    "company": "Algo Soft Solutions LLC",
+    "location": "Highland Park, Dallas",
+    "salary": "$126,761 - $126,761",
+    "description": "Requirement Notes (Candidate Job description below) : We are seeking a senior Full Stack .NET Developer (Angular/Azure) to design, build, and support integrations that power our Fund Administrator, Operations, and Security Master platforms\u2014ensuring accurate, timely, and consistent data across upstream sources and downstream consumers. You will work across backend services, data pipelines, APIs, and UI/operational tooling to onboard new data sources, normalize and validate instrument metadata, a\u2026",
+    "url": "https://www.adzuna.com/land/ad/5719542052?se=vDiwbqFI8RGsLNZFFTop6g&utm_medium=api&utm_source=8b64f8b7&v=D98D72A2E4FDE507AA96D0D9E82E1DB8F9611561",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425590+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@algosoft.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18 (have React expertise but need Angular-specific experience)\", \"Backend\": \"WCF, ERP Systems Integration, Microservices at enterprise scale\", \"Cloud / DevOps\": \"Azure Service Bus, Azure Data Factory, Azure SQL Database administration\", \"Testing\": \"Integration testing frameworks, Load/Performance testing tools\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Led data validation framework for instrument metadata normalization across multiple upstream sources ensuring 99.9% accuracy\"}",
+    "email_draft": "Subject: .NET/Azure Developer with Capital Markets Compliance Experience - Dallas Local\n\nI came across your hybrid .NET Full Stack Developer role and noticed the capital markets focus. Financial services infrastructure with strict compliance requirements is exactly where I've spent my recent years\u2014building systems where security and reliability aren't optional.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, and secured APIs to SOX/PCI-DSS standards across customer-facing systems. I understand what it takes to ship production code in regulated environments.\n\nWould you have 15 minutes this week to discuss how my background aligns with what you're building at Algo Soft Solutions? I'm local to Dallas and available for hybrid work immediately.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:33.164028+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Algo_Soft_Solutions_.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "Angular",
+        "Azure",
+        "TypeScript",
+        "Entity Framework Core",
+        "SQL Server",
+        "REST APIs",
+        "microservices",
+        "financial applications experience",
+        "OAuth2/JWT security"
+      ],
+      "gaps": [
+        "Capital Markets/Fund Administration domain experience not explicitly stated",
+        "Security Master platform experience",
+        "Data pipeline/ETL integration experience",
+        "Azure Data Factory or similar data integration tools"
+      ],
+      "angle": "Strong Azure/.NET full-stack developer with financial sector compliance experience (SOX/PCI-DSS) and the secure API architecture skills needed for sensitive fund data integrations",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@algosoftsolutions.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@algosoft.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "78631b6dfb81": {
+    "id": "78631b6dfb81",
+    "title": "Senior Web Application Developer",
+    "company": "CarShield",
+    "location": "Cottleville, Saint Charles County",
+    "salary": "$84,160 - $84,160",
+    "description": "Description: CarShield is a Best Place to Work, as voted by Glassdoor and the St. Louis Business Journal. We are growing fast and looking to add key talent to the team. We offer a competitive base compensation and benefits package, including medical, dental, vision, life, 401k, and discounted tuition at Lindenwood University! We believe in developing our people and getting results. When it comes to leadership roles we believe in promoting from within, so you have the opportunity to get to the n\u2026",
+    "url": "https://www.adzuna.com/details/5719523415?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425595+00:00",
+    "status": "applied",
+    "recruiter_email": "careers@carshield.com",
+    "recruiter_name": "",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y) standards\", \"Backend\": \"Java, Python, GraphQL, API Gateway patterns, Event-driven architecture\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Docker, Kubernetes, Terraform, monitoring/observability tools\", \"Testing\": \"Cypress, Selenium, Performance testing, Load testing, E2E automation frameworks\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Architected and deployed scalable cloud infrastructure using [AWS/Docker/Kubernetes], reducing deployment time by X% and improving system reliability to 99.9% uptime\"}",
+    "email_draft": "Subject: Senior .NET Developer with PCI-DSS & SOX Compliance Experience\n\nHi,\n\nCarShield's focus on vehicle protection plans means you're handling sensitive customer payment data at scale. My background building compliant financial systems in regulated environments maps directly to that challenge.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. All of this under SOX and PCI-DSS requirements\u2014so I understand what it takes to ship secure, auditable code.\n\nWould you be open to a 15-minute call to discuss how I could contribute to your web application team? My LinkedIn is below if helpful.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-05T16:49:37.860861+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_CarShield.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "ASP.NET Core",
+        "React.js",
+        "Angular",
+        "TypeScript",
+        "JavaScript",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "Git",
+        "REST APIs",
+        "Entity Framework Core"
+      ],
+      "gaps": [
+        "Specific CarShield tech stack unknown - job description truncated",
+        "Leadership/mentoring experience not explicitly stated",
+        "Automotive/warranty industry domain experience"
+      ],
+      "angle": "Strong full-stack .NET developer with enterprise experience and security expertise in regulated environments - ready to contribute immediately to web application development while growing into leadership opportunities CarShield promotes from within.",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@carshield.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@carshield.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
+  },
+  "d32f3a934f81": {
+    "id": "d32f3a934f81",
+    "title": "Sales Account Representative",
+    "company": "Mythics, LLC",
+    "location": "US",
+    "salary": "$70,568 - $70,568",
+    "description": "Emergent is seeking an Account Representative to support a specialized business unit focused on expanding Red Hat\u2019s presence across State and Local Government and Education (SLED) accounts. This role is responsible for developing new customer relationships, expanding existing accounts, and driving adoption of Red Hat\u2019s full software portfolio across a territory covering the Central, Mountain West, and Southeast regions, serving as the primary Red Hat-facing representative for the region. Respon\u2026",
+    "url": "https://www.adzuna.com/details/5719491257?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:42:41.425604+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "516b4b0647d2": {
+    "id": "516b4b0647d2",
+    "title": "\ud83c\udde9\ud83c\uddeaCustomer Support Manager",
+    "company": "Parkosecure GmbH",
+    "location": "Remote",
+    "salary": "",
+    "description": "\ud83c\udde9\ud83c\uddea This job ad is written in German. \ud83c\udde9\ud83c\uddea\nDie Parkosecure GmbH ist ein innovatives Unternehmen im Bereich Parkraummanagement in der Schweiz.\nF\u00fcr die Betreuung unserer Kunden in der franz\u00f6sischen Schweiz suchen wir eine zuverl\u00e4ssige und selbst\u00e4ndig arbeitende Pers\u00f6nlichkeit im 100% Remote-Modell.\nDu arbeitest vollst\u00e4ndig ortsunabh\u00e4ngig und bist die zentrale Ansprechperson f\u00fcr unsere franz\u00f6sischsprachigen Kunden.\nVos missions\n\n\nBearbeitung von Kundenanfragen per Telefon und E-Mail\n\nProfessionelle Behandlung von Kundenreaktionen und Einsprachen\n\n\nUnterst\u00fctzung im administrativen Bereich\n\n\nMitarbeit bei Projekten (bei vorhandenen Ressourcen)\n\n\nSicherstellung einer hohen Kundenzufriedenheit\n\nVos comp\u00e9tences\n\nFranz\u00f6sisch Muttersprache (zwingend)\nSehr gute schriftliche und m\u00fcndliche Ausdrucksweise\n",
+    "url": "https://remotive.com/remote-jobs/customer-service/customer-support-manager-2090874",
+    "portal": "Remotive",
+    "scraped_at": "2026-05-05T16:42:42.584243+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "ae1420ff2cab": {
+    "id": "ae1420ff2cab",
+    "title": "Full Stack Developer (Java With Angular)",
+    "company": "Sharpedge Solutions",
+    "location": "Times Square, King County",
+    "salary": "$105,525 - $105,525",
+    "description": "Title: Full Stack Developer (Java With Angular) Location: Seattle/Everet, WA Proficiency in Java, Angular, Springboot/Microsevices and any object-oriented programming. Proficiency in Oracle SQL & WebSphere Excellent working knowledge of the entire software development lifecycle Familiarity with AWS services & deployment in cloud Experience with Continuous Integration (CI) tools & experience in ADO / GIT DevOps",
+    "url": "https://www.adzuna.com/land/ad/5719545391?se=ehbIfqFI8RGEOrN0EEGqpw&utm_medium=api&utm_source=8b64f8b7&v=F94579E81BB535EE5F700D980F76AC60ADAA4CB6",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-05T16:43:08.387322+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 62
   }
 }
