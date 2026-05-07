@@ -38,6 +38,7 @@ jobs:
           GOOGLE_EMAIL:       ${{ secrets.GOOGLE_EMAIL }}
           GOOGLE_PASSWORD:    ${{ secrets.GOOGLE_PASSWORD }}
           APIFY_API_KEY:      ${{ secrets.APIFY_API_KEY }}
+          APOLLO_API_KEY:     ${{ secrets.APOLLO_API_KEY }} 
         run: python agent/pipeline.py
 
       - name: Commit updated data
