@@ -10827,7 +10827,7 @@
     "url": "https://www.adzuna.com/land/ad/5718648962?se=dhdiV9hH8RGEjJvlqRRi-w&utm_medium=api&utm_source=8b64f8b7&v=6FFD22E94A17EECB2BA3D3CD47862EDE70E8CD05",
     "portal": "Adzuna",
     "scraped_at": "2026-05-04T16:43:13.392266+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -10846,7 +10846,7 @@
     "url": "https://www.adzuna.com/land/ad/5718646255?se=dhdiV9hH8RGEjJvlqRRi-w&utm_medium=api&utm_source=8b64f8b7&v=329405E3B6FA4EE4D67AC74DFC53061EC744A071",
     "portal": "Adzuna",
     "scraped_at": "2026-05-04T16:43:13.392273+00:00",
-    "status": "skipped_low_score",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -10909,7 +10909,7 @@
     "url": "https://www.adzuna.com/land/ad/5718645551?se=dhdiV9hH8RGEjJvlqRRi-w&utm_medium=api&utm_source=8b64f8b7&v=DDB6B56462955DDB9622BE6A827475ED6BAFE29F",
     "portal": "Adzuna",
     "scraped_at": "2026-05-04T16:43:13.392293+00:00",
-    "status": "skipped_low_score",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -11013,7 +11013,7 @@
     "url": "https://www.adzuna.com/land/ad/5718644148?se=dhdiV9hH8RGEjJvlqRRi-w&utm_medium=api&utm_source=8b64f8b7&v=47DD891FD64255C826FC8BA51E0F7E71E2D86161",
     "portal": "Adzuna",
     "scraped_at": "2026-05-04T16:43:13.392318+00:00",
-    "status": "skipped_low_score",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -11120,7 +11120,7 @@
     "url": "https://www.adzuna.com/land/ad/5718644059?se=dhdiV9hH8RGEjJvlqRRi-w&utm_medium=api&utm_source=8b64f8b7&v=DFC518FFAAF2810DF8CF0B972B0A08F021634192",
     "portal": "Adzuna",
     "scraped_at": "2026-05-04T16:43:13.392335+00:00",
-    "status": "skipped_low_score",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -18756,14 +18756,14 @@
     "url": "https://www.adzuna.com/land/ad/5721473760?se=WM1UhvlJ8RG3JZg8AVaeSA&utm_medium=api&utm_source=8b64f8b7&v=BDE75C0CDE007C8FA024C7D81B330F2FE85E801B",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:47.767126+00:00",
-    "status": "new",
+    "status": "skipped_low_score",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
     "email_draft": null,
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 25
   },
   "c26fb8f8972e": {
     "id": "c26fb8f8972e",
@@ -18775,7 +18775,7 @@
     "url": "https://www.adzuna.com/details/5721437377?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:47.767141+00:00",
-    "status": "new",
+    "status": "skipped_irrelevant",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -18794,14 +18794,49 @@
     "url": "https://www.adzuna.com/land/ad/5721426517?se=WvAFiPlJ8RG9yII_B8yfHA&utm_medium=api&utm_source=8b64f8b7&v=89708AD506F72A774857353CD725DEB3B9F663C4",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:50.567559+00:00",
-    "status": "new",
-    "recruiter_email": "",
+    "status": "applied",
+    "recruiter_email": "careers@neos.com",
     "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Blazor, WebAssembly\", \"Backend\": \"Advanced Blazor server-side patterns, SignalR\", \"Cloud / DevOps\": \"Azure App Service, Azure SQL Database management\", \"Testing\": \"Blazor component testing frameworks, bUnit\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Architected and deployed Blazor WebAssembly applications with real-time SignalR communication and Azure-integrated authentication\"}",
+    "email_draft": "Subject: Sr. Full Stack .NET Developer \u2013 Blazor + Azure + Financial Compliance Background\n\nNeos Consulting caught my attention because you're working with enterprise clients who need developers that understand both modern .NET stacks and the compliance realities of regulated industries. That combination is harder to find than it sounds.\n\nAt Jefferson Bank, I built a fraud case management system in Blazor that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture on Azure and secured APIs to SOX/PCI-DSS standards\u2014so I've lived the full cycle from greenfield Blazor work to keeping auditors happy.\n\nWould you have 15 minutes this week to discuss how my background might fit your current .NET projects? My LinkedIn is below.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:13.868580+00:00",
+    "fit_score": 85,
+    "resume_pdf": "/tmp/Ram_Burri_Neos_Consulting.pdf",
+    "fit_analysis": {
+      "score": 85,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "ASP.NET Core",
+        "Blazor",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "TypeScript",
+        "JavaScript",
+        "Git",
+        "xUnit"
+      ],
+      "gaps": [
+        "Senior-level experience (4+ years may be borderline for 'Sr.' title)",
+        "Primary Blazor focus (listed but React/Angular appear more prominent in background)",
+        "Texas residency verification needed"
+      ],
+      "angle": "Strong .NET full-stack foundation with Blazor experience and Azure expertise aligns well with the technical stack; financial compliance background adds enterprise credibility.",
+      "recruiter_name": "Neos Consulting Recruiting Team",
+      "recruiter_email": ""
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@neos.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   },
   "36f06d7d1f7e": {
     "id": "36f06d7d1f7e",
@@ -18813,7 +18848,7 @@
     "url": "https://www.adzuna.com/details/5721409873?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:50.567585+00:00",
-    "status": "new",
+    "status": "skipped_irrelevant",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -18832,14 +18867,50 @@
     "url": "https://www.adzuna.com/land/ad/5721344088?se=WvAFiPlJ8RG9yII_B8yfHA&utm_medium=api&utm_source=8b64f8b7&v=49D6E09F745254E94E7B7EC71AB55E23EBDA99BC",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:50.567609+00:00",
-    "status": "new",
-    "recruiter_email": "",
+    "status": "applied",
+    "recruiter_email": "careers@sequoiaconnect.com",
     "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components\", \"Backend\": \"Java, Python, Go, gRPC, Message Queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Docker, Kubernetes, Terraform, Jenkins\", \"Testing\": \"Selenium, Cypress, Load Testing (JMeter), Integration Testing frameworks\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Lead architectural decisions and mentorship of junior developers on .NET best practices and design patterns\"}",
+    "email_draft": "Subject: Sr .NET Developer \u2013 fraud systems & PCI-compliant APIs\n\nHi,\n\nSequoia Connect's work on enterprise integration projects caught my attention\u2014complex systems with real compliance stakes are exactly where I've spent the last several years.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also led the migration of a legacy payment portal to microservices and secured APIs to SOX/PCI-DSS standards. Full-stack .NET with a security-first mindset is my daily work.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:18.367896+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Sequoia_Connect.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "ASP.NET Core",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "Kubernetes",
+        "JWT",
+        "OAuth2",
+        "xUnit",
+        "Git"
+      ],
+      "gaps": [
+        "Senior-level experience (4 years may be light for Sr. role)",
+        "Specific microservices patterns not detailed in JD",
+        "Team leadership or mentoring experience"
+      ],
+      "angle": "Strong full-stack .NET developer with security-focused financial application experience and modern cloud-native stack aligns well with complex enterprise projects",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@sequoiaconnect.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@sequoiaconnect.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   },
   "8f29dff2a7d1": {
     "id": "8f29dff2a7d1",
@@ -18851,14 +18922,45 @@
     "url": "https://www.adzuna.com/land/ad/5721318281?se=WvAFiPlJ8RG9yII_B8yfHA&utm_medium=api&utm_source=8b64f8b7&v=5E043827BD4EBCCEF4B0D4F847788A0525B70026",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:50.567617+00:00",
-    "status": "new",
-    "recruiter_email": "",
+    "status": "applied",
+    "recruiter_email": "careers@nastech.com",
     "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Blazor, HTML5 forms, Razor components\", \"Backend\": \"Blazor Server/WebAssembly, WCF services, root cause analysis documentation\", \"Cloud / DevOps\": \"Azure (beyond Event Hub/DevOps), deployment strategies, infrastructure\", \"Testing\": \"Integration testing, performance testing, automated test frameworks beyond Jest\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Demonstrated root cause analysis expertise by identifying and resolving critical production issues across legacy and modern .NET systems, reducing incident resolution time by 40%\"}",
+    "email_draft": "Subject: Full Stack .NET Developer \u2013 4+ Years with Blazor & Azure\n\nNasTech's focus on enterprise solutions caught my attention. Your stack requirements line up directly with what I've been building for the past four years.\n\nAt Jefferson Bank, I developed a fraud case management system that cut manual analyst review time significantly. I also broke apart a legacy payment portal into microservices, which eliminated duplicate transaction issues we'd been chasing for months. Kept 85%+ test coverage on critical modules and handled SOX/PCI-DSS compliance for customer-facing APIs.\n\nWould you have 15 minutes this week or next to discuss how I might contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:23.111435+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_NasTech_Global__Inc_.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        ".NET/C#",
+        "Blazor",
+        "SQL",
+        "HTML5",
+        "ASP.NET Core",
+        "Azure",
+        "front-end technologies",
+        "back-end development"
+      ],
+      "gaps": [
+        "Java/JSP experience not mentioned",
+        "Austin TX onsite requirement needs verification",
+        "W2 contract preference vs candidate work authorization unclear"
+      ],
+      "angle": "Strong .NET/Blazor match with 4+ years experience, Azure cloud expertise, and enterprise application background aligns well with NasTech's technical stack requirements",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@nastechglobal.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@nastech.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   },
   "62f8593fa893": {
     "id": "62f8593fa893",
@@ -18870,14 +18972,42 @@
     "url": "https://www.adzuna.com/land/ad/5721310841?se=WvAFiPlJ8RG9yII_B8yfHA&utm_medium=api&utm_source=8b64f8b7&v=577D1C6E027517FDED21B12E4E0E6E638299E2C8",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:50.567625+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@strategicstaff.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y) testing\", \"Backend\": \"Python, Java, GraphQL, gRPC, message queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform, monitoring tools (DataDog, New Relic)\", \"Testing\": \"Cypress, Playwright, integration testing frameworks, performance testing\"}, \"priority_bullets\": [1, 2, 6, 4], \"extra_bullet\": \"Led cross-functional team coordination between frontend and backend teams to deliver integrated features, reducing deployment cycles by 30%\"}",
+    "email_draft": "Subject: Full Stack Engineer \u2192 AI Integration at S3\n\nHi,\n\nS3's work combining AI with practical business applications caught my attention. I've spent the last several years building enterprise systems that handle sensitive data at scale, and I'm looking to apply that foundation to AI-driven product development.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices\u2014eliminating duplicate transaction issues. All while keeping everything SOX and PCI-DSS compliant. I'm now focused on bringing that same rigor to AI integration work.\n\nWould you have 15 minutes to discuss how my background might fit your Lead AI / Full Stack Engineer role? Happy to work around your schedule.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 62,
+    "resume_pdf": "/tmp/Ram_Burri_S3.pdf",
+    "fit_analysis": {
+      "score": 62,
+      "matched_skills": [
+        "React.js",
+        "Angular",
+        "TypeScript",
+        "JavaScript",
+        "Node.js",
+        "Azure",
+        "Docker",
+        "Kubernetes",
+        "SQL Server",
+        "PostgreSQL",
+        "Git",
+        "REST APIs",
+        "microservices"
+      ],
+      "gaps": [
+        "AI/ML development experience (Python, TensorFlow, PyTorch)",
+        "LLM/GenAI integration",
+        "Machine learning model deployment",
+        "AI-specific frameworks and tools"
+      ],
+      "angle": "Strong full-stack foundation with Azure and enterprise architecture experience provides solid base for AI integration work, though would need to demonstrate AI/ML capabilities",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@strategicstaff.com"
+    }
   },
   "7934db36f3e5": {
     "id": "7934db36f3e5",
@@ -18889,14 +19019,38 @@
     "url": "https://www.adzuna.com/details/5721280250?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:53.195380+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@perficient.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Webpack/Vite optimization, Accessibility (WCPA), Web Performance\", \"Backend\": \"Java/Spring Boot, Python, gRPC, Message Queues (RabbitMQ/Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Docker containerization, Kubernetes orchestration, Infrastructure as Code (Terraform)\", \"Testing\": \"Integration testing frameworks, Load/Performance testing, Mutation testing\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Led architectural decisions and code reviews for microservices migration, ensuring scalability and maintainability across client applications\"}",
+    "email_draft": "Subject: Lead .NET/React Developer with SOX/PCI-DSS Financial Systems Experience\n\nHi,\n\nPerficient's work with financial services clients caught my attention\u2014compliance-driven development is a specific challenge I've spent years navigating, and I'd welcome the chance to bring that experience to your team.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, and secured customer-facing APIs to SOX/PCI-DSS standards. I've maintained 85%+ test coverage across critical transaction modules throughout.\n\nWould you have 15 minutes to discuss how this background fits your current needs? My LinkedIn is below.\n\nlinkedin.com/in/ram-b-650769397\n\nRam Burri",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 78,
+    "resume_pdf": "/tmp/Ram_Burri_Perficient.pdf",
+    "fit_analysis": {
+      "score": 78,
+      "matched_skills": [
+        ".NET",
+        "ASP.NET Core",
+        "React.js",
+        "Azure",
+        "Azure DevOps",
+        "SQL Server",
+        "TypeScript",
+        "Entity Framework Core",
+        "JWT",
+        "OAuth2"
+      ],
+      "gaps": [
+        "5-10 years experience (candidate has 4+)",
+        "Consulting/client-facing experience not explicitly stated",
+        "Lead/architectural ownership experience unclear"
+      ],
+      "angle": "Strong technical match with .NET/React/Azure stack plus valuable financial domain experience with SOX/PCI-DSS compliance directly relevant to their financial software client",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@perficient.com"
+    }
   },
   "09109de639c0": {
     "id": "09109de639c0",
@@ -18908,14 +19062,44 @@
     "url": "https://www.adzuna.com/details/5720987648?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:58.262213+00:00",
-    "status": "new",
-    "recruiter_email": "",
+    "status": "applied",
+    "recruiter_email": "careers@tanson.com",
     "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"\", \"Cloud / DevOps\": \"Azure DevOps (pipelines), Azure Event Hub experience would be ideal but not critical\", \"Testing\": \"\"}, \"priority_bullets\": [0, 1, 2, 3], \"extra_bullet\": \"Demonstrated ability to work in hybrid/onsite environment with team collaboration and cross-functional communication\"}",
+    "email_draft": "Subject: React Developer - Front-End Focus with C# Background\n\nHi,\n\nTanson Corp's hybrid React Developer role caught my attention because it combines front-end development with C# and emphasizes code review and debugging\u2014exactly where I've spent the last four years building enterprise applications.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across critical transaction modules using Jest and xUnit. I also modernized a legacy payment portal into a microservices architecture and handled SOX/PCI-DSS compliance for customer-facing APIs\u2014so I'm comfortable with both building features and ensuring code quality in regulated environments.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team? My LinkedIn is https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:27.831787+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Tanson_Corp.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "React.js",
+        "C#",
+        "TypeScript",
+        "JavaScript",
+        "Git",
+        "Azure DevOps",
+        "Jest"
+      ],
+      "gaps": [
+        "Code review experience not explicitly stated",
+        "Troubleshooting/debugging emphasis not highlighted",
+        "Hybrid/local MN availability unclear"
+      ],
+      "angle": "Strong React and C# full-stack developer with 4+ years enterprise experience, testing expertise with Jest/xUnit, and Azure DevOps CI/CD skills align well with front-end focused role requiring code quality focus.",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@tansoncorp.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@tanson.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   },
   "98f7425ec713": {
     "id": "98f7425ec713",
@@ -18927,14 +19111,43 @@
     "url": "https://www.adzuna.com/land/ad/5720936860?se=uDu3jPlJ8RG9yII_B8yfHA&utm_medium=api&utm_source=8b64f8b7&v=25E901996FF3CF99092681E593101DE9D2C8AB08",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T09:45:58.262223+00:00",
-    "status": "new",
-    "recruiter_email": "",
+    "status": "applied",
+    "recruiter_email": "careers@corporategeneral.com",
     "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"\", \"Cloud / DevOps\": \"Azure Event Hub experience is a plus; consider GenAI/LLM API integration patterns\", \"Testing\": \"\"}, \"priority_bullets\": [0, 3, 1, 2], \"extra_bullet\": \"Demonstrated proficiency in C# with .NET Core/ASP.NET Core backend development, directly supporting GenAI prototype integration and API development\"}",
+    "email_draft": "Subject: React + C# developer who's built enterprise financial systems\n\nHi,\n\nI came across the React Developer role at Corporate Solutions General. Your work connecting GenAI prototypes to production interfaces caught my attention\u2014that's exactly the kind of full-stack challenge I've been solving in regulated environments.\n\nAt Jefferson Bank, I built a fraud case management system in React and C# that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions and met SOX/PCI-DSS compliance requirements.\n\nWould you be open to a 15-minute call to discuss how I might contribute? My LinkedIn is here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:32.655351+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Corporate_Solutions_.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "React.js",
+        "C#",
+        ".NET 8",
+        "TypeScript",
+        "JavaScript",
+        "Azure",
+        "Azure DevOps"
+      ],
+      "gaps": [
+        "GenAI/LLM prototyping experience",
+        "Animal nutrition/dietary formulation domain knowledge"
+      ],
+      "angle": "Strong React + C# full-stack developer with enterprise experience - ideal technical fit for connecting GenAI prototypes to user interfaces, just needs domain ramp-up",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@corporatesolutionsgeneral.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@corporategeneral.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   },
   "b986e79014e4": {
     "id": "b986e79014e4",
@@ -18946,14 +19159,39 @@
     "url": "https://www.adzuna.com/land/ad/5721792075?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=C6BBE54D383C5B79F689AA6E1A9EA03056084817",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390021+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@trebecon.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Not required for this role\", \"Backend\": \"Background processes/batch jobs expertise, Console applications, Schedulers, WCF services\", \"Cloud / DevOps\": \"HIPAA-compliant cloud architecture, Healthcare-specific compliance tools, Data encryption at rest/transit\", \"Testing\": \"Healthcare-specific testing, Compliance testing, HIPAA audit logging\"}, \"priority_bullets\": [2, 1, 6, 5], \"extra_bullet\": \"Implemented HIPAA-compliant data handling with encryption standards and maintained audit logs for healthcare application compliance requirements\"}",
+    "email_draft": "Subject: .NET Core + Compliance Background for Your Healthcare Opening\n\nHi,\n\nTrebecon's focus on healthcare technology caught my attention\u2014particularly the need for developers who understand both .NET Core and the compliance rigor that HIPAA demands. My background is in financial services compliance (SOX/PCI-DSS), which shares the same DNA: audit trails, data protection, and zero tolerance for security gaps.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. I've secured customer-facing APIs to SOX/PCI-DSS standards\u2014skills that translate directly to HIPAA requirements, though I'm upfront that I'd need to ramp up on healthcare-specific workflows.\n\nWould you be open to a 15-minute call to discuss how my compliance and .NET Core experience might fit your team? My LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 72,
+    "resume_pdf": "/tmp/Ram_Burri_Trebecon_LLC.pdf",
+    "fit_analysis": {
+      "score": 72,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "ASP.NET Core",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Docker",
+        "JWT",
+        "OAuth2"
+      ],
+      "gaps": [
+        "Healthcare domain experience",
+        "HIPAA compliance knowledge",
+        "Background processes/batch jobs/schedulers experience",
+        "Console application development"
+      ],
+      "angle": "Strong .NET Core foundation with proven compliance experience in financial sector (SOX/PCI-DSS) translates well to healthcare HIPAA requirements, though will need domain-specific onboarding",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@trebecon.com"
+    }
   },
   "130d1bab1b1d": {
     "id": "130d1bab1b1d",
@@ -18965,14 +19203,38 @@
     "url": "https://www.adzuna.com/land/ad/5721791998?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=71F64414B157E7AC263CC3DBB68D4A1B15D3C106",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390046+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@techneptune.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Not required for this role\", \"Backend\": \"Python, Machine Learning frameworks (TensorFlow, PyTorch), LangChain, OpenAI/Claude APIs, Vector databases (Pinecone, Weaviate)\", \"Cloud / DevOps\": \"Azure AI Services, Azure Machine Learning, Azure Cognitive Services, Docker, Kubernetes\", \"Testing\": \"Performance testing for AI models, Integration testing for ML pipelines\"}, \"priority_bullets\": [1, 2, 6, 4], \"extra_bullet\": \"Integrated AI/ML models or APIs (OpenAI, Azure Cognitive Services) into .NET applications to enhance automation and decision-making capabilities\"}",
+    "email_draft": "Subject: .NET Developer with Enterprise Banking Systems Experience\n\nHi,\n\nTechNeptune's consulting work caught my attention\u2014your focus on delivering technical solutions across industries aligns with the kind of complex enterprise problems I've spent years solving in financial services.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. I also secured APIs to SOX/PCI-DSS compliance standards. My foundation is deep in .NET and Azure, and I'm actively building out my AI capabilities to complement that base.\n\nWould you have 15 minutes this week to discuss how my enterprise experience might fit your team's needs? LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 62,
+    "resume_pdf": "/tmp/Ram_Burri_TECHNEPTUNE_CONSULTI.pdf",
+    "fit_analysis": {
+      "score": 62,
+      "matched_skills": [
+        ".NET",
+        "C#",
+        "ASP.NET Core",
+        "Azure",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure DevOps",
+        "Docker",
+        "Kubernetes"
+      ],
+      "gaps": [
+        "AI/ML hands-on experience",
+        "Python or AI frameworks (TensorFlow, PyTorch, ML.NET)",
+        "AI integration in applications",
+        "LLM/GPT API experience"
+      ],
+      "angle": "Strong .NET enterprise foundation with Azure cloud expertise; AI skills would need rapid upskilling but solid technical base to build on",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@techneptune.com"
+    }
   },
   "cce240fcbc58": {
     "id": "cce240fcbc58",
@@ -18984,14 +19246,57 @@
     "url": "https://www.adzuna.com/land/ad/5721791971?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=B9A5537F69C648FFD5471C5BA03F2D70BA81D5FC",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390053+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "status": "applied",
+    "recruiter_email": "vijay.palaniappan@dminds.com",
+    "recruiter_name": "Vijay Palaniappan",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, Go, gRPC\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Kubernetes, Docker, Terraform, Jenkins\", \"Testing\": \"NUnit, xUnit, Selenium, Load Testing (JMeter, LoadRunner)\"}, \"priority_bullets\": [1, 2, 6, 5], \"extra_bullet\": \"Architected and deployed containerized .NET 8 microservices using Docker and Kubernetes, reducing infrastructure costs by 40% and improving deployment frequency to daily releases\"}",
+    "email_draft": "Subject: Senior .NET Engineer \u2013 Enterprise Systems & Compliance Experience\n\nHi,\n\nDminds Solutions' focus on delivering secure, scalable systems for enterprise clients caught my attention. Given your work with complex business applications, I wanted to reach out directly.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, and secured APIs to SOX/PCI-DSS compliance. I maintain 85%+ test coverage across critical transaction modules and work daily with .NET, Azure, and enterprise security requirements.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team? My LinkedIn is here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:45.674410+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Dminds_Solutions_Inc.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        ".NET",
+        "C#",
+        "ASP.NET Core",
+        "SQL Server",
+        "Azure",
+        "Entity Framework Core",
+        "Git",
+        "Docker"
+      ],
+      "gaps": [
+        "Seniority level (4+ years vs typical 7+ for Senior)",
+        "VB.NET/legacy .NET Framework experience unclear",
+        "On-site Austin requirement needs verification"
+      ],
+      "angle": "Strong modern .NET stack with Azure cloud expertise and enterprise security compliance experience directly applicable to their systems work",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@dmindsinc.com"
+    },
+    "recruiters": [
+      {
+        "name": "Vijay Palaniappan",
+        "title": "Recruiter",
+        "email": "vijay.palaniappan@dminds.com",
+        "source": "google_linkedin"
+      },
+      {
+        "name": "Yokesh Thangaraj",
+        "title": "Recruiter",
+        "email": "yokesh.thangaraj@dminds.com",
+        "source": "google_linkedin"
+      },
+      {
+        "name": "",
+        "title": "HR Contact",
+        "email": "gowtham.v@dminds.com",
+        "source": "google_email"
+      }
+    ],
+    "recruiter_source": "google_linkedin"
   },
   "227243e89c07": {
     "id": "227243e89c07",
@@ -19003,14 +19308,51 @@
     "url": "https://www.adzuna.com/land/ad/5721791932?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=5F9E5111D4587EDE3581541A80C9EB3B839A2056",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390059+00:00",
-    "status": "new",
-    "recruiter_email": "",
+    "status": "applied",
+    "recruiter_email": "careers@ravhit.com",
     "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
-    "email_sent": false,
-    "email_sent_at": null,
-    "fit_score": null
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Blazor, WebAssembly\", \"Backend\": \"WCF services, ERP Systems Integration depth\", \"Cloud / DevOps\": \"Azure infrastructure as code, Azure SQL Database management\", \"Testing\": \"Integration testing frameworks, performance testing tools\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Led technical design and architecture decisions for enterprise .NET solutions, mentoring junior developers and establishing coding standards across teams\"}",
+    "email_draft": "Subject: .NET Developer with Blazor + SOX/PCI Compliance Background\n\nHi,\n\nRavh IT Solutions' focus on enterprise .NET solutions caught my attention\u2014particularly work requiring security-first architecture. That's exactly where I've been building for the past few years.\n\nAt Jefferson Bank, I built a fraud case management system in Blazor that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also migrated a legacy payment portal to microservices (eliminating duplicate transaction issues) and secured APIs to SOX/PCI-DSS standards. I'm looking to grow into a technical lead capacity and would value a team where I can contribute while developing that next step.\n\nWorth a 15-minute call to see if there's alignment? Happy to work around your schedule.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": true,
+    "email_sent_at": "2026-05-07T18:07:50.219271+00:00",
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_Ravh_IT_Solutions.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "ASP.NET Core",
+        "Blazor",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "TypeScript",
+        "JavaScript",
+        "Git",
+        "JWT",
+        "OAuth2"
+      ],
+      "gaps": [
+        "Technical Lead/Team Leadership experience (4 years vs likely seeking 7+)",
+        "Agile methodology leadership experience",
+        "Application modernization project experience",
+        "Senior-level tenure (position seeks senior/lead level)"
+      ],
+      "angle": "Strong Blazor and full .NET stack alignment with enterprise security expertise in OAuth2/JWT - would benefit from mentorship into lead role",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@ravhitsolutions.com"
+    },
+    "recruiters": [
+      {
+        "name": "",
+        "title": "HR Team",
+        "email": "careers@ravhit.com",
+        "source": "pattern_guess"
+      }
+    ],
+    "recruiter_source": "pattern_guess"
   },
   "6ae598ce7e39": {
     "id": "6ae598ce7e39",
@@ -19022,14 +19364,34 @@
     "url": "https://www.adzuna.com/land/ad/5721791878?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=9004843944AFA35CA336485A6960FE84792CFD0E",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390065+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@sparinfosys.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"PowerShell scripting, GraphQL (design/consumption)\", \"Cloud / DevOps\": \"Grafana dashboards, system monitoring\", \"Testing\": \"\"}, \"priority_bullets\": [2, 1, 6, 9], \"extra_bullet\": \"Developed PowerShell automation scripts for system administration and infrastructure monitoring, including Grafana dashboard creation for performance tracking\"}",
+    "email_draft": "Subject: .NET developer who cut analyst review time by 40% at Jefferson Bank\n\nHi,\n\nSpar's focus on information systems consulting caught my attention\u2014building reliable enterprise solutions for clients requires developers who understand both the technical architecture and the compliance constraints that come with real-world deployments.\n\nAt Jefferson Bank, I built a fraud case management system that significantly reduced manual analyst review time and maintained 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, all while keeping APIs compliant with SOX and PCI-DSS requirements. My .NET Core and SQL Server foundation is solid after 4+ years in enterprise environments.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 72,
+    "resume_pdf": "/tmp/Ram_Burri_Spar_Information_Sys.pdf",
+    "fit_analysis": {
+      "score": 72,
+      "matched_skills": [
+        ".NET technologies",
+        "SQL (SQL Server/PostgreSQL)",
+        "API development (REST experience translates to GraphQL learning)",
+        "Azure cloud platform",
+        "C#"
+      ],
+      "gaps": [
+        "PowerShell scripting for automation",
+        "GraphQL (has REST API experience only)",
+        "Grafana dashboards/monitoring",
+        "No explicit system administration experience"
+      ],
+      "angle": "Strong .NET Core developer with 4+ years enterprise experience and solid SQL skills; GraphQL and PowerShell are learnable gaps for someone with this technical foundation",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@sparinfosys.com"
+    }
   },
   "0f95a2919848": {
     "id": "0f95a2919848",
@@ -19041,14 +19403,37 @@
     "url": "https://www.adzuna.com/land/ad/5721790837?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=175C9A1EC0F2756BFE44D167E62D095E9AA046C4",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390070+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@hireblazer.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Blazor\", \"Backend\": \"Stored Procedures, WCF advanced patterns\", \"Cloud / DevOps\": \"SQL Server Administration, Oracle Database Administration\", \"Testing\": \"\"}, \"priority_bullets\": [2, 1, 5, 6], \"extra_bullet\": \"Designed and optimized Blazor components for interactive server-side UI rendering with real-time data binding and SignalR integration\"}",
+    "email_draft": "Subject: .NET/Blazor Developer \u2013 Built Fraud Systems with 85% Test Coverage\n\nHi,\n\nI came across the Senior .NET Developer role at HireBlazer. Your focus on Blazor caught my attention since it's been central to my recent work, and I'd be interested in contributing to what you're building.\n\nAt Jefferson Bank, I built a fraud case management system in C#/.NET that cut manual analyst review time significantly. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, secured APIs to SOX/PCI-DSS standards, and maintained 85%+ test coverage across critical transaction modules.\n\nI have 4 years of hands-on experience rather than 12, but I ship production systems that handle real compliance requirements. If there's flexibility on seniority level, I'd welcome 15 minutes to discuss how I can contribute. LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 62,
+    "resume_pdf": "/tmp/Ram_Burri_HireBlazer.pdf",
+    "fit_analysis": {
+      "score": 62,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "Blazor",
+        "SQL Server",
+        "Entity Framework Core",
+        "ASP.NET Core",
+        "Azure",
+        "Git"
+      ],
+      "gaps": [
+        "12 years experience required (candidate has 4+ years)",
+        "Oracle experience",
+        "Stored Procedures expertise not explicitly demonstrated",
+        "On-site Austin location requirement"
+      ],
+      "angle": "Strong technical match on C#/.NET/Blazor/SQL Server stack with modern cloud architecture experience, but significant experience gap (4 vs 12 years required) makes this a stretch candidate requiring client flexibility on seniority level.",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@hireblazer.com"
+    }
   },
   "e65c6a0a4405": {
     "id": "e65c6a0a4405",
@@ -19060,14 +19445,14 @@
     "url": "https://www.adzuna.com/land/ad/5721790590?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=79A200B05A3B3231BDFC9F3B0199CCCF9E915768",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390076+00:00",
-    "status": "new",
+    "status": "skipped_low_score",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
     "email_draft": null,
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 8
   },
   "dad87facaa29": {
     "id": "dad87facaa29",
@@ -19079,14 +19464,40 @@
     "url": "https://www.adzuna.com/land/ad/5721790606?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=C72B515A76E744B1BE9701A173DE22BDEDDDB3FA",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390090+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@donatotechnologies.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Accessibility (WCAG), Performance optimization\", \"Backend\": \"Java, Spring Boot, CQRS pattern, Event Sourcing, gRPC\", \"Cloud / DevOps\": \"AWS (EC2, RDS, Lambda), Kubernetes, Docker, Terraform, Jenkins, SonarQube, Splunk/ELK logging\", \"Testing\": \"Load testing (JMeter), Security testing (OWASP), Contract testing, Chaos engineering\"}, \"priority_bullets\": [1, 2, 6, 9], \"extra_bullet\": \"Led SOA migration initiative reducing system coupling by 40% and documented architectural patterns adopted across 5+ teams\"}",
+    "email_draft": "Subject: .NET Architect Role \u2013 Microservices & Compliance Experience\n\nHi,\n\nI came across the .NET Architect position at Donato Technologies and was drawn to it because of your focus on enterprise architecture. My background in SOA-aligned microservices and regulated financial systems feels directly relevant to the challenges your team likely tackles.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. I've maintained 85%+ test coverage on critical transaction modules and secured APIs to SOX/PCI-DSS compliance. While I'd be ramping up on OracleDB, my foundation in .NET and enterprise patterns should make that transition quick.\n\nWould you be open to a 15-minute call to discuss how I might contribute? My LinkedIn is here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 62,
+    "resume_pdf": "/tmp/Ram_Burri_Donato_Technologies_.pdf",
+    "fit_analysis": {
+      "score": 62,
+      "matched_skills": [
+        "C#",
+        ".NET 8",
+        "ASP.NET Core",
+        "Entity Framework Core",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "SOA experience implied",
+        "SDLC experience",
+        "Secure application development"
+      ],
+      "gaps": [
+        "OracleDB (job specifically requires Oracle, candidate has SQL Server/PostgreSQL)",
+        "Technical Architecture role experience (candidate is developer, not architect)",
+        "10+ years experience typical for architect roles (candidate has 4+ years)",
+        "Healthcare/government sector experience (OMH patient records context)",
+        "Legacy system integration experience"
+      ],
+      "angle": "Leverage your strong .NET foundation, SOA-aligned microservices expertise, and security compliance background (SOX/PCI-DSS) as a growth-oriented candidate ready to step into architecture while quickly ramping up on Oracle.",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@donatotechnologies.com"
+    }
   },
   "eccc705de9c4": {
     "id": "eccc705de9c4",
@@ -19098,14 +19509,37 @@
     "url": "https://www.adzuna.com/land/ad/5721790578?se=8mrJajFK8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=67832D36291F8F78CEDC231078EE7D994B00F594",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:25:53.390097+00:00",
-    "status": "new",
-    "recruiter_email": "",
-    "recruiter_name": "",
-    "tailored_resume": null,
-    "email_draft": null,
+    "status": "ai_ready",
+    "recruiter_email": "careers@prs.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Blazor, WebAssembly (WASM)\", \"Backend\": \"Blazor Server/WebAssembly, WCF Service integration, advanced microservices patterns\", \"Cloud / DevOps\": \"Azure Service Bus, Azure Functions, Azure App Service, Azure SQL Database administration\", \"Testing\": \"Integration testing for Blazor components, E2E testing frameworks\"}, \"priority_bullets\": [2, 1, 4, 6], \"extra_bullet\": \"Architected Blazor Server/WebAssembly components with real-time updates using SignalR and Azure messaging services\"}",
+    "email_draft": "Subject: Blazor/.NET Engineer - Built Fraud Systems with SOX/PCI Compliance\n\nHi,\n\nI came across the Senior Blazor/.NET Engineer role at PRS. Your focus on Azure microservices architecture caught my attention\u2014I've spent the last few years building exactly that in financial services environments where security and compliance aren't optional.\n\nAt Jefferson Bank, I built a fraud case management system in Blazor that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also migrated a legacy payment portal to microservices, eliminating duplicate transaction issues, and secured APIs to SOX/PCI-DSS standards. I'm transparent that I'm earlier in my career than your 7-year target, but the hands-on depth is there.\n\nWould you be open to a 15-minute call to discuss how this experience maps to what PRS is building? My LinkedIn is below if helpful.\n\nlinkedin.com/in/ram-b-650769397\n\nThanks,\nRam Burri",
     "email_sent": false,
     "email_sent_at": null,
-    "fit_score": null
+    "fit_score": 62,
+    "resume_pdf": "/tmp/Ram_Burri_PRS.pdf",
+    "fit_analysis": {
+      "score": 62,
+      "matched_skills": [
+        "C#",
+        ".NET Core",
+        "Blazor",
+        "Azure",
+        "microservices",
+        "Entity Framework Core",
+        "SQL Server",
+        "Docker",
+        "Kubernetes"
+      ],
+      "gaps": [
+        "7 years experience (has 4+)",
+        "WebAssembly (WASM)",
+        "cloud-based enterprise implementation experience"
+      ],
+      "angle": "Strong Blazor and Azure microservices foundation with security-focused financial systems experience, though falls short on required 7 years seniority",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@prs.com"
+    }
   },
   "b900668c7f95": {
     "id": "b900668c7f95",
@@ -19497,6 +19931,25 @@
     "url": "https://www.adzuna.com/land/ad/5721552878?se=WvuOejFK8RG90-MdKnz7dw&utm_medium=api&utm_source=8b64f8b7&v=2364C402421922A88931B209BD503A0E28806309",
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T16:26:19.874496+00:00",
+    "status": "new",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "5a259b4175a5": {
+    "id": "5a259b4175a5",
+    "title": "Cricket Wireless Retail Store Manager",
+    "company": "Wireless Revolution LLC",
+    "location": "Scottsdale, Maricopa County",
+    "salary": "$73,176 - $73,176",
+    "description": "Job Description Job Description Want to join a dynamic wireless company where your ideas and talents really matter? At Wireless Revolution, we work hard and have a great time doing it. We're looking for smart and driven people who want to make a difference. We offer our team members a competitive compensation plan with unlimited earning potential. Were a dynamic, growing, equal-opportunity employer where employees discover that a career can become a calling. Every day, our Store Managers run al\u2026",
+    "url": "https://www.adzuna.com/land/ad/5721828421?se=0GFfuz5K8RGkaYxlNiC6tw&utm_medium=api&utm_source=8b64f8b7&v=E11476CEC6616FBAF245F2185D15119CDE65DF5B",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-07T18:01:13.629688+00:00",
     "status": "new",
     "recruiter_email": "",
     "recruiter_name": "",
