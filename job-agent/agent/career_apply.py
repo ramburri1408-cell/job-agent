@@ -1,7 +1,7 @@
 """
 Career Page Apply Bot — iCIMS and Workday
-Semi-automated: bot fills form, takes screenshot, emails Ram with link to review and submit.
-Ram reviews everything and clicks Submit himself.
+Fixed: properly follows redirects to actual company career pages
+Semi-automated: fills form, emails Ram screenshot + link to submit
 """
 
 import os, json, re, time
@@ -17,6 +17,13 @@ GMAIL_PASS = os.environ.get("GMAIL_APP_PASSWORD", "")
 RAM_EMAIL  = "Ram.burri1408@gmail.com"
 DATA_FILE  = Path("data/jobs.json")
 LOG_FILE   = Path("data/career_apply_log.jsonl")
+
+# Job boards — skip these, they're not company career pages
+JOB_BOARDS = [
+    "adzuna.com", "indeed.com", "dice.com", "ziprecruiter.com",
+    "monster.com", "glassdoor.com", "linkedin.com", "remotive.com",
+    "simplyhired.com", "careerbuilder.com", "snagajob.com",
+]
 
 PROFILE = {
     "first_name":   "Ram",
@@ -53,70 +60,142 @@ def log_apply(entry):
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
+def is_job_board(url: str) -> bool:
+    """Check if URL is a job board — not a company career page."""
+    return any(board in url.lower() for board in JOB_BOARDS)
+
+def get_final_url(page, start_url: str) -> str:
+    """
+    Navigate to URL and follow all redirects.
+    Returns the final URL after all redirects.
+    """
+    try:
+        page.goto(start_url, timeout=30000, wait_until="domcontentloaded")
+        page.wait_for_timeout(3000)
+        final = page.url
+        print(f"  → Redirected to: {final[:80]}")
+        return final
+    except Exception as e:
+        print(f"  ! Navigation error: {str(e)[:60]}")
+        return start_url
+
+def find_apply_link(page) -> str:
+    """
+    On a job listing page, find the Apply button/link
+    that goes to the actual application form.
+    """
+    apply_selectors = [
+        'a:has-text("Apply Now")',
+        'a:has-text("Apply for this job")',
+        'a:has-text("Apply for this position")',
+        'button:has-text("Apply Now")',
+        'a[href*="apply"]',
+        'a[href*="application"]',
+        '.apply-button',
+        '[data-testid*="apply"]',
+        '#apply-button',
+    ]
+
+    for sel in apply_selectors:
+        try:
+            el = page.query_selector(sel)
+            if el and el.is_visible():
+                href = el.get_attribute("href") or ""
+                print(f"  → Apply link found: {href[:60]}")
+                return href
+        except:
+            pass
+    return ""
+
+def detect_platform(page) -> str:
+    """Detect which ATS platform the page is using."""
+    url  = page.url.lower()
+    html = page.content().lower()
+
+    if "myworkdayjobs.com" in url or "workday.com" in url: return "workday"
+    if "icims.com" in url or "icims" in html:              return "icims"
+    if "greenhouse.io" in url:                             return "greenhouse"
+    if "lever.co" in url:                                  return "lever"
+    if "taleo" in url or "taleo" in html:                  return "taleo"
+    if "jobvite" in url or "jobvite" in html:              return "jobvite"
+    if "smartrecruiters" in url:                           return "smartrecruiters"
+    if "successfactors" in url:                            return "successfactors"
+    if "breezy.hr" in url:                                 return "breezy"
+    if "applytojob" in url:                                return "generic_form"
+
+    # Check for application form elements
+    has_form = (
+        page.query_selector('input[type="file"]') or
+        page.query_selector('form[action*="apply"]') or
+        page.query_selector('form[action*="application"]')
+    )
+    if has_form:
+        return "generic_form"
+
+    return "listing_page"
+
 def ai_answer(question: str, options: list = None) -> str:
-    """Answer form questions from profile — no API needed for common fields."""
+    """Answer form questions from profile."""
     q = question.lower()
     if "first name"    in q: return PROFILE["first_name"]
     if "last name"     in q: return PROFILE["last_name"]
     if "full name"     in q or "your name" in q: return PROFILE["full_name"]
     if "email"         in q: return PROFILE["email"]
-    if "phone"         in q or "mobile" in q or "telephone" in q: return PROFILE["phone_format"]
+    if "phone"         in q or "mobile" in q: return PROFILE["phone_format"]
     if "city"          in q: return PROFILE["city"]
     if "zip"           in q or "postal" in q: return PROFILE["zip"]
     if "linkedin"      in q: return PROFILE["linkedin"]
     if "salary"        in q or "compensation" in q: return PROFILE["salary"]
     if "years of exp"  in q or "how many years" in q: return PROFILE["experience"]
     if "university"    in q or "school" in q or "college" in q: return PROFILE["university"]
-    if "grad"          in q or "graduation" in q: return PROFILE["grad_year"]
+    if "grad"          in q: return PROFILE["grad_year"]
 
-    if "state"         in q:
+    if "state" in q:
         if options:
-            best = next((o for o in options if "florida" in o.lower() or o.upper() in ["FL", "FLORIDA"]), None)
+            best = next((o for o in options if "florida" in o.lower() or o.upper() in ["FL"]), None)
             return best or PROFILE["state"]
         return PROFILE["state"]
 
-    if "country"       in q:
+    if "country" in q:
         if options:
             best = next((o for o in options if "united states" in o.lower() or o.upper() in ["US", "USA"]), None)
             return best or PROFILE["country"]
         return PROFILE["country"]
 
-    if "degree"        in q or "education" in q:
+    if "degree" in q or "education" in q:
         if options:
             best = next((o for o in options if "master" in o.lower()), None)
             return best or PROFILE["degree"]
         return PROFILE["degree"]
 
-    if any(k in q for k in ["authorized", "authorization", "eligible", "work in the us", "legally"]):
+    if any(k in q for k in ["authorized", "eligible", "work in the us", "legally"]):
         if options:
             best = next((o for o in options if any(k in o.lower() for k in
-                        ["yes", "authorized", "citizen", "permanent", "opt", "eligible"])
+                        ["yes", "authorized", "citizen", "opt", "eligible"])
                         and "not" not in o.lower() and "no " not in o.lower()), None)
             return best or options[0]
-        return "Yes, I am authorized to work in the United States"
+        return "Yes"
 
-    if any(k in q for k in ["sponsor", "sponsorship", "require visa", "require sponsor"]):
+    if any(k in q for k in ["sponsor", "sponsorship"]):
         if options:
             best = next((o for o in options if any(k in o.lower() for k in
-                        ["no", "not require", "don't", "do not"])), None)
+                        ["no", "not require", "don't"])), None)
             return best or options[-1]
         return "No"
 
-    # Use Claude Haiku for everything else
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         opts   = f"\nOptions: {options}" if options else ""
         return client.messages.create(
             model="claude-haiku-4-5-20251001", max_tokens=80,
-            system="Answer job application form questions for Ram Burri, Full Stack .NET Developer, 4 years exp, OPT visa, authorized to work in US. Brief direct answers only.",
+            system="Answer job application form questions for Ram Burri, Full Stack .NET Developer, 4 years exp, OPT visa, authorized to work in US. Brief direct answers.",
             messages=[{"role": "user", "content": f"Q: {question}{opts}\nA:"}]
         ).content[0].text.strip()
     except:
         return "Yes"
 
 def generate_cover_letter(job: dict) -> str:
-    """Generate cover letter using Claude."""
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -124,19 +203,18 @@ def generate_cover_letter(job: dict) -> str:
             model="claude-haiku-4-5-20251001", max_tokens=300,
             system="Write a 3-sentence professional cover letter for Ram Burri. Be specific and confident.",
             messages=[{"role": "user", "content":
-                f"Job: {job['title']} at {job['company']}\n"
-                f"Score: {job.get('fit_score', 80)}/100\nWrite cover letter:"}]
+                f"Job: {job['title']} at {job['company']}\nWrite cover letter:"}]
         ).content[0].text.strip()
     except:
         return (
             f"I am excited to apply for the {job['title']} position at {job['company']}. "
-            f"With 4+ years of enterprise .NET development experience building scalable applications "
-            f"with ASP.NET Core, React, and Azure, I am confident I can contribute immediately to your team. "
+            f"With 4+ years of enterprise .NET development experience with ASP.NET Core, "
+            f"React, and Azure, I am confident I will contribute immediately. "
             f"I look forward to discussing how my background aligns with your needs."
         )
 
 def fill_all_fields(page, job: dict) -> int:
-    """Fill all visible form fields on the page."""
+    """Fill all visible form fields."""
     filled = 0
     try:
         # Text inputs
@@ -185,7 +263,8 @@ def fill_all_fields(page, job: dict) -> int:
             try:
                 if not sel.is_visible():
                     continue
-                opts = [o.inner_text().strip() for o in sel.query_selector_all("option") if o.inner_text().strip()]
+                opts = [o.inner_text().strip() for o in sel.query_selector_all("option")
+                        if o.inner_text().strip()]
                 iid  = sel.get_attribute("id") or ""
                 lbl  = ""
                 if iid:
@@ -227,7 +306,6 @@ def fill_all_fields(page, job: dict) -> int:
     return filled
 
 def upload_resume(page, resume_pdf: str) -> bool:
-    """Upload resume to file input."""
     if not resume_pdf or not Path(resume_pdf).exists():
         return False
     try:
@@ -242,13 +320,7 @@ def upload_resume(page, resume_pdf: str) -> bool:
         print(f"  ! Upload error: {str(e)[:60]}")
     return False
 
-def take_screenshot(page) -> bytes:
-    try:
-        return page.screenshot(full_page=True)
-    except:
-        return page.screenshot()
-
-def send_review_email(job: dict, screenshot: bytes, apply_url: str):
+def send_review_email(job: dict, screenshot: bytes, apply_url: str, fields_filled: int):
     """Email Ram with screenshot and link to review and submit."""
     try:
         msg            = MIMEMultipart()
@@ -258,19 +330,20 @@ def send_review_email(job: dict, screenshot: bytes, apply_url: str):
 
         body = f"""Hi Ram,
 
-Your application has been auto-filled and is ready for your review!
+Your application form has been auto-filled and is ready for your review!
 
 📋 Position : {job['title']}
 🏢 Company  : {job['company']}
 📍 Location : {job.get('location', 'Not specified')}
 ⭐ Fit Score : {job.get('fit_score', 'N/A')}/100
+📝 Fields filled: {fields_filled}
 
 🔗 CLICK TO REVIEW AND SUBMIT:
 {apply_url}
 
 What was auto-filled:
-✓ Name, email, phone, address (Boca Raton, FL)
-✓ Work authorization: Yes (OPT)
+✓ Name, email, phone, address (Boca Raton, FL 33431)
+✓ Work authorization: Yes (OPT — authorized to work)
 ✓ Sponsorship required: No
 ✓ Years of experience: 4
 ✓ Education: MS CS, Florida Atlantic University (2025)
@@ -279,8 +352,8 @@ What was auto-filled:
 ✓ Resume PDF uploaded
 ✓ Cover letter generated
 
-📸 Screenshot of filled form is attached.
-Please review all fields and click Submit when ready.
+📸 Screenshot of the filled form is attached.
+Please open the link, review all fields, and click Submit.
 
 Best,
 Job Agent Bot"""
@@ -290,7 +363,7 @@ Job Agent Bot"""
         if screenshot:
             img = MIMEImage(screenshot, _subtype="png")
             img.add_header("Content-Disposition", "attachment",
-                           filename=f"filled_form_{job['company'][:20]}.png")
+                           filename=f"filled_{job['company'][:20]}.png")
             msg.attach(img)
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
@@ -299,44 +372,125 @@ Job Agent Bot"""
 
         print(f"  ✓ Review email sent to Ram")
         return True
-
     except Exception as e:
         print(f"  ! Email error: {str(e)[:80]}")
         return False
 
-def detect_platform(page) -> str:
-    """Detect which ATS platform the page is using."""
-    url  = page.url.lower()
-    html = page.content().lower()
+def navigate_to_application(page, start_url: str, job: dict) -> str:
+    """
+    Navigate from job listing to actual application form.
+    Follows redirects, skips job boards, finds Apply button.
+    Returns final application URL or empty string if failed.
+    """
+    # Step 1: Navigate to start URL
+    final_url = get_final_url(page, start_url)
 
-    if "workday" in url or "myworkdayjobs" in url:    return "workday"
-    if "icims" in url or "icims" in html:             return "icims"
-    if "greenhouse.io" in url:                        return "greenhouse"
-    if "lever.co" in url:                             return "lever"
-    if "taleo" in url or "taleo" in html:             return "taleo"
-    if "successfactors" in url:                       return "successfactors"
-    return "generic"
+    # Step 2: If landed on a job board, try to find external apply link
+    if is_job_board(final_url):
+        print(f"  ! Landed on job board: {final_url[:60]}")
+        print(f"  → Looking for external apply link...")
 
-def handle_multistep(page, job: dict, resume_pdf: str) -> dict:
-    """Handle multi-step application forms — stop at Submit for Ram to review."""
+        # Look for external apply link on job board page
+        ext_selectors = [
+            'a:has-text("Apply on company site")',
+            'a:has-text("Apply externally")',
+            'a:has-text("Apply Now")',
+            '[data-testid*="apply-link"]',
+            'a[href*="workday"]',
+            'a[href*="icims"]',
+            'a[href*="greenhouse"]',
+            'a[href*="lever"]',
+            'a[href*="career"]',
+            'a[href*="jobs"]',
+        ]
+
+        external_url = ""
+        for sel in ext_selectors:
+            try:
+                el = page.query_selector(sel)
+                if el:
+                    href = el.get_attribute("href") or ""
+                    if href and not is_job_board(href) and href.startswith("http"):
+                        external_url = href
+                        print(f"  → External link found: {href[:70]}")
+                        break
+            except: pass
+
+        if not external_url:
+            print(f"  ! No external apply link found — skipping")
+            return ""
+
+        # Navigate to external URL
+        final_url = get_final_url(page, external_url)
+
+    # Step 3: Check platform
+    platform = detect_platform(page)
+    print(f"  → Platform detected: {platform}")
+
+    # Step 4: If on listing page (not form), find Apply button
+    if platform == "listing_page":
+        print(f"  → On listing page — looking for Apply button...")
+        apply_link = find_apply_link(page)
+
+        if apply_link:
+            if not apply_link.startswith("http"):
+                # Relative URL
+                from urllib.parse import urljoin
+                apply_link = urljoin(final_url, apply_link)
+
+            print(f"  → Navigating to apply form: {apply_link[:70]}")
+            page.goto(apply_link, timeout=30000, wait_until="domcontentloaded")
+            page.wait_for_timeout(3000)
+            final_url = page.url
+
+            # Re-detect platform
+            platform = detect_platform(page)
+            print(f"  → Platform after apply click: {platform}")
+
+    if platform == "listing_page":
+        print(f"  ! Still on listing page — could not reach application form")
+        return ""
+
+    return final_url
+
+def handle_application_form(page, job: dict, resume_pdf: str) -> dict:
+    """Fill application form step by step — stop at Submit for Ram."""
     result = {"filled": 0, "screenshot": None, "url": page.url, "ready": False}
+    platform = detect_platform(page)
 
+    # Workday: click Apply button if present
+    if platform == "workday":
+        for asel in [
+            '[data-automation-id="applyButton"]',
+            'a:has-text("Apply")',
+            'button:has-text("Apply")',
+        ]:
+            try:
+                btn = page.query_selector(asel)
+                if btn and btn.is_visible():
+                    btn.click()
+                    page.wait_for_timeout(3000)
+                    print(f"  → Clicked Workday Apply button")
+                    break
+            except: pass
+
+    # Multi-step form handling
     for step in range(8):
         page.wait_for_timeout(2000)
 
         # Upload resume
         upload_resume(page, resume_pdf)
 
-        # Fill all fields
+        # Fill all visible fields
         n = fill_all_fields(page, job)
         result["filled"] += n
         print(f"  → Step {step+1}: filled {n} fields")
 
         # Take screenshot
-        result["screenshot"] = take_screenshot(page)
+        result["screenshot"] = page.screenshot(full_page=True)
         result["url"]        = page.url
 
-        # Check for Submit button — stop here for Ram
+        # Check for Submit — stop here for Ram
         submit_btn = None
         for sel in [
             'button:has-text("Submit")',
@@ -344,6 +498,7 @@ def handle_multistep(page, job: dict, resume_pdf: str) -> dict:
             'input[value="Submit"]',
             '[data-automation-id*="submit"]',
             '[data-icims-id="submit"]',
+            'button[type="submit"]:has-text("Submit")',
         ]:
             try:
                 btn = page.query_selector(sel)
@@ -353,7 +508,7 @@ def handle_multistep(page, job: dict, resume_pdf: str) -> dict:
             except: pass
 
         if submit_btn:
-            print(f"  → Submit button found — stopping for Ram to review")
+            print(f"  → Submit button reached — stopping for Ram to review")
             result["ready"] = True
             break
 
@@ -373,68 +528,15 @@ def handle_multistep(page, job: dict, resume_pdf: str) -> dict:
                     btn.click()
                     page.wait_for_timeout(3000)
                     next_clicked = True
+                    print(f"  → Clicked Next")
                     break
             except: pass
 
         if not next_clicked:
-            result["ready"] = True  # Assume on final step
+            result["ready"] = True
             break
 
     return result
-
-def apply_to_career_page(page, job: dict, resume_pdf: str) -> bool:
-    """Navigate to job URL, fill form, email Ram with screenshot."""
-    url = job.get("url", "")
-    if not url or not url.startswith("http"):
-        return False
-
-    try:
-        print(f"  → Opening: {url[:80]}")
-        page.goto(url, timeout=30000, wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
-
-        platform = detect_platform(page)
-        print(f"  → Platform: {platform}")
-
-        # For Workday — click Apply button first
-        if platform == "workday":
-            for asel in [
-                '[data-automation-id="applyButton"]',
-                'a:has-text("Apply")',
-                'button:has-text("Apply")',
-                'a:has-text("Apply Now")',
-            ]:
-                try:
-                    btn = page.query_selector(asel)
-                    if btn and btn.is_visible():
-                        btn.click()
-                        page.wait_for_timeout(3000)
-                        break
-                except: pass
-
-        # Handle multi-step form
-        result = handle_multistep(page, job, resume_pdf)
-
-        if result["filled"] > 0:
-            send_review_email(job, result["screenshot"], result["url"])
-            log_apply({
-                "title":        job["title"],
-                "company":      job["company"],
-                "platform":     platform,
-                "fields_filled": result["filled"],
-                "url":          result["url"],
-                "applied_at":   now_iso(),
-                "status":       "pending_review",
-            })
-            print(f"  ✓ {result['filled']} fields filled — email sent to Ram")
-            return True
-        else:
-            print(f"  ! Could not fill any fields")
-            return False
-
-    except Exception as e:
-        print(f"  ! Career apply error: {str(e)[:80]}")
-        return False
 
 def get_resume_pdf(jobs: dict) -> str:
     for jid, job in jobs.items():
@@ -471,16 +573,23 @@ def run_career_apply():
         print("[Career Apply] No new jobs to process")
         return 0
 
-    # Top 5 per run — don't overwhelm Ram
-    targets = sorted(targets, key=lambda x: x[1].get("fit_score", 0), reverse=True)[:5]
+    # Top 5 per run
+    targets = sorted(
+        targets,
+        key=lambda x: x[1].get("fit_score", 0),
+        reverse=True
+    )[:5]
+
     print(f"[Career Apply] Processing {len(targets)} jobs...")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-setuid-sandbox",
-                  "--disable-dev-shm-usage",
-                  "--disable-blink-features=AutomationControlled"]
+            args=[
+                "--no-sandbox", "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled",
+            ]
         )
         ctx = browser.new_context(
             viewport={"width": 1280, "height": 900},
@@ -498,21 +607,48 @@ def run_career_apply():
         page.set_default_timeout(25000)
 
         for jid, job in targets:
-            print(f"\n  [{job['title']} @ {job['company']}] Score: {job.get('fit_score')}/100")
+            print(f"\n  [{job['title']} @ {job['company']}] Score:{job.get('fit_score')}/100")
 
-            success = apply_to_career_page(page, job, resume_pdf)
+            start_url = job.get("url", "")
 
-            if success:
+            # Navigate to actual application form
+            apply_url = navigate_to_application(page, start_url, job)
+
+            if not apply_url:
+                print(f"  ! Could not reach application form — skipping")
+                jobs[jid]["career_applied"]    = True  # Mark to avoid retrying
+                jobs[jid]["career_apply_skip"] = "no_form_found"
+                continue
+
+            # Fill the application form
+            result = handle_application_form(page, job, resume_pdf)
+
+            if result["filled"] > 0:
+                send_review_email(job, result["screenshot"], result["url"], result["filled"])
+                log_apply({
+                    "title":         job["title"],
+                    "company":       job["company"],
+                    "platform":      detect_platform(page),
+                    "fields_filled": result["filled"],
+                    "url":           result["url"],
+                    "applied_at":    now_iso(),
+                    "status":        "pending_review",
+                })
                 jobs[jid]["career_applied"]    = True
                 jobs[jid]["career_applied_at"] = now_iso()
                 applied += 1
+                print(f"  ✓ {result['filled']} fields filled — review email sent to Ram!")
+            else:
+                print(f"  ! Form found but could not fill — skipping")
+                jobs[jid]["career_applied"]    = True
+                jobs[jid]["career_apply_skip"] = "could_not_fill"
 
             time.sleep(3)
 
         browser.close()
 
     DATA_FILE.write_text(json.dumps(jobs, indent=2))
-    print(f"\n[Career Apply] Done. {applied} forms filled, emails sent to Ram.")
+    print(f"\n[Career Apply] Done. {applied} forms filled, review emails sent to Ram.")
     return applied
 
 if __name__ == "__main__":
