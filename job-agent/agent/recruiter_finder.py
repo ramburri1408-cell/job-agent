@@ -1,19 +1,13 @@
 """
-Recruiter Finder - Hunter.io + Anthropic Version
+Recruiter Finder - Hunter.io + Anthropic Fixed Version
 
-Flow:
-1. Load high-fit jobs from data/jobs.json
-2. Use Hunter.io Domain Search to find company emails
-3. Filter for recruiter / HR / talent contacts
-4. Verify every email using Hunter Email Verifier
-5. Validate recruiter relevance using Anthropic
-6. Save only verified + AI-approved contacts
-7. Skip email sending if no verified contact exists
-
-Required env vars:
-- HUNTER_API_KEY
-- ANTHROPIC_API_KEY
-- ANTHROPIC_MODEL optional
+Fixes:
+- Hunter plan limit error by using limit=10
+- Retries Hunter pagination_error safely
+- Adds known domain corrections
+- Uses Hunter verifier
+- Uses Anthropic validation
+- Skips email if no verified recruiter is found
 """
 
 import os
@@ -41,7 +35,6 @@ RECRUITER_KEYWORDS = [
     "talent partner",
     "talent sourcer",
     "sourcer",
-    "hr",
     "human resources",
     "people operations",
     "staffing",
@@ -57,6 +50,16 @@ SKIP_EMAIL_LOCAL_PARTS = {
     "verification", "verifications", "compliance",
     "notifications", "alerts", "employment.compliance",
     "employee.verifications",
+    "careers", "jobs",
+}
+
+COMMON_DOMAIN_FIXES = {
+    "caciinternational.com": "caci.com",
+    "judgegroup.com": "judge.com",
+    "motionrecruitment.com": "motionrecruitment.com",
+    "eliassengroup.com": "eliassen.com",
+    "americanitsystems.com": "americanit.com",
+    "intellixsoftware.com": "intellixsoftware.com",
 }
 
 
@@ -75,29 +78,30 @@ def clean_domain(domain: str) -> str:
     domain = (domain or "").lower().strip()
     domain = domain.replace("https://", "").replace("http://", "")
     domain = domain.replace("www.", "")
-    domain = domain.split("/")[0]
-    return domain
+    domain = domain.split("/")[0].strip()
+    return COMMON_DOMAIN_FIXES.get(domain, domain)
 
 
 def company_to_domain(company: str) -> str:
-    original = company
-    company = company.lower().strip()
+    original = company.strip()
+    text = company.lower().strip()
 
-    company = re.sub(
+    text = re.sub(
         r"\b(inc|llc|ltd|corp|corporation|co|company|technologies|technology|"
         r"tech|solutions|services|group|global|systems|consulting|staffing|"
-        r"professionals|bank|na|the)\b",
+        r"professionals|bank|na|the|international)\b",
         "",
-        company,
+        text,
     )
 
-    company = re.sub(r"[^a-z0-9\s]", "", company)
-    company = re.sub(r"\s+", "", company)
+    text = re.sub(r"[^a-z0-9\s]", "", text)
+    text = re.sub(r"\s+", "", text)
 
-    if not company:
-        company = re.sub(r"[^a-z0-9]", "", original.lower())
+    if not text:
+        text = re.sub(r"[^a-z0-9]", "", original.lower())
 
-    return f"{company}.com"
+    domain = f"{text}.com"
+    return clean_domain(domain)
 
 
 def is_good_email(email: str) -> bool:
@@ -113,9 +117,6 @@ def is_good_email(email: str) -> bool:
     if any(skip in local for skip in SKIP_EMAIL_LOCAL_PARTS):
         return False
 
-    if local.startswith("careers") or local.startswith("jobs"):
-        return False
-
     return True
 
 
@@ -125,7 +126,6 @@ def is_recruiter_contact(contact: dict) -> bool:
     seniority = (contact.get("seniority") or "").lower()
 
     text = f"{position} {department} {seniority}"
-
     return any(keyword in text for keyword in RECRUITER_KEYWORDS)
 
 
@@ -139,11 +139,26 @@ def hunter_domain_search(domain: str) -> list:
     params = {
         "domain": domain,
         "api_key": HUNTER_API_KEY,
-        "limit": 50,
+        "limit": 10,
     }
 
     try:
         res = requests.get(url, params=params, timeout=25)
+
+        if res.status_code == 400:
+            try:
+                data = res.json()
+                errors = data.get("errors", [])
+                if any(e.get("id") == "pagination_error" for e in errors):
+                    print("  ! Hunter plan allows max 10 results — retrying with limit=10")
+                    params["limit"] = 10
+                    res = requests.get(url, params=params, timeout=25)
+                else:
+                    print(f"  ! Hunter domain search error 400: {res.text[:250]}")
+                    return []
+            except Exception:
+                print(f"  ! Hunter domain search error 400: {res.text[:250]}")
+                return []
 
         if res.status_code >= 400:
             print(f"  ! Hunter domain search error {res.status_code}: {res.text[:250]}")
@@ -176,7 +191,6 @@ def hunter_verify_email(email: str) -> dict:
             return {"verified": False, "status": "error", "score": 0}
 
         data = res.json().get("data", {})
-
         status = data.get("status", "")
         score = data.get("score") or 0
 
