@@ -29,6 +29,7 @@ jobs:
         working-directory: job-agent
         env:
           ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL:    claude-opus-4-5-20251101
           GMAIL_USER:         ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ADZUNA_APP_ID:      ${{ secrets.ADZUNA_APP_ID }}
@@ -40,6 +41,8 @@ jobs:
           APIFY_API_KEY:      ${{ secrets.APIFY_API_KEY }}
           APOLLO_API_KEY:     ${{ secrets.APOLLO_API_KEY }} 
           HUNTER_API_KEY:     ${{ secrets.HUNTER_API_KEY }}
+          EMAIL_MIN_DELAY_SECONDS:   45
+          MAX_EMAILS_PER_RUN: 10
         run: python agent/pipeline.py
 
       - name: Commit updated data
