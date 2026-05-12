@@ -1,33 +1,48 @@
 """
-Recruiter Finder - Hunter.io + Anthropic Fixed Version
+Recruiter Finder - Hunter.io + Anthropic Production Version
 
-Fixes:
-- Hunter plan limit error by using limit=10
-- Retries Hunter pagination_error safely
-- Adds known domain corrections
-- Uses Hunter verifier
-- Uses Anthropic validation
-- Skips email if no verified recruiter is found
+Flow:
+1. Pick high-fit jobs that have not been emailed.
+2. Resolve the best company domain.
+3. Search Hunter.io domain emails.
+4. Filter recruiter / HR / talent contacts.
+5. Verify every email with Hunter.
+6. Validate contact relevance using Anthropic.
+7. Save only verified contacts.
+8. Mark jobs with no verified contacts as skip_email=True.
+
+Required env:
+- HUNTER_API_KEY
+- ANTHROPIC_API_KEY
+- ANTHROPIC_MODEL=claude-opus-4-5-20251101
 """
 
-import os
 import json
+import os
 import re
 import time
 from pathlib import Path
+from typing import Dict, List, Optional
 
-import requests
 import anthropic
+import requests
 
 DATA_FILE = Path("data/jobs.json")
 
-HUNTER_API_KEY = os.environ.get("HUNTER_API_KEY", "")
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-20250514")
+HUNTER_API_KEY = os.environ.get("HUNTER_API_KEY", "").strip()
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_MODEL = os.environ.get(
+    "ANTHROPIC_MODEL",
+    "claude-opus-4-5-20251101",
+).strip()
 
-client_ai = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
+client_ai = (
+    anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    if ANTHROPIC_API_KEY
+    else None
+)
 
-RECRUITER_KEYWORDS = [
+RECRUITER_KEYWORDS = {
     "recruiter",
     "technical recruiter",
     "engineering recruiter",
@@ -40,36 +55,59 @@ RECRUITER_KEYWORDS = [
     "staffing",
     "hiring",
     "recruiting",
-]
+}
 
-SKIP_EMAIL_LOCAL_PARTS = {
-    "noreply", "no-reply", "donotreply", "do-not-reply",
-    "support", "info", "help", "privacy", "legal", "press",
-    "admin", "abuse", "example", "test", "unsubscribe",
-    "feedback", "news", "phishing", "spam", "security",
-    "verification", "verifications", "compliance",
-    "notifications", "alerts", "employment.compliance",
-    "employee.verifications",
-    "careers", "jobs",
+BAD_LOCAL_PARTS = {
+    "noreply",
+    "no-reply",
+    "donotreply",
+    "do-not-reply",
+    "support",
+    "info",
+    "help",
+    "privacy",
+    "legal",
+    "press",
+    "admin",
+    "abuse",
+    "example",
+    "test",
+    "unsubscribe",
+    "feedback",
+    "news",
+    "phishing",
+    "spam",
+    "security",
+    "verification",
+    "verifications",
+    "compliance",
+    "notifications",
+    "alerts",
+    "careers",
+    "jobs",
+    "hr",
 }
 
 COMMON_DOMAIN_FIXES = {
     "caciinternational.com": "caci.com",
-    "judgegroup.com": "judge.com",
-    "motionrecruitment.com": "motionrecruitment.com",
     "eliassengroup.com": "eliassen.com",
+    "judgegroup.com": "judge.com",
     "americanitsystems.com": "americanit.com",
-    "intellixsoftware.com": "intellixsoftware.com",
+    "simplesolutions.com": "simplesolutionsinc.com",
+    "simple.com": "simplesolutionsinc.com",
+    "stellar.com": "stellarprofessionals.com",
+    "ssv.com": "ssvtechnologies.com",
+    "emergere.com": "emergere-tech.com",
 }
 
 
-def load_jobs():
+def load_jobs() -> Dict:
     if not DATA_FILE.exists():
         return {}
     return json.loads(DATA_FILE.read_text())
 
 
-def save_jobs(jobs):
+def save_jobs(jobs: Dict) -> None:
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
     DATA_FILE.write_text(json.dumps(jobs, indent=2))
 
@@ -100,8 +138,49 @@ def company_to_domain(company: str) -> str:
     if not text:
         text = re.sub(r"[^a-z0-9]", "", original.lower())
 
-    domain = f"{text}.com"
-    return clean_domain(domain)
+    return clean_domain(f"{text}.com")
+
+
+def domain_responds(domain: str) -> bool:
+    for scheme in ("https", "http"):
+        try:
+            res = requests.get(
+                f"{scheme}://{domain}",
+                timeout=6,
+                allow_redirects=True,
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+            if res.status_code < 500:
+                return True
+        except requests.RequestException:
+            continue
+    return False
+
+
+def resolve_domain(company: str, job: Dict) -> str:
+    existing = clean_domain(job.get("company_domain", ""))
+    if existing:
+        fixed = clean_domain(existing)
+        if domain_responds(fixed):
+            return fixed
+
+    guessed = company_to_domain(company)
+    if domain_responds(guessed):
+        return guessed
+
+    compact_company = re.sub(r"[^a-z0-9]", "", company.lower())
+    candidates = [
+        clean_domain(f"{compact_company}.com"),
+        clean_domain(f"{compact_company}inc.com"),
+        clean_domain(f"{compact_company}llc.com"),
+        guessed,
+    ]
+
+    for domain in candidates:
+        if domain and domain_responds(domain):
+            return domain
+
+    return guessed
 
 
 def is_good_email(email: str) -> bool:
@@ -114,22 +193,32 @@ def is_good_email(email: str) -> bool:
     if len(email) > 90:
         return False
 
-    if any(skip in local for skip in SKIP_EMAIL_LOCAL_PARTS):
+    if any(bad == local or bad in local for bad in BAD_LOCAL_PARTS):
         return False
 
     return True
 
 
-def is_recruiter_contact(contact: dict) -> bool:
+def looks_like_person_email(email: str) -> bool:
+    local = email.split("@")[0].lower()
+    return "." in local or "_" in local or len(local) >= 5
+
+
+def is_recruiter_contact(contact: Dict, email: str) -> bool:
     position = (contact.get("position") or "").lower()
     department = (contact.get("department") or "").lower()
     seniority = (contact.get("seniority") or "").lower()
 
     text = f"{position} {department} {seniority}"
-    return any(keyword in text for keyword in RECRUITER_KEYWORDS)
+
+    if any(keyword in text for keyword in RECRUITER_KEYWORDS):
+        return True
+
+    # Relaxed fallback: Hunter sometimes misses titles/departments.
+    return looks_like_person_email(email)
 
 
-def hunter_domain_search(domain: str) -> list:
+def hunter_domain_search(domain: str) -> List[Dict]:
     if not HUNTER_API_KEY:
         print("  ! Missing HUNTER_API_KEY")
         return []
@@ -145,21 +234,6 @@ def hunter_domain_search(domain: str) -> list:
     try:
         res = requests.get(url, params=params, timeout=25)
 
-        if res.status_code == 400:
-            try:
-                data = res.json()
-                errors = data.get("errors", [])
-                if any(e.get("id") == "pagination_error" for e in errors):
-                    print("  ! Hunter plan allows max 10 results — retrying with limit=10")
-                    params["limit"] = 10
-                    res = requests.get(url, params=params, timeout=25)
-                else:
-                    print(f"  ! Hunter domain search error 400: {res.text[:250]}")
-                    return []
-            except Exception:
-                print(f"  ! Hunter domain search error 400: {res.text[:250]}")
-                return []
-
         if res.status_code >= 400:
             print(f"  ! Hunter domain search error {res.status_code}: {res.text[:250]}")
             return []
@@ -167,12 +241,12 @@ def hunter_domain_search(domain: str) -> list:
         data = res.json().get("data", {})
         return data.get("emails", []) or []
 
-    except Exception as e:
-        print(f"  ! Hunter domain search exception: {str(e)[:100]}")
+    except requests.RequestException as exc:
+        print(f"  ! Hunter domain search exception: {str(exc)[:100]}")
         return []
 
 
-def hunter_verify_email(email: str) -> dict:
+def hunter_verify_email(email: str) -> Dict:
     if not HUNTER_API_KEY:
         return {"verified": False, "status": "missing_key", "score": 0}
 
@@ -194,16 +268,14 @@ def hunter_verify_email(email: str) -> dict:
         status = data.get("status", "")
         score = data.get("score") or 0
 
-        verified = status == "valid" or score >= 85
-
         return {
-            "verified": verified,
+            "verified": status == "valid" or score >= 85,
             "status": status,
             "score": score,
         }
 
-    except Exception as e:
-        print(f"  ! Hunter verify exception: {str(e)[:100]}")
+    except requests.RequestException as exc:
+        print(f"  ! Hunter verify exception: {str(exc)[:100]}")
         return {"verified": False, "status": "error", "score": 0}
 
 
@@ -211,21 +283,19 @@ def ai_validate_recruiter(name: str, title: str, email: str, company: str) -> bo
     if not client_ai:
         return True
 
-    if not email:
-        return False
-
     prompt = f"""
-You are validating a recruiter contact for job outreach.
+Validate this contact for job outreach.
 
 Company: {company}
-Name: {name}
-Title: {title}
+Name: {name or "Unknown"}
+Title: {title or "Unknown"}
 Email: {email}
 
-Is this person likely involved in hiring, recruiting, talent acquisition,
-HR, staffing, sourcing, people operations, or engineering hiring?
+Question:
+Is this person likely related to recruiting, talent acquisition, staffing,
+HR, sourcing, people operations, or technical hiring?
 
-Answer ONLY YES or NO.
+Answer only YES or NO.
 """
 
     try:
@@ -239,28 +309,27 @@ Answer ONLY YES or NO.
         answer = response.content[0].text.strip().lower()
         return answer.startswith("yes")
 
-    except Exception as e:
-        print(f"  ! Anthropic validation skipped: {str(e)[:100]}")
+    except Exception as exc:
+        print(f"  ! Anthropic validation skipped: {str(exc)[:120]}")
+        # Do not block verified Hunter emails if AI temporarily fails.
         return True
 
 
-def dedupe_recruiters(recruiters: list) -> list:
+def dedupe_recruiters(recruiters: List[Dict]) -> List[Dict]:
     seen = set()
-    clean = []
+    result = []
 
     for recruiter in recruiters:
         email = recruiter.get("email", "").lower().strip()
-
         if not email or email in seen:
             continue
-
         seen.add(email)
-        clean.append(recruiter)
+        result.append(recruiter)
 
-    return clean
+    return result
 
 
-def find_recruiters_hunter(company: str, domain: str) -> list:
+def find_recruiters_hunter(company: str, domain: str) -> List[Dict]:
     print("  → Hunter domain search...")
 
     contacts = hunter_domain_search(domain)
@@ -272,13 +341,13 @@ def find_recruiters_hunter(company: str, domain: str) -> list:
         if not is_good_email(email):
             continue
 
-        if not is_recruiter_contact(contact):
+        if not is_recruiter_contact(contact, email):
             continue
 
         first = contact.get("first_name") or ""
         last = contact.get("last_name") or ""
         name = f"{first} {last}".strip()
-        title = contact.get("position") or "Recruiter"
+        title = contact.get("position") or "Recruiting Contact"
 
         print(f"  → Verifying {email}...")
 
@@ -295,14 +364,16 @@ def find_recruiters_hunter(company: str, domain: str) -> list:
             print(f"  ! Rejected by Anthropic: {email} — {title}")
             continue
 
-        recruiters.append({
-            "name": name,
-            "title": title,
-            "email": email,
-            "source": "hunter_ai",
-            "verification_status": verification["status"],
-            "verification_score": verification["score"],
-        })
+        recruiters.append(
+            {
+                "name": name,
+                "title": title,
+                "email": email,
+                "source": "hunter_ai",
+                "verification_status": verification["status"],
+                "verification_score": verification["score"],
+            }
+        )
 
         print(
             f"  ✓ Approved: {email} "
@@ -317,7 +388,23 @@ def find_recruiters_hunter(company: str, domain: str) -> list:
     return dedupe_recruiters(recruiters)
 
 
-def run_recruiter_finder():
+def mark_no_contact(job: Dict) -> None:
+    job["recruiters"] = []
+    job["recruiter_email"] = ""
+    job["recruiter_name"] = ""
+    job["recruiter_source"] = "none"
+    job["skip_email"] = True
+
+
+def save_contacts(job: Dict, recruiters: List[Dict]) -> None:
+    job["recruiters"] = recruiters
+    job["recruiter_email"] = recruiters[0]["email"]
+    job["recruiter_name"] = recruiters[0].get("name", "")
+    job["recruiter_source"] = "hunter_ai"
+    job["skip_email"] = False
+
+
+def run_recruiter_finder() -> int:
     jobs = load_jobs()
     updated = 0
 
@@ -335,12 +422,12 @@ def run_recruiter_finder():
     print(f"[Recruiter Finder] Processing {len(targets)} jobs...")
 
     for jid, job in targets[:15]:
-        company = job.get("company", "").strip()
+        company = (job.get("company") or "").strip()
 
         if not company:
             continue
 
-        domain = clean_domain(job.get("company_domain") or company_to_domain(company))
+        domain = resolve_domain(company, job)
 
         print(f"\n  [{company}] → {domain}")
 
@@ -348,23 +435,14 @@ def run_recruiter_finder():
 
         if not recruiters:
             print("  ! No verified recruiter found — skipping email")
-            jobs[jid]["recruiters"] = []
-            jobs[jid]["recruiter_email"] = ""
-            jobs[jid]["recruiter_name"] = ""
-            jobs[jid]["recruiter_source"] = "none"
-            jobs[jid]["skip_email"] = True
+            mark_no_contact(job)
         else:
-            jobs[jid]["recruiters"] = recruiters
-            jobs[jid]["recruiter_email"] = recruiters[0]["email"]
-            jobs[jid]["recruiter_name"] = recruiters[0].get("name", "")
-            jobs[jid]["recruiter_source"] = "hunter_ai"
-            jobs[jid]["skip_email"] = False
+            save_contacts(job, recruiters)
 
             print(f"  → {len(recruiters)} verified contact(s) saved:")
-
-            for r in recruiters:
-                label = f" ({r['name']})" if r.get("name") else ""
-                print(f"     • {r['email']}{label}")
+            for recruiter in recruiters:
+                label = f" ({recruiter['name']})" if recruiter.get("name") else ""
+                print(f"     • {recruiter['email']}{label}")
 
         updated += 1
         time.sleep(1)
