@@ -1,31 +1,23 @@
 """
-Recruiter Finder - Hunter.io + Anthropic Production Version
+Recruiter Finder V2
+Hunter.io + Anthropic + safer accept_all handling.
 
-Flow:
-1. Pick high-fit jobs that have not been emailed.
-2. Resolve the best company domain.
-3. Search Hunter.io domain emails.
-4. Filter recruiter / HR / talent contacts.
-5. Verify every email with Hunter.
-6. Validate contact relevance using Anthropic.
-7. Save only verified contacts.
-8. Mark jobs with no verified contacts as skip_email=True.
-
-Required env:
-- HUNTER_API_KEY
-- ANTHROPIC_API_KEY
-- ANTHROPIC_MODEL=claude-opus-4-5-20251101
+Fixes:
+- Accepts Hunter accept_all emails with score >= 75
+- Uses Anthropic to reject non-hiring contacts
+- Does NOT use fake careers@ fallback
+- Saves only verified/acceptable recruiter contacts
 """
 
-import json
 import os
+import json
 import re
 import time
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-import anthropic
 import requests
+import anthropic
 
 DATA_FILE = Path("data/jobs.json")
 
@@ -33,14 +25,12 @@ HUNTER_API_KEY = os.environ.get("HUNTER_API_KEY", "").strip()
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ANTHROPIC_MODEL = os.environ.get(
     "ANTHROPIC_MODEL",
-    "claude-opus-4-5-20251101",
+    "claude-opus-4-5-20251101"
 ).strip()
 
-client_ai = (
-    anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    if ANTHROPIC_API_KEY
-    else None
-)
+client_ai = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
+
+MAX_JOBS_PER_RUN = int(os.environ.get("MAX_RECRUITER_JOBS_PER_RUN", "15"))
 
 RECRUITER_KEYWORDS = {
     "recruiter",
@@ -85,7 +75,6 @@ BAD_LOCAL_PARTS = {
     "alerts",
     "careers",
     "jobs",
-    "hr",
 }
 
 COMMON_DOMAIN_FIXES = {
@@ -98,6 +87,8 @@ COMMON_DOMAIN_FIXES = {
     "stellar.com": "stellarprofessionals.com",
     "ssv.com": "ssvtechnologies.com",
     "emergere.com": "emergere-tech.com",
+    "russelltobinassociates.com": "russelltobin.com",
+    "techtandem.com": "techtandem.com",
 }
 
 
@@ -127,7 +118,7 @@ def company_to_domain(company: str) -> str:
     text = re.sub(
         r"\b(inc|llc|ltd|corp|corporation|co|company|technologies|technology|"
         r"tech|solutions|services|group|global|systems|consulting|staffing|"
-        r"professionals|bank|na|the|international)\b",
+        r"professionals|bank|na|the|international|associates)\b",
         "",
         text,
     )
@@ -142,6 +133,9 @@ def company_to_domain(company: str) -> str:
 
 
 def domain_responds(domain: str) -> bool:
+    if not domain:
+        return False
+
     for scheme in ("https", "http"):
         try:
             res = requests.get(
@@ -154,30 +148,32 @@ def domain_responds(domain: str) -> bool:
                 return True
         except requests.RequestException:
             continue
+
     return False
 
 
 def resolve_domain(company: str, job: Dict) -> str:
     existing = clean_domain(job.get("company_domain", ""))
-    if existing:
-        fixed = clean_domain(existing)
-        if domain_responds(fixed):
-            return fixed
+
+    if existing and domain_responds(existing):
+        return existing
 
     guessed = company_to_domain(company)
+
     if domain_responds(guessed):
         return guessed
 
-    compact_company = re.sub(r"[^a-z0-9]", "", company.lower())
+    compact = re.sub(r"[^a-z0-9]", "", company.lower())
+
     candidates = [
-        clean_domain(f"{compact_company}.com"),
-        clean_domain(f"{compact_company}inc.com"),
-        clean_domain(f"{compact_company}llc.com"),
+        clean_domain(f"{compact}.com"),
+        clean_domain(f"{compact}inc.com"),
+        clean_domain(f"{compact}llc.com"),
         guessed,
     ]
 
     for domain in candidates:
-        if domain and domain_responds(domain):
+        if domain_responds(domain):
             return domain
 
     return guessed
@@ -187,7 +183,7 @@ def is_good_email(email: str) -> bool:
     if not email or "@" not in email:
         return False
 
-    email = email.strip().lower()
+    email = email.lower().strip()
     local = email.split("@")[0]
 
     if len(email) > 90:
@@ -214,8 +210,23 @@ def is_recruiter_contact(contact: Dict, email: str) -> bool:
     if any(keyword in text for keyword in RECRUITER_KEYWORDS):
         return True
 
-    # Relaxed fallback: Hunter sometimes misses titles/departments.
     return looks_like_person_email(email)
+
+
+def is_hunter_acceptable(status: str, score: int) -> bool:
+    status = (status or "").lower()
+    score = score or 0
+
+    if status == "valid":
+        return True
+
+    if status == "accept_all" and score >= 75:
+        return True
+
+    if status == "risky" and score >= 80:
+        return True
+
+    return False
 
 
 def hunter_domain_search(domain: str) -> List[Dict]:
@@ -242,13 +253,13 @@ def hunter_domain_search(domain: str) -> List[Dict]:
         return data.get("emails", []) or []
 
     except requests.RequestException as exc:
-        print(f"  ! Hunter domain search exception: {str(exc)[:100]}")
+        print(f"  ! Hunter domain search exception: {str(exc)[:120]}")
         return []
 
 
 def hunter_verify_email(email: str) -> Dict:
     if not HUNTER_API_KEY:
-        return {"verified": False, "status": "missing_key", "score": 0}
+        return {"status": "missing_key", "score": 0, "acceptable": False}
 
     url = "https://api.hunter.io/v2/email-verifier"
 
@@ -262,21 +273,21 @@ def hunter_verify_email(email: str) -> Dict:
 
         if res.status_code >= 400:
             print(f"  ! Hunter verify error {res.status_code}: {res.text[:200]}")
-            return {"verified": False, "status": "error", "score": 0}
+            return {"status": "error", "score": 0, "acceptable": False}
 
         data = res.json().get("data", {})
         status = data.get("status", "")
         score = data.get("score") or 0
 
         return {
-            "verified": status == "valid" or score >= 85,
             "status": status,
             "score": score,
+            "acceptable": is_hunter_acceptable(status, score),
         }
 
     except requests.RequestException as exc:
-        print(f"  ! Hunter verify exception: {str(exc)[:100]}")
-        return {"verified": False, "status": "error", "score": 0}
+        print(f"  ! Hunter verify exception: {str(exc)[:120]}")
+        return {"status": "error", "score": 0, "acceptable": False}
 
 
 def ai_validate_recruiter(name: str, title: str, email: str, company: str) -> bool:
@@ -293,7 +304,7 @@ Email: {email}
 
 Question:
 Is this person likely related to recruiting, talent acquisition, staffing,
-HR, sourcing, people operations, or technical hiring?
+HR, sourcing, people operations, technical hiring, or hiring decisions?
 
 Answer only YES or NO.
 """
@@ -311,7 +322,6 @@ Answer only YES or NO.
 
     except Exception as exc:
         print(f"  ! Anthropic validation skipped: {str(exc)[:120]}")
-        # Do not block verified Hunter emails if AI temporarily fails.
         return True
 
 
@@ -321,8 +331,10 @@ def dedupe_recruiters(recruiters: List[Dict]) -> List[Dict]:
 
     for recruiter in recruiters:
         email = recruiter.get("email", "").lower().strip()
+
         if not email or email in seen:
             continue
+
         seen.add(email)
         result.append(recruiter)
 
@@ -353,7 +365,7 @@ def find_recruiters_hunter(company: str, domain: str) -> List[Dict]:
 
         verification = hunter_verify_email(email)
 
-        if not verification["verified"]:
+        if not verification["acceptable"]:
             print(
                 f"  ! Rejected by Hunter: {email} "
                 f"status={verification['status']} score={verification['score']}"
@@ -377,7 +389,7 @@ def find_recruiters_hunter(company: str, domain: str) -> List[Dict]:
 
         print(
             f"  ✓ Approved: {email} "
-            f"({name or 'No Name'}) score={verification['score']}"
+            f"status={verification['status']} score={verification['score']}"
         )
 
         if len(recruiters) >= 5:
@@ -413,6 +425,7 @@ def run_recruiter_finder() -> int:
         for jid, job in jobs.items()
         if (job.get("fit_score") or 0) >= 80
         and not job.get("email_sent")
+        and job.get("recruiter_source") != "hunter_ai"
     ]
 
     if not targets:
@@ -421,7 +434,7 @@ def run_recruiter_finder() -> int:
 
     print(f"[Recruiter Finder] Processing {len(targets)} jobs...")
 
-    for jid, job in targets[:15]:
+    for jid, job in targets[:MAX_JOBS_PER_RUN]:
         company = (job.get("company") or "").strip()
 
         if not company:
