@@ -1,7 +1,8 @@
 """
-Cold Email Sender V4
-- Sends job alert emails to Ram with JD + Job Link + ATS Resume attached
-- Also sends cold outreach to verified Hunter.io recruiters
+Cold Email Sender V5
+- Sends job alert to Ram with JD + link + ATS resume
+- Sends cold outreach to Hunter verified recruiters
+- Fixed: properly finds and attaches ATS resume PDF
 """
 
 import json, os, random, smtplib, ssl, time
@@ -47,28 +48,66 @@ def is_sendable_email(email: str) -> bool:
         return False
     return True
 
-def get_resume_path(job: Dict) -> str:
+def find_resume_pdf(job: Dict) -> str:
+    """
+    Find ATS resume PDF for this job.
+    Checks multiple locations in order of preference.
+    """
+    # 1. Check stored path in job
     for key in ["resume_pdf", "ats_pdf", "resume_path"]:
         path = job.get(key, "")
         if path and Path(path).exists():
+            print(f"  → Resume found: {path}")
             return str(path)
-    company_safe = "".join(c if c.isalnum() else "_" for c in job.get("company", ""))[:20]
-    for pattern in [f"Ram_Burri_{company_safe}*.pdf", "Ram_Burri_*.pdf"]:
-        matches = list(Path("/tmp").glob(pattern))
+
+    # 2. Search /tmp for company-specific PDF
+    company = job.get("company", "")
+    company_safe = "".join(c if c.isalnum() else "_" for c in company)[:20]
+
+    patterns = [
+        f"Ram_Burri_{company_safe}*.pdf",
+        f"Ram_Burri_*.pdf",
+    ]
+
+    for pattern in patterns:
+        matches = sorted(
+            Path("/tmp").glob(pattern),
+            key=lambda p: p.stat().st_mtime,  # newest first
+            reverse=True
+        )
         if matches:
+            print(f"  → Resume found in /tmp: {matches[0].name}")
             return str(matches[0])
+
+    # 3. Try to regenerate from ai_engine
+    try:
+        print(f"  → Regenerating ATS resume for {job.get('title')} @ {company}...")
+        from ats_resume import generate_ats_resume
+        result = generate_ats_resume(job, "/tmp")
+        pdf_path = result.get("pdf_path", "")
+        if pdf_path and Path(pdf_path).exists():
+            # Save path back to job
+            job["resume_pdf"] = pdf_path
+            print(f"  → Resume regenerated: {pdf_path}")
+            return pdf_path
+    except Exception as e:
+        print(f"  ! Could not regenerate resume: {str(e)[:60]}")
+
+    print(f"  ! No resume found for: {job.get('title')} @ {company}")
     return ""
 
 def attach_resume(msg: EmailMessage, resume_path: str) -> bool:
     if not resume_path or not Path(resume_path).exists():
         return False
     try:
+        data = Path(resume_path).read_bytes()
         msg.add_attachment(
-            Path(resume_path).read_bytes(),
+            data,
             maintype="application",
             subtype="pdf",
             filename=Path(resume_path).name,
         )
+        print(f"  ✓ Resume attached: {Path(resume_path).name}")
         return True
     except Exception as e:
         print(f"  ! Attach error: {str(e)[:80]}")
@@ -94,16 +133,16 @@ def send_via_gmail(to: str, subject: str, body: str, resume_path: str = "") -> N
 
 def send_job_alert_to_ram(job: Dict, resume_path: str) -> bool:
     """
-    Email Ram the full job details so he can review and apply manually.
-    Includes: Job Title, Company, Location, Score, Description, Link, ATS Resume.
+    Email Ram the full job details with ATS resume attached.
+    Includes: Title, Company, Score, Fit Angle, Description, Apply Link.
     """
     title    = job.get("title", "Unknown")
     company  = job.get("company", "Unknown")
     location = job.get("location", "Not specified")
     score    = job.get("fit_score", "N/A")
-    angle    = job.get("fit_angle", "")
+    angle    = job.get("fit_angle", "Strong match based on your profile")
     url      = job.get("url", "")
-    desc     = job.get("description", "No description available")[:1500]
+    desc     = (job.get("description") or "No description available")[:1500]
 
     subject = f"🎯 Job Match {score}/100: {title} @ {company}"
 
@@ -127,7 +166,6 @@ Here's a high-scoring job match for you to review and apply!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📄 JOB DESCRIPTION:
 {desc}
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Your ATS-tailored resume for this role is attached.
@@ -137,7 +175,10 @@ Job Agent Bot"""
 
     try:
         send_via_gmail(RAM_EMAIL, subject, body, resume_path)
-        print(f"  ✓ Job alert sent to Ram: {title} @ {company}")
+        if resume_path:
+            print(f"  ✓ Job alert sent to Ram with resume: {title} @ {company}")
+        else:
+            print(f"  ✓ Job alert sent to Ram (no resume): {title} @ {company}")
         return True
     except Exception as e:
         print(f"  ! Alert email failed: {str(e)[:80]}")
@@ -160,11 +201,11 @@ def build_recruiter_subject(job: Dict) -> str:
     return random.choice(SUBJECT_VARIANTS).format(title=title, company=company)
 
 def build_recruiter_body(job: Dict, recruiter: Dict) -> str:
-    name  = recruiter.get("name") or ""
-    first = name.split()[0] if name else "there"
-    title = job.get("title") or "the role"
+    name    = recruiter.get("name") or ""
+    first   = name.split()[0] if name else "there"
+    title   = job.get("title") or "the role"
     company = job.get("company") or "your team"
-    desc  = (job.get("description") or "").lower()
+    desc    = (job.get("description") or "").lower()
 
     extra = ""
     if "azure"   in desc: extra = "I've worked extensively with Azure-based deployments, CI/CD pipelines, and cloud-ready .NET services.\n\n"
@@ -179,7 +220,7 @@ I came across the {title} role at {company} and wanted to reach out directly.
 
 I've attached an ATS-tailored resume generated specifically for this role.
 
-Would you be open to a quick 10–15 minute conversation this week?
+Would you be open to a quick 10-15 minute conversation this week?
 
 Best regards,
 Ram Burri
@@ -205,11 +246,14 @@ def run_sender() -> int:
         if (job.get("fit_score") or 0) < 80:
             continue
 
-        resume_path = get_resume_path(job)
         emails_sent = job.get("emails_sent_to") or []
+
+        # Find resume PDF
+        resume_path = find_resume_pdf(job)
 
         # ── 1. Send job alert to Ram ──────────────────────────────────────
         if RAM_EMAIL not in emails_sent:
+            print(f"\n[Sender] Job alert → Ram: {job.get('title')} @ {job.get('company')}")
             success = send_job_alert_to_ram(job, resume_path)
             if success:
                 emails_sent.append(RAM_EMAIL)
@@ -230,7 +274,7 @@ def run_sender() -> int:
                 continue
 
             if not resume_path:
-                print(f"  ! No resume for recruiter email — skipping")
+                print(f"  ! Skipping recruiter email — no resume found")
                 continue
 
             subject = build_recruiter_subject(job)
@@ -253,7 +297,7 @@ def run_sender() -> int:
             except Exception as e:
                 print(f"  ✗ Failed: {str(e)[:120]}")
 
-        # Mark job as fully processed
+        # Mark job fully processed
         job["email_sent"]     = True
         job["emails_sent_to"] = emails_sent
         save_jobs(jobs)
