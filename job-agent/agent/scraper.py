@@ -1,14 +1,12 @@
 """
 Job Scraper — Adzuna + Remotive
-Scrapes new job postings every run, deduplicates by title+company hash.
+Resolves actual company job URLs by following Adzuna redirects.
 """
 
-import json, os, time, hashlib
+import json, os, time, hashlib, requests
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import quote
-
-import requests
 from bs4 import BeautifulSoup
 
 DATA_FILE   = Path("data/jobs.json")
@@ -41,7 +39,34 @@ def make_id(title: str, company: str) -> str:
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
-def new_job(title, company, location, salary, description, url, portal, recruiter_email="") -> dict:
+def resolve_job_url(adzuna_url: str) -> str:
+    """
+    Follow Adzuna redirect to get the actual company job page URL.
+    Returns the final URL after all redirects.
+    """
+    if not adzuna_url or not adzuna_url.startswith("http"):
+        return adzuna_url
+    try:
+        resp = requests.get(
+            adzuna_url,
+            headers=HEADERS,
+            timeout=10,
+            allow_redirects=True,
+        )
+        final_url = resp.url
+
+        # If still on Adzuna/job board, return original
+        job_boards = ["adzuna.com", "indeed.com", "ziprecruiter.com",
+                      "monster.com", "dice.com"]
+        if any(board in final_url for board in job_boards):
+            return adzuna_url
+
+        return final_url
+    except Exception:
+        return adzuna_url  # Fall back to original if redirect fails
+
+def new_job(title, company, location, salary, description, url, portal,
+            recruiter_email="") -> dict:
     return {
         "id":             make_id(title, company),
         "title":          title,
@@ -79,15 +104,22 @@ def scrape_adzuna(query: str, max_days: int = 3) -> list:
         data = resp.json()
 
         for item in data.get("results", []):
-            title   = str(item.get("title", ""))
-            company = str(item.get("company", {}).get("display_name", "Unknown"))
-            loc     = str(item.get("location", {}).get("display_name", "US"))
-            sm      = item.get("salary_min")
-            sx      = item.get("salary_max")
-            salary  = f"${int(sm):,} - ${int(sx):,}" if sm and sx else "Not listed"
-            desc    = str(item.get("description", ""))
-            job_url = str(item.get("redirect_url", ""))
-            jobs.append(new_job(title, company, loc, salary, desc, job_url, "Adzuna"))
+            title      = str(item.get("title", ""))
+            company    = str(item.get("company", {}).get("display_name", "Unknown"))
+            loc        = str(item.get("location", {}).get("display_name", "US"))
+            sm         = item.get("salary_min")
+            sx         = item.get("salary_max")
+            salary     = f"${int(sm):,} - ${int(sx):,}" if sm and sx else "Not listed"
+            desc       = str(item.get("description", ""))
+            adzuna_url = str(item.get("redirect_url", ""))
+
+            # Follow redirect to get actual company job URL
+            print(f"  → Resolving URL for: {title[:40]}...")
+            actual_url = resolve_job_url(adzuna_url)
+
+            jobs.append(new_job(
+                title, company, loc, salary, desc, actual_url, "Adzuna"
+            ))
 
         time.sleep(1)
         print(f"  [Adzuna] Found {len(jobs)} jobs for '{query}'")
@@ -133,10 +165,8 @@ def scrape_remotive(query: str) -> list:
 
 
 def archive_old_skipped(jobs: dict, days: int = 3) -> None:
-    """Move old skipped jobs to archived so new ones can replace them."""
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    cutoff       = datetime.now(timezone.utc) - timedelta(days=days)
     skip_statuses = {"skipped_low_score", "skipped_irrelevant", "no_email"}
-
     for job in jobs.values():
         if job.get("status") in skip_statuses:
             try:
@@ -164,6 +194,7 @@ def run_scraper() -> int:
                 jobs[job["id"]] = job
                 added += 1
                 print(f"  + Adzuna: {job['title']} @ {job['company']}")
+                print(f"    URL: {job['url'][:80]}")
 
         for job in scrape_remotive(query):
             if job["id"] not in jobs:
