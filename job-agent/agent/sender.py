@@ -1,285 +1,266 @@
 """
 Cold Email Sender V4
-
-Fixes:
-- Sends ONLY fresh ai_ready jobs
-- Requires job-specific ATS PDF: job["resume_pdf"]
-- Requires Hunter + Anthropic verified contacts
-- Attaches the exact ATS resume created for that job
+- Sends job alert emails to Ram with JD + Job Link + ATS Resume attached
+- Also sends cold outreach to verified Hunter.io recruiters
 """
 
-import json
-import os
-import random
-import smtplib
-import ssl
-import time
+import json, os, random, smtplib, ssl, time
 from email.message import EmailMessage
 from pathlib import Path
 from typing import Dict, List
 
-DATA_FILE = Path("data/jobs.json")
-
-GMAIL_USER = os.environ.get("GMAIL_USER", "").strip()
+DATA_FILE          = Path("data/jobs.json")
+GMAIL_USER         = os.environ.get("GMAIL_USER", "").strip()
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+RAM_EMAIL          = "Ram.burri1408@gmail.com"
 
-MAX_EMAILS_PER_RUN = int(os.environ.get("MAX_EMAILS_PER_RUN", "5"))
-EMAIL_MIN_DELAY_SECONDS = int(os.environ.get("EMAIL_MIN_DELAY_SECONDS", "90"))
+MAX_EMAILS_PER_RUN      = int(os.environ.get("MAX_EMAILS_PER_RUN", "15"))
+EMAIL_MIN_DELAY_SECONDS = int(os.environ.get("EMAIL_MIN_DELAY_SECONDS", "8"))
 
 BAD_EMAIL_PREFIXES = (
-    "careers@",
-    "jobs@",
-    "info@",
-    "support@",
-    "noreply@",
-    "no-reply@",
-    "admin@",
-    "hr@",
+    "careers@", "jobs@", "info@", "support@", "noreply@",
+    "no-reply@", "admin@", "hr@", "phishing@", "verif@",
 )
 
 SUBJECT_VARIANTS = [
     "Application for {title} - Ram Burri",
     "{title} | .NET Full Stack Developer",
     "Regarding {title} at {company}",
-    "{title} opportunity",
+    "{title} — Ram Burri, .NET Developer",
 ]
 
 
 def load_jobs() -> Dict:
     return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
 
-
 def save_jobs(jobs: Dict) -> None:
     DATA_FILE.write_text(json.dumps(jobs, indent=2))
 
-
 def is_sendable_email(email: str) -> bool:
     email = (email or "").lower().strip()
-
-    if not email or "@" not in email:
+    if not email or "@" not in email or len(email) > 90:
         return False
-
-    if any(email.startswith(prefix) for prefix in BAD_EMAIL_PREFIXES):
+    if any(email.startswith(p) for p in BAD_EMAIL_PREFIXES):
         return False
-
+    local = email.split("@")[0]
+    if local.upper() == local and len(local) > 5:
+        return False
     return True
 
-
-def get_recipients(job: Dict) -> List[Dict]:
-    recruiters = job.get("recruiters") or []
-    result = []
-
-    for recruiter in recruiters:
-        email = (recruiter.get("email") or "").lower().strip()
-
-        if not is_sendable_email(email):
-            continue
-
-        if recruiter.get("source") != "hunter_ai":
-            continue
-
-        result.append(recruiter)
-
-    return result
-
-
 def get_resume_path(job: Dict) -> str:
-    path = job.get("resume_pdf") or ""
-
-    if not path:
-        print(f"  ! No job-specific ATS resume path for {job.get('title')} @ {job.get('company')}")
-        return ""
-
-    pdf = Path(path)
-
-    if not pdf.exists():
-        print(f"  ! ATS resume file missing on disk: {path}")
-        return ""
-
-    return str(pdf)
-
+    for key in ["resume_pdf", "ats_pdf", "resume_path"]:
+        path = job.get(key, "")
+        if path and Path(path).exists():
+            return str(path)
+    company_safe = "".join(c if c.isalnum() else "_" for c in job.get("company", ""))[:20]
+    for pattern in [f"Ram_Burri_{company_safe}*.pdf", "Ram_Burri_*.pdf"]:
+        matches = list(Path("/tmp").glob(pattern))
+        if matches:
+            return str(matches[0])
+    return ""
 
 def attach_resume(msg: EmailMessage, resume_path: str) -> bool:
-    path = Path(resume_path)
-
-    if not path.exists():
-        print(f"  ! Resume not found: {resume_path}")
+    if not resume_path or not Path(resume_path).exists():
         return False
-
     try:
         msg.add_attachment(
-            path.read_bytes(),
+            Path(resume_path).read_bytes(),
             maintype="application",
             subtype="pdf",
-            filename=path.name,
+            filename=Path(resume_path).name,
         )
-
-        print(f"  ✓ Attached ATS resume: {path.name}")
         return True
+    except Exception as e:
+        print(f"  ! Attach error: {str(e)[:80]}")
+        return False
 
-    except Exception as exc:
-        print(f"  ! Failed to attach resume: {str(exc)[:120]}")
+def send_via_gmail(to: str, subject: str, body: str, resume_path: str = "") -> None:
+    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
+        raise RuntimeError("Missing Gmail credentials")
+    msg             = EmailMessage()
+    msg["From"]     = GMAIL_USER
+    msg["To"]       = to
+    msg["Subject"]  = subject
+    msg["Reply-To"] = GMAIL_USER
+    msg.set_content(body)
+    attach_resume(msg, resume_path)
+    ctx = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ctx) as server:
+        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+        server.send_message(msg)
+
+
+# ── JOB ALERT TO RAM ────────────────────────────────────────────────────────
+
+def send_job_alert_to_ram(job: Dict, resume_path: str) -> bool:
+    """
+    Email Ram the full job details so he can review and apply manually.
+    Includes: Job Title, Company, Location, Score, Description, Link, ATS Resume.
+    """
+    title    = job.get("title", "Unknown")
+    company  = job.get("company", "Unknown")
+    location = job.get("location", "Not specified")
+    score    = job.get("fit_score", "N/A")
+    angle    = job.get("fit_angle", "")
+    url      = job.get("url", "")
+    desc     = job.get("description", "No description available")[:1500]
+
+    subject = f"🎯 Job Match {score}/100: {title} @ {company}"
+
+    body = f"""Hi Ram,
+
+Here's a high-scoring job match for you to review and apply!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 POSITION  : {title}
+🏢 COMPANY   : {company}
+📍 LOCATION  : {location}
+⭐ FIT SCORE : {score}/100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔗 APPLY HERE:
+{url}
+
+📝 WHY YOU'RE A GOOD FIT:
+{angle}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 JOB DESCRIPTION:
+{desc}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your ATS-tailored resume for this role is attached.
+
+Good luck!
+Job Agent Bot"""
+
+    try:
+        send_via_gmail(RAM_EMAIL, subject, body, resume_path)
+        print(f"  ✓ Job alert sent to Ram: {title} @ {company}")
+        return True
+    except Exception as e:
+        print(f"  ! Alert email failed: {str(e)[:80]}")
         return False
 
 
-def build_subject(job: Dict, recruiter: Dict) -> str:
-    title = job.get("title") or ".NET Developer"
+# ── COLD EMAIL TO RECRUITER ──────────────────────────────────────────────────
+
+def get_recruiter_recipients(job: Dict) -> List[Dict]:
+    recruiters = job.get("recruiters") or []
+    return [
+        r for r in recruiters
+        if r.get("source") == "hunter_ai"
+        and is_sendable_email(r.get("email", ""))
+    ]
+
+def build_recruiter_subject(job: Dict) -> str:
+    title   = (job.get("title") or ".NET Developer")[:65]
     company = job.get("company") or ""
+    return random.choice(SUBJECT_VARIANTS).format(title=title, company=company)
 
-    if len(title) > 65:
-        title = title[:62] + "..."
-
-    return random.choice(SUBJECT_VARIANTS).format(
-        title=title,
-        company=company,
-    )
-
-
-def build_body(job: Dict, recruiter: Dict) -> str:
-    name = recruiter.get("name") or ""
+def build_recruiter_body(job: Dict, recruiter: Dict) -> str:
+    name  = recruiter.get("name") or ""
     first = name.split()[0] if name else "there"
-
     title = job.get("title") or "the role"
     company = job.get("company") or "your team"
-    description = (job.get("description") or "").lower()
+    desc  = (job.get("description") or "").lower()
 
     extra = ""
-
-    if "azure" in description:
-        extra = (
-            "I’ve also worked with Azure-based deployments, CI/CD pipelines, "
-            "and cloud-ready .NET services.\n\n"
-        )
-    elif "react" in description:
-        extra = (
-            "I’ve built React-based frontend workflows and reusable component "
-            "libraries connected to secure backend APIs.\n\n"
-        )
-    elif "angular" in description:
-        extra = (
-            "I’ve worked on Angular-based enterprise applications with .NET APIs, "
-            "SQL Server, and secure authentication flows.\n\n"
-        )
+    if "azure"   in desc: extra = "I've worked extensively with Azure-based deployments, CI/CD pipelines, and cloud-ready .NET services.\n\n"
+    elif "react"  in desc: extra = "I've built React-based frontend workflows and reusable component libraries connected to secure .NET APIs.\n\n"
+    elif "angular" in desc: extra = "I've worked on Angular enterprise applications with .NET APIs, SQL Server, and secure authentication flows.\n\n"
 
     return f"""Hi {first},
 
 I came across the {title} role at {company} and wanted to reach out directly.
 
-{extra}I’m a .NET full-stack developer with experience in C#, ASP.NET Core, REST APIs, SQL Server, Azure, React, Angular, and secure enterprise application development.
+{extra}I'm a .NET full-stack developer with experience in C#, ASP.NET Core, REST APIs, SQL Server, Azure, React, Angular, and secure enterprise application development.
 
-I’ve attached an ATS-tailored resume generated specifically for this role.
+I've attached an ATS-tailored resume generated specifically for this role.
 
 Would you be open to a quick 10–15 minute conversation this week?
 
 Best regards,
 Ram Burri
-ram.burri1408@gmail.com
-"""
+Ram.burri1408@gmail.com | (954) 445-4339
+linkedin.com/in/ramburri"""
 
 
-def send_email(to_email: str, subject: str, body: str, resume_path: str) -> None:
-    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
-        raise RuntimeError("Missing GMAIL_USER or GMAIL_APP_PASSWORD")
-
-    msg = EmailMessage()
-    msg["From"] = GMAIL_USER
-    msg["To"] = to_email
-    msg["Subject"] = subject
-    msg["Reply-To"] = GMAIL_USER
-    msg.set_content(body)
-
-    attached = attach_resume(msg, resume_path)
-
-    if not attached:
-        raise RuntimeError("ATS resume attachment failed")
-
-    context = ssl.create_default_context()
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-        server.send_message(msg)
-
-
-def mark_sent(job: Dict, email: str) -> None:
-    sent = job.get("emails_sent_to") or []
-
-    if email not in sent:
-        sent.append(email)
-
-    job["emails_sent_to"] = sent
-    job["email_sent"] = True
-    job["email_sent_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-
+# ── MAIN ────────────────────────────────────────────────────────────────────
 
 def run_sender() -> int:
-    jobs = load_jobs()
+    jobs       = load_jobs()
     sent_count = 0
 
-    targets = [
-        (jid, job)
-        for jid, job in jobs.items()
-        if job.get("status") == "ai_ready"
-        and job.get("resume_pdf")
-        and not job.get("email_sent")
-        and not job.get("skip_email")
-        and job.get("recruiter_source") == "hunter_ai"
-    ]
-
-    print(f"[Sender] Fresh sendable jobs: {len(targets)}")
-
-    for jid, job in targets:
+    for jid, job in jobs.items():
         if sent_count >= MAX_EMAILS_PER_RUN:
-            print(f"[Sender] Reached max emails per run: {MAX_EMAILS_PER_RUN}")
+            print(f"[Sender] Reached max {MAX_EMAILS_PER_RUN} emails per run")
             break
 
-        recipients = get_recipients(job)
-
-        if not recipients:
+        if job.get("email_sent"):
+            continue
+        if job.get("skip_email"):
+            continue
+        if (job.get("fit_score") or 0) < 80:
             continue
 
         resume_path = get_resume_path(job)
+        emails_sent = job.get("emails_sent_to") or []
 
-        if not resume_path:
-            continue
+        # ── 1. Send job alert to Ram ──────────────────────────────────────
+        if RAM_EMAIL not in emails_sent:
+            success = send_job_alert_to_ram(job, resume_path)
+            if success:
+                emails_sent.append(RAM_EMAIL)
+                job["emails_sent_to"] = emails_sent
+                job["ram_alerted"]    = True
+                sent_count += 1
+                save_jobs(jobs)
+                time.sleep(EMAIL_MIN_DELAY_SECONDS)
 
-        for recruiter in recipients:
+        # ── 2. Send cold email to verified Hunter recruiters ──────────────
+        recruiters = get_recruiter_recipients(job)
+        for recruiter in recruiters:
             if sent_count >= MAX_EMAILS_PER_RUN:
                 break
 
-            email = recruiter["email"]
-
-            if email in (job.get("emails_sent_to") or []):
+            email = recruiter["email"].lower().strip()
+            if email in emails_sent:
                 continue
 
-            subject = build_subject(job, recruiter)
-            body = build_body(job, recruiter)
+            if not resume_path:
+                print(f"  ! No resume for recruiter email — skipping")
+                continue
 
-            print(f"[Sender] → {email} | {job.get('title')} @ {job.get('company')}")
+            subject = build_recruiter_subject(job)
+            body    = build_recruiter_body(job, recruiter)
 
+            print(f"\n[Sender] → {email} | {job.get('title')} @ {job.get('company')}")
             if recruiter.get("name"):
-                print(f"         Contact: {recruiter['name']}")
-
+                print(f"         Recruiter: {recruiter['name']} [hunter_ai]")
             print(f"         Subject: {subject}")
-            print(f"         Resume: {resume_path}")
 
             try:
-                send_email(email, subject, body, resume_path)
-                mark_sent(job, email)
-                sent_count += 1
+                send_via_gmail(email, subject, body, resume_path)
+                emails_sent.append(email)
+                job["emails_sent_to"] = emails_sent
+                job["email_sent"]     = True
+                sent_count           += 1
+                print("  ✓ Sent!")
                 save_jobs(jobs)
-
-                print("  ✓ Sent with ATS resume attached!")
-
                 time.sleep(EMAIL_MIN_DELAY_SECONDS)
+            except Exception as e:
+                print(f"  ✗ Failed: {str(e)[:120]}")
 
-            except Exception as exc:
-                print(f"  ✗ Send failed: {email} — {str(exc)[:160]}")
+        # Mark job as fully processed
+        job["email_sent"]     = True
+        job["emails_sent_to"] = emails_sent
+        save_jobs(jobs)
 
     save_jobs(jobs)
-
-    print(f"[Sender] Done. {sent_count} emails sent.")
+    print(f"\n[Sender] Done. {sent_count} emails sent.")
     return sent_count
-
 
 if __name__ == "__main__":
     run_sender()
