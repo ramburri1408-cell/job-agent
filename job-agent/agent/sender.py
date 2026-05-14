@@ -1,27 +1,24 @@
 """
-Cold Email Sender V6 — Production Ready
+Cold Email Sender V7 — Production Ready
 
-Two independent flows:
-
-FLOW 1 — RAM ALERT (always runs):
-  Sends Ram a complete job alert email containing:
+FLOW 1 — RAM ALERT (always runs for every 80+ score job):
   - Job title, company, location, fit score
-  - Why he's a good fit (AI angle)
+  - AI fit angle (why he's a good fit)
   - Apply link
-  - Recruiter contacts:
-      * Hunter subscription active → verified contacts only
-      * Hunter limit hit / no subscription → all contacts found (Ram verifies manually)
-  - ATS resume attached
+  - Recruiter contacts (verified if Hunter active, all found if limit hit)
+  - Full job description
+  - ATS resume attached (job-specific)
 
-FLOW 2 — RECRUITER COLD EMAIL (autonomous, unchanged):
-  Sends cold outreach to Hunter verified contacts only.
-  Runs independently of Flow 1.
+FLOW 2 — RECRUITER COLD EMAIL (autonomous):
+  - Sends to Hunter verified contacts only
+  - ATS resume attached
 """
 
 import json, os, random, smtplib, ssl, time
 from email.message import EmailMessage
 from pathlib import Path
 from typing import Dict, List
+import requests
 
 DATA_FILE          = Path("data/jobs.json")
 GMAIL_USER         = os.environ.get("GMAIL_USER", "").strip()
@@ -30,6 +27,17 @@ RAM_EMAIL          = "Ram.burri1408@gmail.com"
 
 MAX_EMAILS_PER_RUN      = int(os.environ.get("MAX_EMAILS_PER_RUN", "15"))
 EMAIL_MIN_DELAY_SECONDS = int(os.environ.get("EMAIL_MIN_DELAY_SECONDS", "8"))
+
+JOB_BOARDS = ["adzuna.com", "indeed.com", "ziprecruiter.com",
+              "monster.com", "dice.com", "glassdoor.com"]
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    )
+}
 
 BAD_EMAIL_PREFIXES = (
     "careers@", "jobs@", "info@", "support@", "noreply@",
@@ -45,6 +53,24 @@ RECRUITER_SUBJECT_VARIANTS = [
 
 
 # ── UTILITIES ────────────────────────────────────────────────────────────────
+
+def resolve_apply_url(url: str) -> str:
+    """
+    Follow redirects to get the actual company job page URL.
+    If URL is still on a job board after redirect, return original.
+    """
+    if not url or not url.startswith("http"):
+        return url or "No link available"
+    try:
+        resp      = requests.get(url, headers=HEADERS, timeout=10,
+                                 allow_redirects=True)
+        final_url = resp.url
+        # If redirected to a real company page, use it
+        if not any(board in final_url for board in JOB_BOARDS):
+            return final_url
+    except Exception:
+        pass
+    return url  # Return original if redirect fails or stays on job board
 
 def load_jobs() -> Dict:
     return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
@@ -64,35 +90,50 @@ def is_sendable_email(email: str) -> bool:
     return True
 
 def find_resume_pdf(job: Dict) -> str:
-    """Find ATS resume — checks stored path, /tmp, then regenerates."""
+    """
+    Find job-specific ATS resume PDF.
+    Tries job fields first, then /tmp with company name, then regenerates.
+    """
+    # 1. Check stored path in job
     for key in ["resume_pdf", "ats_pdf", "resume_path"]:
         path = job.get(key, "")
         if path and Path(path).exists():
             return str(path)
 
+    # 2. Search /tmp for company-specific PDF
     company_safe = "".join(
         c if c.isalnum() else "_" for c in job.get("company", "")
     )[:20]
 
-    for pattern in [f"Ram_Burri_{company_safe}*.pdf", "Ram_Burri_*.pdf"]:
-        matches = sorted(
-            Path("/tmp").glob(pattern),
-            key=lambda p: p.stat().st_mtime,
-            reverse=True,
-        )
-        if matches:
-            return str(matches[0])
+    matches = sorted(
+        Path("/tmp").glob(f"Ram_Burri_{company_safe}*.pdf"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    if matches:
+        return str(matches[0])
 
-    # Regenerate if not found
+    # 3. Regenerate job-specific ATS resume
     try:
         from ats_resume import generate_ats_resume
         result   = generate_ats_resume(job, "/tmp")
         pdf_path = result.get("pdf_path", "")
         if pdf_path and Path(pdf_path).exists():
             job["resume_pdf"] = pdf_path
+            print(f"  → ATS resume regenerated: {Path(pdf_path).name}")
             return pdf_path
     except Exception as e:
         print(f"  ! Resume regeneration failed: {str(e)[:60]}")
+
+    # 4. Last resort — any Ram Burri PDF
+    any_pdf = sorted(
+        Path("/tmp").glob("Ram_Burri_*.pdf"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    if any_pdf:
+        print(f"  ⚠ Using fallback resume: {any_pdf[0].name}")
+        return str(any_pdf[0])
 
     return ""
 
@@ -136,69 +177,77 @@ def format_recruiter_section(job: Dict) -> str:
     """
     Format recruiter contacts for Ram's alert email.
 
-    - Hunter subscription active → show only verified contacts (source=hunter_ai)
-    - Hunter limit hit / no subscription → show all contacts found (Ram verifies manually)
+    Hunter active   → show only verified contacts (source=hunter_ai)
+    Hunter limit hit → show ALL contacts found (Ram verifies manually)
+    No contacts      → suggest LinkedIn search
     """
     all_recruiters      = job.get("recruiters") or []
     verified_recruiters = [
         r for r in all_recruiters if r.get("source") == "hunter_ai"
     ]
-    hunter_active       = len(verified_recruiters) > 0
 
-    # Decide which list to show
-    if hunter_active:
+    if verified_recruiters:
+        # Hunter found and verified contacts
         contacts_to_show = verified_recruiters
-        section_title    = "👥 RECRUITER CONTACTS (Hunter.io Verified)"
-        note             = "These contacts have been verified by Hunter.io."
+        header = "👥 RECRUITER CONTACTS (Hunter.io Verified — Emails sent automatically):"
     elif all_recruiters:
+        # Hunter limit hit — show all found contacts for manual outreach
         contacts_to_show = all_recruiters
-        section_title    = "👥 RECRUITER CONTACTS (Unverified — Please Verify Manually)"
-        note             = (
-            "Hunter.io subscription limit reached. "
-            "These contacts were found but not verified. "
-            "Please review and reach out to the right person."
-        )
+        header = "👥 RECRUITER CONTACTS (Unverified — Please reach out manually):"
     else:
         return (
             "👥 RECRUITER CONTACTS:\n"
-            "   No contacts found for this company this run.\n"
-            "   Try searching LinkedIn for HR/Talent Acquisition at this company."
+            "   No contacts found this run.\n"
+            "   Tip: Search LinkedIn for HR/Talent Acquisition at this company."
         )
 
-    lines = [f"{section_title}:", f"   ({note})", ""]
-
+    lines = [header, ""]
     for r in contacts_to_show:
-        name   = r.get("name", "Unknown")
+        name   = r.get("name", "")
         email  = r.get("email", "")
         title  = r.get("title", "")
         score  = r.get("verification_score", "")
         status = r.get("verification_status", "")
-        source = r.get("source", "")
 
-        lines.append(f"   • Name  : {name}")
+        if name:
+            lines.append(f"   • {name}")
+        else:
+            lines.append(f"   •")
         if title:
-            lines.append(f"     Title : {title}")
-        lines.append(f"     Email : {email}")
+            lines.append(f"     Title  : {title}")
+        lines.append(f"     Email  : {email}")
         if score:
-            lines.append(f"     Score : {score} | Status: {status}")
+            lines.append(f"     Score  : {score} | Status: {status}")
         lines.append("")
 
     return "\n".join(lines)
 
+def get_fit_angle(job: Dict) -> str:
+    """Get AI fit angle — never show generic fallback."""
+    angle = (job.get("fit_angle") or "").strip()
+    if angle and len(angle) > 20:
+        return angle
+    # Build a basic angle from score and title
+    score = job.get("fit_score", "")
+    title = job.get("title", "")
+    return (
+        f"Score {score}/100 — Your .NET full-stack background with Azure, "
+        f"React/Angular, and enterprise experience aligns well with the "
+        f"{title} requirements."
+    )
+
 def send_job_alert_to_ram(job: Dict, resume_path: str) -> bool:
-    """
-    Send Ram a complete job alert email with all info needed to apply.
-    """
+    """Send Ram a complete job alert with everything he needs to apply."""
     title    = job.get("title", "Unknown")
     company  = job.get("company", "Unknown")
     location = job.get("location", "Not specified")
     score    = job.get("fit_score", "N/A")
-    angle    = job.get("fit_angle", "Strong match based on your profile")
-    url      = job.get("url", "No link available")
+    angle    = get_fit_angle(job)
+    url      = resolve_apply_url(job.get("url", ""))
     desc     = (job.get("description") or "No description available")[:2000]
     contacts = format_recruiter_section(job)
     resume_note = (
-        f"✅ ATS resume tailored for this role is attached — {Path(resume_path).name}"
+        f"✅ ATS resume tailored for this role — {Path(resume_path).name}"
         if resume_path
         else "⚠️ Resume not found — re-run pipeline to regenerate"
     )
@@ -248,7 +297,6 @@ Job Agent Bot"""
 # ── FLOW 2: AUTONOMOUS COLD EMAIL TO RECRUITERS ──────────────────────────────
 
 def get_verified_recruiters(job: Dict) -> List[Dict]:
-    """Only Hunter.io verified contacts for autonomous outreach."""
     return [
         r for r in (job.get("recruiters") or [])
         if r.get("source") == "hunter_ai"
@@ -271,20 +319,11 @@ def build_recruiter_body(job: Dict, recruiter: Dict) -> str:
 
     extra = ""
     if "azure"    in desc:
-        extra = (
-            "I've worked extensively with Azure-based deployments, "
-            "CI/CD pipelines, and cloud-ready .NET services.\n\n"
-        )
+        extra = "I've worked extensively with Azure-based deployments, CI/CD pipelines, and cloud-ready .NET services.\n\n"
     elif "react"  in desc:
-        extra = (
-            "I've built React-based frontend workflows and reusable "
-            "component libraries connected to secure .NET APIs.\n\n"
-        )
+        extra = "I've built React-based frontend workflows and reusable component libraries connected to secure .NET APIs.\n\n"
     elif "angular" in desc:
-        extra = (
-            "I've worked on Angular enterprise applications with .NET APIs, "
-            "SQL Server, and secure authentication flows.\n\n"
-        )
+        extra = "I've worked on Angular enterprise applications with .NET APIs, SQL Server, and secure authentication flows.\n\n"
 
     return f"""Hi {first},
 
@@ -304,14 +343,16 @@ linkedin.com/in/ramburri"""
 def send_recruiter_cold_email(
     job: Dict, recruiter: Dict, resume_path: str
 ) -> bool:
-    """Send autonomous cold email to a single verified recruiter."""
     email   = recruiter["email"].lower().strip()
     subject = build_recruiter_subject(job)
     body    = build_recruiter_body(job, recruiter)
 
-    print(f"\n[Sender] Recruiter → {email} | {job.get('title')} @ {job.get('company')}")
+    print(
+        f"\n[Sender] Recruiter → {email} | "
+        f"{job.get('title')} @ {job.get('company')}"
+    )
     if recruiter.get("name"):
-        print(f"         Name: {recruiter['name']} [{recruiter.get('title', '')}]")
+        print(f"         Name: {recruiter['name']} | {recruiter.get('title', '')}")
     print(f"         Subject: {subject}")
 
     try:
@@ -381,7 +422,7 @@ def run_sender() -> int:
                 save_jobs(jobs)
                 time.sleep(EMAIL_MIN_DELAY_SECONDS)
 
-        # Mark job as fully processed
+        # Mark job fully processed
         job["email_sent"]     = True
         job["emails_sent_to"] = emails_sent
         save_jobs(jobs)
