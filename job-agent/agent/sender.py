@@ -1,13 +1,11 @@
 """
-Cold Email Sender V3
+Cold Email Sender V4
 
-Sends only verified recruiter contacts and attaches the ATS resume PDF
-created specifically for that job.
-
-Uses:
-- job["resume_pdf"] from ai_engine.py
-- job["recruiters"] from recruiter_finder.py
-- source must be hunter_ai
+Fixes:
+- Sends ONLY fresh ai_ready jobs
+- Requires job-specific ATS PDF: job["resume_pdf"]
+- Requires Hunter + Anthropic verified contacts
+- Attaches the exact ATS resume created for that job
 """
 
 import json
@@ -20,7 +18,6 @@ from email.message import EmailMessage
 from pathlib import Path
 from typing import Dict, List
 
-
 DATA_FILE = Path("data/jobs.json")
 
 GMAIL_USER = os.environ.get("GMAIL_USER", "").strip()
@@ -28,7 +25,6 @@ GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
 
 MAX_EMAILS_PER_RUN = int(os.environ.get("MAX_EMAILS_PER_RUN", "5"))
 EMAIL_MIN_DELAY_SECONDS = int(os.environ.get("EMAIL_MIN_DELAY_SECONDS", "90"))
-
 
 BAD_EMAIL_PREFIXES = (
     "careers@",
@@ -41,7 +37,6 @@ BAD_EMAIL_PREFIXES = (
     "hr@",
 )
 
-
 SUBJECT_VARIANTS = [
     "Application for {title} - Ram Burri",
     "{title} | .NET Full Stack Developer",
@@ -51,9 +46,7 @@ SUBJECT_VARIANTS = [
 
 
 def load_jobs() -> Dict:
-    if not DATA_FILE.exists():
-        return {}
-    return json.loads(DATA_FILE.read_text())
+    return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
 
 
 def save_jobs(jobs: Dict) -> None:
@@ -91,35 +84,22 @@ def get_recipients(job: Dict) -> List[Dict]:
 
 
 def get_resume_path(job: Dict) -> str:
-    """
-    Uses the ATS PDF created for this exact job.
-    ai_engine.py stores this in job["resume_pdf"].
-    """
-
-    path = (
-        job.get("resume_pdf")
-        or job.get("ats_pdf")
-        or job.get("resume_path")
-        or ""
-    )
+    path = job.get("resume_pdf") or ""
 
     if not path:
-        print("  ! No ATS resume path found for this job")
+        print(f"  ! No job-specific ATS resume path for {job.get('title')} @ {job.get('company')}")
         return ""
 
-    resume_path = Path(path)
+    pdf = Path(path)
 
-    if not resume_path.exists():
-        print(f"  ! ATS resume file missing: {path}")
+    if not pdf.exists():
+        print(f"  ! ATS resume file missing on disk: {path}")
         return ""
 
-    return str(resume_path)
+    return str(pdf)
 
 
 def attach_resume(msg: EmailMessage, resume_path: str) -> bool:
-    if not resume_path:
-        return False
-
     path = Path(resume_path)
 
     if not path.exists():
@@ -133,6 +113,7 @@ def attach_resume(msg: EmailMessage, resume_path: str) -> bool:
             subtype="pdf",
             filename=path.name,
         )
+
         print(f"  ✓ Attached ATS resume: {path.name}")
         return True
 
@@ -196,12 +177,7 @@ ram.burri1408@gmail.com
 """
 
 
-def send_email(
-    to_email: str,
-    subject: str,
-    body: str,
-    resume_path: str,
-) -> None:
+def send_email(to_email: str, subject: str, body: str, resume_path: str) -> None:
     if not GMAIL_USER or not GMAIL_APP_PASSWORD:
         raise RuntimeError("Missing GMAIL_USER or GMAIL_APP_PASSWORD")
 
@@ -239,19 +215,22 @@ def run_sender() -> int:
     jobs = load_jobs()
     sent_count = 0
 
-    for jid, job in jobs.items():
+    targets = [
+        (jid, job)
+        for jid, job in jobs.items()
+        if job.get("status") == "ai_ready"
+        and job.get("resume_pdf")
+        and not job.get("email_sent")
+        and not job.get("skip_email")
+        and job.get("recruiter_source") == "hunter_ai"
+    ]
+
+    print(f"[Sender] Fresh sendable jobs: {len(targets)}")
+
+    for jid, job in targets:
         if sent_count >= MAX_EMAILS_PER_RUN:
             print(f"[Sender] Reached max emails per run: {MAX_EMAILS_PER_RUN}")
             break
-
-        if job.get("email_sent"):
-            continue
-
-        if job.get("skip_email"):
-            continue
-
-        if job.get("recruiter_source") != "hunter_ai":
-            continue
 
         recipients = get_recipients(job)
 
@@ -261,10 +240,6 @@ def run_sender() -> int:
         resume_path = get_resume_path(job)
 
         if not resume_path:
-            print(
-                f"  ! Skipping: ATS resume missing for "
-                f"{job.get('title')} @ {job.get('company')}"
-            )
             continue
 
         for recruiter in recipients:
@@ -282,7 +257,7 @@ def run_sender() -> int:
             print(f"[Sender] → {email} | {job.get('title')} @ {job.get('company')}")
 
             if recruiter.get("name"):
-                print(f"         Recruiter: {recruiter['name']}")
+                print(f"         Contact: {recruiter['name']}")
 
             print(f"         Subject: {subject}")
             print(f"         Resume: {resume_path}")
@@ -301,6 +276,7 @@ def run_sender() -> int:
                 print(f"  ✗ Send failed: {email} — {str(exc)[:160]}")
 
     save_jobs(jobs)
+
     print(f"[Sender] Done. {sent_count} emails sent.")
     return sent_count
 
