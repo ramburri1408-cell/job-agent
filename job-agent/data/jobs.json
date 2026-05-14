@@ -16799,8 +16799,8 @@
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T03:41:24.864465+00:00",
     "status": "ai_ready",
-    "recruiter_email": "careers@ssgva.com",
-    "recruiter_name": "Hiring Manager",
+    "recruiter_email": "",
+    "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Cypress, Selenium, Playwright, TestNG\", \"Backend\": \"API testing frameworks, mock servers, test data management\", \"Cloud / DevOps\": \"Test automation infrastructure, CI/CD test orchestration, containerized testing\", \"Testing\": \"Test automation frameworks, performance testing tools, load testing, accessibility testing, BDD (Cucumber/Gherkin)\"}, \"priority_bullets\": [7, 6, 1, 2], \"extra_bullet\": \"Architected end-to-end test automation framework using Selenium/Cypress and C# for enterprise applications, reducing manual testing effort by 70% and integrating with Azure DevOps CI/CD pipelines\"}",
     "email_draft": "Subject: SDET role - C#/.NET engineer with 85%+ test coverage track record\n\nHi,\n\nI came across SSG while researching companies where quality engineering is central to the product, not an afterthought. Your focus on delivering reliable software solutions aligns with how I approach development\u2014testing isn't something I bolt on at the end.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I've worked with xUnit and Jest, modernized legacy systems into microservices, and secured APIs to SOX/PCI-DSS standards. The transition to a dedicated SDET focus is a natural next step given how much of my work already centers on testability and reliability.\n\nWould you be open to a 15-minute call to discuss how I could contribute to your team? Here's my LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
     "email_sent": false,
@@ -16830,7 +16830,10 @@
       "angle": "Strong C#/.NET programming foundation with testing framework experience (xUnit, Jest) positions candidate to transition into SDET role with minimal ramp-up on test automation focus",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@ssgva.com"
-    }
+    },
+    "recruiters": [],
+    "recruiter_source": "none",
+    "skip_email": true
   },
   "230cd35f374c": {
     "id": "230cd35f374c",
@@ -17007,8 +17010,8 @@
     "portal": "Adzuna",
     "scraped_at": "2026-05-07T03:41:24.864539+00:00",
     "status": "ai_ready",
-    "recruiter_email": "careers@roberthalf.com",
-    "recruiter_name": "Hiring Manager",
+    "recruiter_email": "",
+    "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y), Performance optimization tools\", \"Backend\": \"Java, Spring Boot, Python, Django, GraphQL, gRPC, Message queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform, Jenkins, SonarQube\", \"Testing\": \"Cypress, Selenium, LoadRunner, Performance testing, E2E testing frameworks, Test automation\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Spearheaded migration of legacy Windows-based applications to cloud-native .NET Core architecture, reducing infrastructure costs by 30% and improving deployment frequency\"}",
     "email_draft": "Subject: Full Stack Developer II - .NET developer with enterprise compliance experience\n\nHi,\n\nRobert Half builds software that staffing professionals rely on daily, which means downtime or bugs directly impact placements and revenue. That kind of pressure requires developers who understand both the technical stack and the business consequences of getting it wrong.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, with APIs secured to SOX/PCI-DSS standards. I work across the full stack\u2014databases through frontend\u2014and I'm used to building systems where reliability isn't optional.\n\nWould you be open to a 15-minute call to discuss how I could contribute to your development team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
     "email_sent": false,
@@ -17039,7 +17042,10 @@
       "angle": "Strong full stack .NET developer with enterprise experience and the database-to-frontend coverage they need for custom business systems",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@roberthalf.com"
-    }
+    },
+    "recruiters": [],
+    "recruiter_source": "none",
+    "skip_email": true
   },
   "bd88b12c79c1": {
     "id": "bd88b12c79c1",
@@ -30942,7 +30948,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Advanced state management (Redux, Zustand, Jotai), Accessibility (WCPA/ARIA), Performance optimization, CSS-in-JS libraries\", \"Backend\": \"GraphQL, gRPC, message queues (RabbitMQ, Kafka), caching strategies (Redis), API security best practices\", \"Cloud / DevOps\": \"Docker, Kubernetes, infrastructure as code (Terraform), AWS/GCP alternatives, monitoring and observability tools\", \"Testing\": \"E2E testing (Cypress, Playwright), load/performance testing, API testing frameworks, test automation strategies\"}, \"priority_bullets\": [2, 4, 6, 7], \"extra_bullet\": \"Architected and deployed containerized full-stack applications using Docker and orchestrated microservices with Kubernetes on cloud infrastructure\"}",
     "email_draft": "Subject: Full-Stack Developer with Fraud Systems & Compliance Experience\n\nHi,\n\nI came across American IT Systems and noticed your focus on delivering enterprise solutions for clients with complex requirements. Having spent the last few years building financial applications where security and reliability aren't optional, I'm interested in bringing that same rigor to your team.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, with all APIs secured to SOX/PCI-DSS standards. I work across the stack\u2014React and Angular on the front end, scalable backend services underneath.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your current projects? My LinkedIn is https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_American_IT_Systems.pdf",
@@ -30972,7 +30978,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "c7146c1d2047": {
     "id": "c7146c1d2047",
@@ -31359,7 +31369,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Webpack, CSS-in-JS libraries\", \"Backend\": \"gRPC, GraphQL, Domain-Driven Design patterns\", \"Cloud / DevOps\": \"Kubernetes, Docker containerization, AWS services, Infrastructure as Code\", \"Testing\": \"Integration testing frameworks, Load testing tools, BDD/Cucumber\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Led architecture design for scalable microservices using .NET 8 and established code standards across engineering teams to improve maintainability and reduce technical debt\"}",
     "email_draft": "Subject: .NET developer who eliminated duplicate transactions in payment systems\n\nJose,\n\nI came across the Senior .NET Developer role at your company and wanted to reach out directly. I've been building full-stack .NET applications with a focus on financial systems where security and reliability aren't optional.\n\nAt Jefferson Bank, I rebuilt a legacy payment portal into a microservices architecture that eliminated duplicate transactions entirely. I also built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and secured APIs to SOX/PCI-DSS compliance standards.\n\nWould you have 15 minutes this week to discuss what you're looking for in this role? I'd like to learn more about the technical challenges your team is tackling.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Jose_Merciline.pdf",
@@ -31392,7 +31402,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "1f244a7e3b75": {
     "id": "1f244a7e3b75",
@@ -31447,7 +31461,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"\", \"Backend\": \"WCF, ERP Systems Integration\", \"Cloud / DevOps\": \"Container technologies (Docker/Kubernetes)\", \"Testing\": \"\"}, \"priority_bullets\": [1, 2, 6, 5], \"extra_bullet\": \"Designed and deployed containerized .NET Core microservices using Docker and managed orchestration in cloud environments\"}",
     "email_draft": "Subject: .NET Developer - SQL Server + API Security Experience\n\nHi,\n\nI came across the .Net Developer role at Jose Merciline and wanted to reach out. I've been building enterprise .NET applications with the same stack you're using\u2014ASP.NET Core, SQL Server, and secure REST APIs\u2014and I'm looking for a team where that experience translates directly.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on transaction-critical modules, and migrated a legacy payment portal to microservices that eliminated duplicate transaction issues. All of this under SOX/PCI-DSS compliance requirements, so I'm comfortable with the security rigor enterprise systems demand.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? Happy to work around your schedule.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 88,
     "resume_pdf": "/tmp/Ram_Burri_Jose_Merciline.pdf",
@@ -31474,7 +31488,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "473d73739112": {
     "id": "473d73739112",
@@ -31649,7 +31667,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (WCAG), Performance optimization tools\", \"Backend\": \"Java, Python, GraphQL, gRPC, Domain-Driven Design (DDD), CQRS patterns\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Kubernetes, Docker advanced orchestration, Terraform, Infrastructure as Code\", \"Testing\": \"Selenium, Cypress, LoadTesting (JMeter), Contract Testing (Pact), Performance profiling\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Led architectural design and code review sessions to establish .NET and frontend best practices across team, mentoring junior developers on SOLID principles and design patterns\"}",
     "email_draft": "Subject: .NET Developer with Azure + Financial Compliance Background\n\nHi,\n\nClearwaters.IT's focus on enterprise solutions for regulated industries caught my attention\u2014it aligns directly with the work I've been doing in financial services, where security and scalability aren't optional.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, modernized a legacy payment portal into microservices (eliminating duplicate transaction issues), and brought APIs into SOX/PCI-DSS compliance. I maintain 85%+ test coverage on critical transaction modules because in financial systems, bugs are expensive.\n\nWould you have 15 minutes to discuss how this background might fit your team's current projects?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Clearwaters_IT.pdf",
@@ -31684,7 +31702,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "eaacc75de761": {
     "id": "eaacc75de761",
@@ -31762,7 +31784,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18 (have React focus, need Angular depth)\", \"Backend\": \"WCF, ERP Systems Integration experience\", \"Cloud / DevOps\": \"Azure SQL Database, Azure App Service deployment specifics\", \"Testing\": \"E2E testing frameworks (Cypress, Playwright), .NET unit testing (xUnit, NUnit)\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Architected and deployed multi-tenant Angular 14+ applications with role-based access control on Azure App Service, handling 10K+ concurrent users\"}",
     "email_draft": "Subject: .NET/Angular engineer with financial compliance background\n\nHi,\n\nSimple Solutions' focus on mortgage technology caught my attention\u2014compliance and security in financial applications is exactly where I've spent the last several years working. The regulatory complexity in that space is something I genuinely find interesting to solve.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transaction issues. I also handled SOX and PCI-DSS compliance across customer-facing APIs\u2014experience that translates directly to mortgage industry requirements.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? My background is at linkedin.com/in/ram-b-650769397.\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Simple_Solutions.pdf",
@@ -31794,7 +31816,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "9cd843ce66e4": {
     "id": "9cd843ce66e4",
@@ -37892,6 +37918,44 @@
     "url": "https://remotive.com/remote-jobs/artificial-intelligence/business-transformation-lead-2090881",
     "portal": "Remotive",
     "scraped_at": "2026-05-14T17:18:05.533329+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "d0e31336e7b7": {
+    "id": "d0e31336e7b7",
+    "title": "Senior Technical Business Analyst \u2013w2",
+    "company": "Siritech Solutions Corp",
+    "location": "Travis Heights, Travis County",
+    "salary": "$169,070 - $169,070",
+    "description": "We are seeking an experienced Senior Technical Business Analyst to support large-scale legacy-to-web application modernization initiatives . The ideal candidate will have strong experience analyzing legacy systems, gathering business and technical requirements, and collaborating with development teams working in .NET and SQL environments . This is a highly visible role requiring strong stakeholder communication, modernization strategy experience, and the ability to bridge business and technical\u2026",
+    "url": "https://www.adzuna.com/details/5729421409?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T17:45:57.275991+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "3d45b35e6c08": {
+    "id": "3d45b35e6c08",
+    "title": "Behavior Technician (BT) Troy",
+    "company": "Astra ABA",
+    "location": "Queen, Montgomery County",
+    "salary": "$43,680 - $62,400",
+    "description": "Astra ABA - Discover a purpose-driven career at Astra ABA, where we prioritize individualized therapy for children. We're currently seeking passionate BT's to join our skilled team of Applied Behavioral Analysis (ABA) Therapists, supporting children on their journey to realizing their full potential. Hours : After school hours Behavior Technician (BT) Responsibilities Provide one-on-one ABA therapy to children in-home setting. Implement treatment and behavior intervention plans (BIPs) with fide\u2026",
+    "url": "https://www.adzuna.com/details/5729416960?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T17:45:57.276012+00:00",
     "status": "skipped_irrelevant",
     "recruiter_email": "",
     "recruiter_name": "",
