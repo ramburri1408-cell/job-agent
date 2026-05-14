@@ -1,130 +1,309 @@
-import json, os, time, hashlib
-from datetime import datetime, timezone
-from pathlib import Path
-from urllib.parse import quote
-import requests
-from bs4 import BeautifulSoup
+"""
+Cold Email Sender V3
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
-}
+Sends only verified recruiter contacts and attaches the ATS resume PDF
+created specifically for that job.
+
+Uses:
+- job["resume_pdf"] from ai_engine.py
+- job["recruiters"] from recruiter_finder.py
+- source must be hunter_ai
+"""
+
+import json
+import os
+import random
+import smtplib
+import ssl
+import time
+from email.message import EmailMessage
+from pathlib import Path
+from typing import Dict, List
+
 
 DATA_FILE = Path("data/jobs.json")
-DATA_FILE.parent.mkdir(exist_ok=True)
 
-ADZUNA_APP_ID  = os.environ.get("ADZUNA_APP_ID", "")
-ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY", "")
+GMAIL_USER = os.environ.get("GMAIL_USER", "").strip()
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
 
-def load_jobs():
-    return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
+MAX_EMAILS_PER_RUN = int(os.environ.get("MAX_EMAILS_PER_RUN", "5"))
+EMAIL_MIN_DELAY_SECONDS = int(os.environ.get("EMAIL_MIN_DELAY_SECONDS", "90"))
 
-def save_jobs(jobs):
+
+BAD_EMAIL_PREFIXES = (
+    "careers@",
+    "jobs@",
+    "info@",
+    "support@",
+    "noreply@",
+    "no-reply@",
+    "admin@",
+    "hr@",
+)
+
+
+SUBJECT_VARIANTS = [
+    "Application for {title} - Ram Burri",
+    "{title} | .NET Full Stack Developer",
+    "Regarding {title} at {company}",
+    "{title} opportunity",
+]
+
+
+def load_jobs() -> Dict:
+    if not DATA_FILE.exists():
+        return {}
+    return json.loads(DATA_FILE.read_text())
+
+
+def save_jobs(jobs: Dict) -> None:
     DATA_FILE.write_text(json.dumps(jobs, indent=2))
 
-def make_id(title, company):
-    return hashlib.md5(f"{title.lower().strip()}-{company.lower().strip()}".encode()).hexdigest()[:12]
 
-def now_iso():
-    return datetime.now(timezone.utc).isoformat()
+def is_sendable_email(email: str) -> bool:
+    email = (email or "").lower().strip()
 
-def new_job(title, company, location, salary, description, url, portal, recruiter_email=""):
-    return {
-        "id": make_id(title, company), "title": title, "company": company,
-        "location": location, "salary": salary, "description": description,
-        "url": url, "portal": portal, "scraped_at": now_iso(),
-        "status": "new", "recruiter_email": recruiter_email, "recruiter_name": "",
-        "tailored_resume": None, "email_draft": None,
-        "email_sent": False, "email_sent_at": None, "fit_score": None,
-    }
+    if not email or "@" not in email:
+        return False
 
-def scrape_adzuna(query, max_days=3):
-    jobs = []
-    if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
-        return jobs
+    if any(email.startswith(prefix) for prefix in BAD_EMAIL_PREFIXES):
+        return False
+
+    return True
+
+
+def get_recipients(job: Dict) -> List[Dict]:
+    recruiters = job.get("recruiters") or []
+    result = []
+
+    for recruiter in recruiters:
+        email = (recruiter.get("email") or "").lower().strip()
+
+        if not is_sendable_email(email):
+            continue
+
+        if recruiter.get("source") != "hunter_ai":
+            continue
+
+        result.append(recruiter)
+
+    return result
+
+
+def get_resume_path(job: Dict) -> str:
+    """
+    Uses the ATS PDF created for this exact job.
+    ai_engine.py stores this in job["resume_pdf"].
+    """
+
+    path = (
+        job.get("resume_pdf")
+        or job.get("ats_pdf")
+        or job.get("resume_path")
+        or ""
+    )
+
+    if not path:
+        print("  ! No ATS resume path found for this job")
+        return ""
+
+    resume_path = Path(path)
+
+    if not resume_path.exists():
+        print(f"  ! ATS resume file missing: {path}")
+        return ""
+
+    return str(resume_path)
+
+
+def attach_resume(msg: EmailMessage, resume_path: str) -> bool:
+    if not resume_path:
+        return False
+
+    path = Path(resume_path)
+
+    if not path.exists():
+        print(f"  ! Resume not found: {resume_path}")
+        return False
+
     try:
-        url = (
-            f"https://api.adzuna.com/v1/api/jobs/us/search/1"
-            f"?app_id={ADZUNA_APP_ID}&app_key={ADZUNA_APP_KEY}"
-            f"&results_per_page=20&what={quote(str(query))}"
-            f"&content-type=application/json&sort_by=date&max_days_old={max_days}"
+        msg.add_attachment(
+            path.read_bytes(),
+            maintype="application",
+            subtype="pdf",
+            filename=path.name,
         )
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        data = resp.json()
-        for item in data.get("results", []):
-            title   = str(item.get("title", ""))
-            company = str(item.get("company", {}).get("display_name", "Unknown"))
-            loc     = str(item.get("location", {}).get("display_name", "US"))
-            sm, sx  = item.get("salary_min"), item.get("salary_max")
-            salary  = f"${int(sm):,} - ${int(sx):,}" if sm and sx else "Not listed"
-            jobs.append(new_job(title, company, loc, salary,
-                                str(item.get("description", "")),
-                                str(item.get("redirect_url", "")), "Adzuna"))
-        time.sleep(1)
-        print(f"  [Adzuna] Found {len(jobs)} jobs for '{query}'")
-    except Exception as e:
-        print(f"  [Adzuna] Error: {e}")
-    return jobs
+        print(f"  ✓ Attached ATS resume: {path.name}")
+        return True
 
-def scrape_remotive(query):
-    jobs = []
-    try:
-        url  = f"https://remotive.com/api/remote-jobs?search={quote(str(query))}&category=software-dev&limit=10"
-        resp = requests.get(url, timeout=15)
-        data = resp.json()
-        for item in data.get("jobs", []):
-            title   = str(item.get("title", ""))
-            company = str(item.get("company_name", ""))
-            desc    = BeautifulSoup(str(item.get("description", "")), "html.parser").get_text()[:800]
-            jobs.append(new_job(title, company, "Remote",
-                                str(item.get("salary", "Not listed")), desc,
-                                str(item.get("url", "")), "Remotive",
-                                str(item.get("company_email", ""))))
-        time.sleep(1)
-        print(f"  [Remotive] Found {len(jobs)} jobs for '{query}'")
-    except Exception as e:
-        print(f"  [Remotive] Error: {e}")
-    return jobs
+    except Exception as exc:
+        print(f"  ! Failed to attach resume: {str(exc)[:120]}")
+        return False
 
-def run_scraper():
-    cfg      = json.loads(Path("data/config.json").read_text())
-    queries  = cfg.get("job_queries", ["software engineer"])
-    existing = load_jobs()
-    new_count = 0
 
-    # Reset old skipped jobs older than 3 days so new ones can come in
-    import datetime as dt
-    cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=3)
-    for jid, job in existing.items():
-        if job.get("status") in ["skipped_low_score", "skipped_irrelevant", "no_email"]:
-            scraped = job.get("scraped_at", "")
+def build_subject(job: Dict, recruiter: Dict) -> str:
+    title = job.get("title") or ".NET Developer"
+    company = job.get("company") or ""
+
+    if len(title) > 65:
+        title = title[:62] + "..."
+
+    return random.choice(SUBJECT_VARIANTS).format(
+        title=title,
+        company=company,
+    )
+
+
+def build_body(job: Dict, recruiter: Dict) -> str:
+    name = recruiter.get("name") or ""
+    first = name.split()[0] if name else "there"
+
+    title = job.get("title") or "the role"
+    company = job.get("company") or "your team"
+    description = (job.get("description") or "").lower()
+
+    extra = ""
+
+    if "azure" in description:
+        extra = (
+            "I’ve also worked with Azure-based deployments, CI/CD pipelines, "
+            "and cloud-ready .NET services.\n\n"
+        )
+    elif "react" in description:
+        extra = (
+            "I’ve built React-based frontend workflows and reusable component "
+            "libraries connected to secure backend APIs.\n\n"
+        )
+    elif "angular" in description:
+        extra = (
+            "I’ve worked on Angular-based enterprise applications with .NET APIs, "
+            "SQL Server, and secure authentication flows.\n\n"
+        )
+
+    return f"""Hi {first},
+
+I came across the {title} role at {company} and wanted to reach out directly.
+
+{extra}I’m a .NET full-stack developer with experience in C#, ASP.NET Core, REST APIs, SQL Server, Azure, React, Angular, and secure enterprise application development.
+
+I’ve attached an ATS-tailored resume generated specifically for this role.
+
+Would you be open to a quick 10–15 minute conversation this week?
+
+Best regards,
+Ram Burri
+ram.burri1408@gmail.com
+"""
+
+
+def send_email(
+    to_email: str,
+    subject: str,
+    body: str,
+    resume_path: str,
+) -> None:
+    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
+        raise RuntimeError("Missing GMAIL_USER or GMAIL_APP_PASSWORD")
+
+    msg = EmailMessage()
+    msg["From"] = GMAIL_USER
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg["Reply-To"] = GMAIL_USER
+    msg.set_content(body)
+
+    attached = attach_resume(msg, resume_path)
+
+    if not attached:
+        raise RuntimeError("ATS resume attachment failed")
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+        server.send_message(msg)
+
+
+def mark_sent(job: Dict, email: str) -> None:
+    sent = job.get("emails_sent_to") or []
+
+    if email not in sent:
+        sent.append(email)
+
+    job["emails_sent_to"] = sent
+    job["email_sent"] = True
+    job["email_sent_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def run_sender() -> int:
+    jobs = load_jobs()
+    sent_count = 0
+
+    for jid, job in jobs.items():
+        if sent_count >= MAX_EMAILS_PER_RUN:
+            print(f"[Sender] Reached max emails per run: {MAX_EMAILS_PER_RUN}")
+            break
+
+        if job.get("email_sent"):
+            continue
+
+        if job.get("skip_email"):
+            continue
+
+        if job.get("recruiter_source") != "hunter_ai":
+            continue
+
+        recipients = get_recipients(job)
+
+        if not recipients:
+            continue
+
+        resume_path = get_resume_path(job)
+
+        if not resume_path:
+            print(
+                f"  ! Skipping: ATS resume missing for "
+                f"{job.get('title')} @ {job.get('company')}"
+            )
+            continue
+
+        for recruiter in recipients:
+            if sent_count >= MAX_EMAILS_PER_RUN:
+                break
+
+            email = recruiter["email"]
+
+            if email in (job.get("emails_sent_to") or []):
+                continue
+
+            subject = build_subject(job, recruiter)
+            body = build_body(job, recruiter)
+
+            print(f"[Sender] → {email} | {job.get('title')} @ {job.get('company')}")
+
+            if recruiter.get("name"):
+                print(f"         Recruiter: {recruiter['name']}")
+
+            print(f"         Subject: {subject}")
+            print(f"         Resume: {resume_path}")
+
             try:
-                scraped_dt = dt.datetime.fromisoformat(scraped)
-                if scraped_dt < cutoff:
-                    existing[jid]["status"] = "archived"
-            except:
-                pass
+                send_email(email, subject, body, resume_path)
+                mark_sent(job, email)
+                sent_count += 1
+                save_jobs(jobs)
 
-    for query in queries:
-        query = str(query)
-        print(f"\n[Scraper] Query: '{query}'")
-        for job in scrape_adzuna(query, max_days=3):
-            if job["id"] not in existing:
-                existing[job["id"]] = job
-                new_count += 1
-                print(f"  + Adzuna: {job['title']} @ {job['company']}")
-        for job in scrape_remotive(query):
-            if job["id"] not in existing:
-                existing[job["id"]] = job
-                new_count += 1
-                print(f"  + Remotive: {job['title']} @ {job['company']}")
+                print("  ✓ Sent with ATS resume attached!")
 
-    save_jobs(existing)
-    print(f"\n[Scraper] Done. {new_count} new jobs added. Total: {len(existing)}")
-    return new_count
+                time.sleep(EMAIL_MIN_DELAY_SECONDS)
+
+            except Exception as exc:
+                print(f"  ✗ Send failed: {email} — {str(exc)[:160]}")
+
+    save_jobs(jobs)
+    print(f"[Sender] Done. {sent_count} emails sent.")
+    return sent_count
+
 
 if __name__ == "__main__":
-    run_scraper()
+    run_sender()
