@@ -31959,7 +31959,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"RxJS, Reactive Forms (Angular-specific reactive patterns)\", \"Backend\": \"WCF (Windows Communication Foundation)\", \"Cloud / DevOps\": \"Azure SQL Database management, Azure App Service deployment\", \"Testing\": \"xUnit, NUnit, Moq (C# unit testing frameworks)\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Architected Angular 14/18 component hierarchy with RxJS observables and reactive forms for complex state management in enterprise applications\"}",
     "email_draft": "Subject: Full Stack .NET Developer \u2013 Enterprise Financial Systems Experience\n\nHi,\n\nStellar Professionals caught my attention because your .NET Developer role maps directly to what I've been building for the past several years\u2014C#, .NET Core, Angular, and Azure in production environments. I'm particularly interested in the enterprise-scale work your team handles.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage across critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transaction issues. I also secured APIs to SOX and PCI-DSS compliance across customer-facing financial systems.\n\nWould you be open to a 15-minute call to discuss how this experience might fit what you're building? My LinkedIn is below if helpful.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 88,
     "resume_pdf": "/tmp/Ram_Burri_Stellar_Professional.pdf",
@@ -31992,7 +31992,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "cb53908930cd": {
     "id": "cb53908930cd",
@@ -32051,7 +32055,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, Go, gRPC, GraphQL\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda, RDS), Kubernetes, Docker, Terraform, Jenkins\", \"Testing\": \"NUnit, xUnit, Moq, Integration Testing frameworks\"}, \"priority_bullets\": [1, 2, 5, 6], \"extra_bullet\": \"Architected and deployed microservices using .NET 8 with Docker containerization and Kubernetes orchestration in Azure cloud environment\"}",
     "email_draft": "Subject: Senior .NET Developer \u2013 Backend Systems & Azure Infrastructure\n\nSSV Technologies' focus on enterprise automation caught my attention, particularly the complexity involved in building reliable backend systems that businesses actually depend on daily.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also broke apart a legacy payment portal into microservices that eliminated duplicate transaction issues, with all APIs secured to SOX/PCI-DSS standards.\n\nWould you have 15 minutes this week to discuss how I could contribute to your backend team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_SSV_Technologies_Inc.pdf",
@@ -32085,7 +32089,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "27f503889605": {
     "id": "27f503889605",
@@ -32292,7 +32300,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Next.js advanced patterns (App Router, Server Components), advanced state management (Zustand/Jotai), performance optimization\", \"Backend\": \"Azure Functions serverless patterns, event-driven architecture, message queue handling (Service Bus), distributed caching (Redis)\", \"Cloud / DevOps\": \"Azure monitoring (Application Insights), infrastructure-as-code (Terraform/Bicep), container orchestration (Docker/Kubernetes), Azure security best practices\", \"Testing\": \"Integration testing frameworks, end-to-end testing (Cypress/Playwright), performance testing, load testing tools\"}, \"priority_bullets\": [2, 1, 4, 6], \"extra_bullet\": \"Architected and mentored team on Azure-native serverless solutions using Functions and Event Grid, reducing infrastructure costs by 40% while improving scalability\"}",
     "email_draft": "Subject: .NET/Azure/React Stack + Enterprise Security Experience\n\nHi,\n\nYour Full Stack Engineer role caught my attention because the stack mirrors what I've been building with for years\u2014.NET Core, Azure cloud-native, React/Next.js. The C2H structure also works well for my situation.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture and secured APIs to SOX/PCI-DSS compliance\u2014experience that tends to matter in enterprise environments.\n\nWould you have 15 minutes this week to discuss how I might contribute to Emergere? Happy to work around your schedule.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 92,
     "resume_pdf": "/tmp/Ram_Burri_Emergere_Technologie.pdf",
@@ -32323,7 +32331,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "b5dcccf96370": {
     "id": "b5dcccf96370",
@@ -32340,7 +32352,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Tailwind CSS, CSS-in-JS libraries\", \"Backend\": \"Java, Python, Go, gRPC, GraphQL, message queue systems (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"Kubernetes, Docker advanced orchestration, AWS, GCP, Terraform, Helm charts, monitoring/logging stacks (ELK, Datadog)\", \"Testing\": \"Integration testing frameworks, performance testing, load testing tools, E2E testing (Cypress, Playwright)\"}, \"priority_bullets\": [1, 4, 2, 6], \"extra_bullet\": \"Designed and deployed containerized microservices on Azure Kubernetes Service (AKS) with auto-scaling and health monitoring\"}",
     "email_draft": "Subject: Full Stack Engineer - .NET/Azure/React experience with secure financial systems\n\nHi,\n\nI came across the Full Stack Engineer role at Emergere Technologies and noticed you're looking for someone across the .NET/Azure/React/Next.js stack. I've been working with this exact combination in financial services, where the security and performance requirements don't leave much room for error.\n\nMost recently at Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transaction issues. All of this was built to SOX/PCI-DSS compliance standards.\n\nWould you be open to a 15-minute call to discuss how this experience might translate to what you're building at Emergere? My LinkedIn is here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 92,
     "resume_pdf": "/tmp/Ram_Burri_Emergere_Technologie.pdf",
@@ -32370,7 +32382,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "81f9cc2318cb": {
     "id": "81f9cc2318cb",
@@ -33098,7 +33114,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Next.js (mentioned in JD but not in your experience)\", \"Backend\": \"Azure Functions, Event/Messaging systems (Service Bus, Event Hub consumption patterns)\", \"Cloud / DevOps\": \"Docker/Containerization, App Services deployment, Azure Storage integration patterns\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Containerized ASP.NET Core microservices using Docker and deployed to Azure Container Registry with AKS orchestration\"}",
     "email_draft": "Subject: Full Stack Engineer \u2013 .NET/Azure/React experience for Emergere\n\nHi,\n\nI came across Emergere Technologies and noticed your focus on building cloud-native solutions with the .NET/Azure/React stack. That's exactly where I've been working for the past several years, and I'd like to explore how I might contribute to your engineering team.\n\nMost recently at Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transaction issues. All of this was done while meeting SOX and PCI-DSS compliance requirements\u2014so I'm comfortable working in environments where security and reliability aren't optional.\n\nWould you be open to a 15-minute call to discuss what you're working on and whether there's a fit? My LinkedIn is here: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 92,
     "resume_pdf": "/tmp/Ram_Burri_Emergere_Technologie.pdf",
@@ -33130,7 +33146,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "1e290b50ed26": {
     "id": "1e290b50ed26",
@@ -37956,6 +37976,120 @@
     "url": "https://www.adzuna.com/details/5729416960?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T17:45:57.276012+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "f33f542272a6": {
+    "id": "f33f542272a6",
+    "title": "Director - Integrated Marketing",
+    "company": "Horizon Organic Dairy, LL",
+    "location": "Broomfield, Colorado",
+    "salary": "$163,069 - $163,069",
+    "description": "Job Description Job Description Director Integrated Marketing & Communications; Horizon Brands About the Company: At Horizon Organic, we\u2019re growing a culture of passionate people driven to do good for the horizon we all share. We\u2019re building the tomorrow we want to see. Every single day. Joining our team means being part of a dynamic environment where your skills are valued, and your contributions make a real difference. We offer diverse opportunities for career growth and development. Embark o\u2026",
+    "url": "https://www.adzuna.com/land/ad/5729438541?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=4AD4AB1BBBD6325A33FA8AAD91AE86A890616E61",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T18:23:22.219921+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "1d895fd8082e": {
+    "id": "1d895fd8082e",
+    "title": "Director of Drilling & Completions",
+    "company": "QB Energy",
+    "location": "Denver, Colorado",
+    "salary": "$94,431 - $94,431",
+    "description": "Job Description Job Description Company Information QB Energy is a Denver-based upstream natural gas company committed to delivering value through responsible acquisition, development, and production that benefits both shareholders and stakeholders by operating efficiently, sustainably, and with cutting-edge technology. QB Energy operates in the Piceance Basin of Western Colorado, currently operating about 400,000 net acres. The company develops and operates upstream gathering, compression, pro\u2026",
+    "url": "https://www.adzuna.com/land/ad/5729434262?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=798A5FD1D1EED2B3814D282B702975EACA2D5722",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T18:23:22.219953+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "e2a8355e47b0": {
+    "id": "e2a8355e47b0",
+    "title": "Business Development Manager, Value-Added Services",
+    "company": "Depatie Fluid Power Company",
+    "location": "Portage, Kalamazoo County",
+    "salary": "$117,077 - $117,077",
+    "description": "Job Description Job Description Description: About the Role Depatie is looking for a commercially driven, technically fluent Business Development Manager to spearhead growth in our Value-Added Services portfolio. This is a hunter role for someone who thrives on building from the ground up \u2014 identifying underserved opportunities, winning new customers, and expanding how existing accounts leverage Depatie's differentiated service capabilities. You will operate at the intersection of technical dep\u2026",
+    "url": "https://www.adzuna.com/land/ad/5729434096?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=9D3BE06058006873F252DF9E98531AF4205AE6F0",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T18:23:22.219959+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "b177dab1e9da": {
+    "id": "b177dab1e9da",
+    "title": "Managed Services Sales Specialist",
+    "company": "AHEAD",
+    "location": "Minneapolis, Hennepin County",
+    "salary": "$67,402 - $67,402",
+    "description": "Job Description Job Description AHEAD builds platforms for digital business. By weaving together advances in cloud infrastructure, automation and analytics, and software delivery, we help enterprises deliver on the promise of digital transformation. At AHEAD, we prioritize creating a culture of belonging, where all perspectives and voices are represented, valued, respected, and heard. We create spaces to empower everyone to speak up, make change, and drive the culture at AHEAD. We are an equal \u2026",
+    "url": "https://www.adzuna.com/land/ad/5729430503?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=96D1A56ADC9F7D03C6C4CB8EFB5FD0CAB220DB92",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T18:23:22.219965+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "09fa1b45e3be": {
+    "id": "09fa1b45e3be",
+    "title": "Programmer/Analyst V",
+    "company": "GEOGRAPHIC SOLUTIONS INC",
+    "location": "Palm Harbor, Pinellas County",
+    "salary": "$80,964 - $80,964",
+    "description": "Job Description Job Description Description: Job Summary: The Programmer/Analyst V will be responsible for a variety of duties in support of the Company\u2019s Virtual OneStop (VOS) software solution. The Programmer/Analyst V will work closely with other team members in an Agile environment who have responsibility for prompt and timely delivery of new development, maintenance incidents, configuration tasks, setup tasks, responding to customer questions, data change requests, and other duties as assi\u2026",
+    "url": "https://www.adzuna.com/land/ad/5729430411?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=788A43B2A389252746E3B92B457046CE80812170",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T18:23:22.219973+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "31b4a0d624ef": {
+    "id": "31b4a0d624ef",
+    "title": "Materials Testing Laboratory Technician",
+    "company": "MC Squared,LLC",
+    "location": "South Bay, Palm Beach County",
+    "salary": "$35,216 - $35,216",
+    "description": "Job Description Job Description We're seeking a CMT Lab Technician for our next reservoir project in South Bay, FL (near Sunrise, Plantation, Hollywood, Westin). One of the landmark projects \u2013 one of the largest in Florida, if not the entire nation. It is an opportunity to be part of a high-profile Earth Dam project for the Army Corps of Engineers, a 5 year project \u2013 it is more than a job- it is a career-defining opportunity. It offers stability, career growth, and the chance to work alongside \u2026",
+    "url": "https://www.adzuna.com/land/ad/5729429190?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=D9C662F82DB5CA055368DF1309CAD8D2D13939EF",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-14T18:23:22.219985+00:00",
     "status": "skipped_irrelevant",
     "recruiter_email": "",
     "recruiter_name": "",
