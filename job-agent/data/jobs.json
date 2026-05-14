@@ -33167,7 +33167,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Accessibility (a11y), Web Performance Optimization\", \"Backend\": \"Java, Python, gRPC, Message Queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Docker, Kubernetes, Terraform, Infrastructure as Code\", \"Testing\": \"Selenium, Cypress, LoadTesting, Security Testing, OWASP\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Demonstrated expertise in full-stack .NET development with cloud-native architecture, CI/CD automation, and enterprise-grade security implementations\"}",
     "email_draft": "Subject: Full-Stack .NET Developer with Security Compliance Background for Application Analyst II Role\n\nI came across the Application Analyst II position and was drawn to NNSS's mission-critical work supporting national security. Having built systems under SOX and PCI-DSS compliance requirements, I understand what it takes to develop software where security isn't optional\u2014it's foundational.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions and secured customer-facing APIs to meet strict compliance standards. My daily stack\u2014.NET Core, Angular, and Azure\u2014maps directly to what you're using.\n\nWould you have 15 minutes this week to discuss how my compliance-focused development experience could contribute to NNSS? My LinkedIn is below if helpful.\n\nLinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nBest regards,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Nevada_National_Secu.pdf",
@@ -33200,7 +33200,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": false,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "cc7df7ab9e5b": {
     "id": "cc7df7ab9e5b",
@@ -33217,7 +33221,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y) testing\", \"Backend\": \"Java, Python, GraphQL, gRPC, Spring Framework\", \"Cloud / DevOps\": \"Kubernetes, Docker containerization, AWS services, GCP, Terraform, Infrastructure as Code\", \"Testing\": \"Selenium, Cypress, Integration testing frameworks, Performance testing tools\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Demonstrated expertise in full-stack development across .NET/C# backend and React frontend with cloud integration experience\"}",
     "email_draft": "Subject: Full Stack Engineer with SOX/PCI-DSS Security Experience\n\nHi,\n\nAscension Federal Services caught my attention because federal healthcare systems demand the same rigorous compliance and security standards I've been building against in financial services. The intersection of sensitive data, regulatory requirements, and reliable system architecture is where I do my best work.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, with all APIs secured to SOX and PCI-DSS compliance standards.\n\nWould you have 15 minutes to discuss how this experience translates to your federal healthcare projects? My LinkedIn is below.\n\nlinkedin.com/in/ram-b-650769397\n\nBest,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Ascension_Federal_Se.pdf",
@@ -33253,7 +33257,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "c2297cc90825": {
     "id": "c2297cc90825",
@@ -33384,7 +33392,7 @@
     "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Material handling UI domain knowledge, accessibility (WCPA compliance), performance optimization for complex data visualization\", \"Backend\": \"WCF services, ERP systems integration patterns, legacy system modernization, material handling business logic\", \"Cloud / DevOps\": \"Azure infrastructure as code (Terraform/ARM templates), Azure Service Bus, container orchestration beyond CI/CD\", \"Testing\": \"Integration testing frameworks, load testing for real-time systems, E2E testing with Cypress/Playwright\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Designed and implemented T-SQL stored procedures and query optimization strategies for high-volume material handling transaction processing, reducing execution time by 40%\"}",
     "email_draft": "Subject: C#/React/SQL Server developer with compliance-hardened systems experience\n\nHi,\n\nHy-Tek's logistics software handles complex warehouse operations where accuracy and reliability matter\u2014similar pressures to the financial systems I've been building. That overlap in \"zero room for error\" environments is what drew me to your Software Developer role.\n\nAt Jefferson Bank, I built a fraud case management system in C#/React/SQL Server that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. I also secured APIs to SOX/PCI-DSS standards\u2014the kind of detail-oriented compliance work that translates well to regulated logistics environments.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? My LinkedIn is below if helpful.\n\nhttps://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Hy_Tek.pdf",
@@ -33411,7 +33419,11 @@
     },
     "recruiters": [],
     "recruiter_source": "none",
-    "skip_email": true
+    "skip_email": true,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "de95411530bb": {
     "id": "de95411530bb",
@@ -33763,7 +33775,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (WCPA11y), Performance Optimization\", \"Backend\": \"Java, Python, Go, gRPC, Message Queues (RabbitMQ, Kafka), Caching (Redis)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Kubernetes, Docker, Terraform, Jenkins, Monitoring (Datadog, New Relic), Security/Compliance\", \"Testing\": \"Integration Testing, E2E Testing (Cypress, Playwright), Performance Testing, Load Testing\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Designed and led architectural decisions for scalable microservices across multiple teams, reducing system latency by 40% and improving deployment frequency to daily releases\"}",
     "email_draft": "Subject: Staff Engineer with PCI-DSS payment systems experience\n\nHi,\n\nPayactiv's earned wage access model sits at a tricky intersection\u2014real-time money movement, strict compliance requirements, and the kind of scale where small bugs become expensive fast. That's exactly the problem space I've been working in.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage across transaction-critical modules, and migrated a legacy payment portal to microservices that eliminated duplicate transaction issues. All of this on Azure/.NET/React with SOX and PCI-DSS compliance baked in from day one.\n\nWould you be open to a 15-minute call to discuss how this maps to what you're building? Here's my LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Payactiv.pdf",
@@ -33795,7 +33807,11 @@
       "angle": "FinTech-ready full-stack engineer with proven financial compliance expertise (SOX/PCI-DSS) and the exact Azure/.NET/React stack Payactiv uses, bringing secure payment systems experience directly aligned with their earned wage access platform.",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@payactiv.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "9a553c0142e5": {
     "id": "9a553c0142e5",
@@ -33812,7 +33828,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Webpack, CSS-in-JS libraries\", \"Backend\": \"Java, Python, gRPC, GraphQL\", \"Cloud / DevOps\": \"Kubernetes, Docker, AWS, GCP, Terraform, Jenkins\", \"Testing\": \"Selenium, Cypress, xUnit, NUnit, Integration Testing frameworks\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Led cross-functional technical discussions with stakeholders to define API contracts and microservice architecture patterns, reducing integration issues by 40%\"}",
     "email_draft": "Subject: .NET Developer with Financial Security Compliance Background\n\nHi,\n\nNTT's infrastructure services handle sensitive enterprise data at scale, which caught my attention given my background building compliant systems in financial services. The hybrid setup in Parsippany also works well for me.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. I've also secured APIs to SOX and PCI-DSS standards across customer-facing systems\u2014experience that translates directly to enterprise clients with strict compliance requirements.\n\nWould you have 15 minutes to discuss how my full-stack .NET and security compliance background could contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 85,
     "resume_pdf": "/tmp/Ram_Burri_NTT_America__Inc_.pdf",
@@ -33844,7 +33860,11 @@
       "angle": "Strong full-stack .NET developer with exact tech stack match plus valuable security compliance experience in financial applications - hybrid arrangement in Parsippany aligns well",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@nttdata.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "9c399ce6f694": {
     "id": "9c399ce6f694",
