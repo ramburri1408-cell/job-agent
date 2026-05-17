@@ -37885,11 +37885,11 @@
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T12:56:36.292810+00:00",
     "status": "ai_ready",
-    "recruiter_email": "careers@bruno.com",
-    "recruiter_name": "Hiring Manager",
+    "recruiter_email": "",
+    "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Tailwind CSS, accessibility (a11y) testing\", \"Backend\": \"Java, Python, GraphQL\", \"Cloud / DevOps\": \"AWS, Docker, Kubernetes, Terraform\"}, \"priority_bullets\": [2, 1, 6, 7], \"extra_bullet\": \"Designed responsive UI components aligned with design systems and accessibility standards, improving usability scores by 20%\"}",
     "email_draft": "Subject: .NET Developer with Fraud Systems & Azure Experience\n\nHi,\n\nI came across Bruno and was interested in how you're building web applications with .NET. My background sits right at that intersection\u2014ASP.NET Core on the backend, React/Angular on the front, all deployed through Azure pipelines.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also broke apart a legacy payment portal into microservices, which eliminated duplicate transaction issues we'd been chasing for months. All of it had to meet SOX/PCI-DSS requirements, so I'm used to working within strict compliance constraints.\n\nWould you be open to a 15-minute call to see if there's a fit? Happy to work around your schedule.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 88,
     "resume_pdf": "/tmp/Ram_Burri_Bruno.pdf",
@@ -37917,7 +37917,14 @@
       "angle": "Strong ASP.NET Core expertise with modern front-end frameworks (React, Angular) and Azure cloud experience makes this candidate a near-perfect fit for building .NET web applications with collaborative DevOps practices.",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@bruno.com"
-    }
+    },
+    "recruiters": [],
+    "recruiter_source": "none",
+    "skip_email": false,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "9e0b6e1c043f": {
     "id": "9e0b6e1c043f",
@@ -38017,7 +38024,7 @@
     "recruiter_name": "Tech Holding Recruiting Team",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y)\", \"Backend\": \"Java, Python, Go, gRPC, Message Queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform, Jenkins\", \"Testing\": \"Selenium, Cypress, Load Testing (JMeter), BDD (Cucumber)\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Mentored junior developers on .NET best practices and code quality standards\"}",
     "email_draft": "Subject: Senior .NET Engineer \u2013 Enterprise Azure & Compliance Experience\n\nHi,\n\nTech Holding's focus on delivering consulting solutions for enterprise clients caught my attention. Contract engagements in regulated industries require engineers who can ship production-ready code without handholding, and that's where I operate.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, modernized a legacy payment portal into microservices architecture that eliminated duplicate transactions, and secured APIs to SOX/PCI-DSS compliance. I maintained 85%+ test coverage across critical transaction modules throughout.\n\nWould a 15-minute call make sense to discuss how I could contribute to Tech Holding's .NET projects?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Tech_Holding.pdf",
@@ -38045,7 +38052,11 @@
       "angle": "Strong full-stack .NET developer with enterprise Azure experience and security/compliance background ideal for consulting engagements requiring reliable, production-ready solutions",
       "recruiter_name": "Tech Holding Recruiting Team",
       "recruiter_email": "careers@techholding.co"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "29ce158037ac": {
     "id": "29ce158037ac",
@@ -38081,7 +38092,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y), Performance optimization tools\", \"Backend\": \"Java, Spring Boot, Python, Django, GraphQL, gRPC, Event streaming (Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda, RDS), GCP, Docker, Kubernetes, Terraform, Infrastructure as Code, Monitoring/Logging (ELK, Datadog)\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Led architectural design decisions and mentored junior engineers on microservices best practices and cloud-native development patterns\"}",
     "email_draft": "Subject: .NET engineer who's shipped PCI-compliant retail systems\n\nHi,\n\nQVC processes massive transaction volumes across multiple channels, which means your engineering team is likely balancing platform modernization with strict compliance requirements. That's exactly the kind of challenge I've spent my career solving.\n\nAt Jefferson Bank, I rebuilt a legacy payment portal into a microservices architecture that eliminated duplicate transactions, secured APIs to SOX/PCI-DSS standards, and maintained 85%+ test coverage on critical transaction modules. I also built a fraud case management system that cut manual analyst review time significantly\u2014the kind of work that directly impacts both security posture and operational efficiency.\n\nWould you have 15 minutes this week to discuss how I could contribute to QVC's platform engineering efforts? LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_QVC.pdf",
@@ -38111,7 +38122,11 @@
       "angle": "Strong full-stack .NET developer with Azure expertise and security compliance background ideal for modernizing QVC's retail platforms at scale",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@qvc.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "646d36813835": {
     "id": "646d36813835",
@@ -38142,7 +38157,7 @@
     "url": "https://remotive.com/remote-jobs/artificial-intelligence/business-transformation-lead-2090881",
     "portal": "Remotive",
     "scraped_at": "2026-05-14T17:18:05.533329+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38161,7 +38176,7 @@
     "url": "https://www.adzuna.com/details/5729421409?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T17:45:57.275991+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38180,7 +38195,7 @@
     "url": "https://www.adzuna.com/details/5729416960?utm_medium=api&utm_source=8b64f8b7",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T17:45:57.276012+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38199,7 +38214,7 @@
     "url": "https://www.adzuna.com/land/ad/5729438541?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=4AD4AB1BBBD6325A33FA8AAD91AE86A890616E61",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T18:23:22.219921+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38218,7 +38233,7 @@
     "url": "https://www.adzuna.com/land/ad/5729434262?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=798A5FD1D1EED2B3814D282B702975EACA2D5722",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T18:23:22.219953+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38237,7 +38252,7 @@
     "url": "https://www.adzuna.com/land/ad/5729434096?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=9D3BE06058006873F252DF9E98531AF4205AE6F0",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T18:23:22.219959+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38256,7 +38271,7 @@
     "url": "https://www.adzuna.com/land/ad/5729430503?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=96D1A56ADC9F7D03C6C4CB8EFB5FD0CAB220DB92",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T18:23:22.219965+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38275,7 +38290,7 @@
     "url": "https://www.adzuna.com/land/ad/5729430411?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=788A43B2A389252746E3B92B457046CE80812170",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T18:23:22.219973+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38294,7 +38309,7 @@
     "url": "https://www.adzuna.com/land/ad/5729429190?se=2D0f_cFP8RGmDPVqctWqJg&utm_medium=api&utm_source=8b64f8b7&v=D9C662F82DB5CA055368DF1309CAD8D2D13939EF",
     "portal": "Adzuna",
     "scraped_at": "2026-05-14T18:23:22.219985+00:00",
-    "status": "skipped_irrelevant",
+    "status": "archived",
     "recruiter_email": "",
     "recruiter_name": "",
     "tailored_resume": null,
@@ -38318,7 +38333,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte\", \"Backend\": \"Java, Python, Go, gRPC\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda, RDS, CloudFormation), Docker, Kubernetes, Terraform, Infrastructure as Code\", \"Testing\": \"Xunit, NUnit, Moq, Integration testing frameworks, Load testing tools\"}, \"priority_bullets\": [2, 1, 6, 5], \"extra_bullet\": \"Architected and deployed greenfield AWS infrastructure using CloudFormation/Terraform, establishing CI/CD pipelines and containerized microservices deployment patterns for scalable platform growth\"}",
     "email_draft": "Subject: C# engineer who's built compliant financial systems from scratch\n\nHi,\n\nI came across YourCode and noticed you're building greenfield products. Starting clean is rare\u2014most teams inherit legacy debt. I've done both: modernized a monolithic payment portal into microservices and built a fraud case management system from the ground up at Jefferson Bank.\n\nOn the technical side, I maintained 85%+ test coverage across critical transaction modules and secured APIs to SOX/PCI-DSS compliance. The fraud system cut manual analyst review time significantly, and the microservices migration eliminated duplicate transaction issues that were costing real money. My cloud experience is Azure-based, but the patterns translate.\n\nWould you have 15 minutes to talk about what you're building? Happy to share more specifics on the compliance and architecture work.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_YourCode.pdf",
@@ -38343,7 +38358,11 @@
       "angle": "Strong C# and .NET Core foundation with microservices and financial compliance experience transfers well to greenfield build; cloud skills are portable from Azure to AWS",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@yourcode.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "df77a880eeac": {
     "id": "df77a880eeac",
@@ -38457,7 +38476,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (a11y) testing\", \"Backend\": \"Java, Spring Boot, Python, Django, GraphQL, gRPC\", \"Cloud / DevOps\": \"Kubernetes, Docker, AWS (EC2, Lambda, S3), GCP, Terraform, Jenkins, Ansible\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Led database optimization initiatives reducing query execution time by 40% through strategic indexing and query refactoring across Oracle and SQL Server environments\"}",
     "email_draft": "Subject: Full-Stack Engineer with Financial Compliance Background\n\nHi,\n\nPeopleTec's work supporting defense and federal clients caught my attention\u2014organizations where security and reliability aren't optional. That's the environment I've been building in.\n\nAt Jefferson Bank, I developed a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. All of this under SOX and PCI-DSS compliance requirements.\n\nWould you have 15 minutes to discuss how this background might fit your full-stack engineering needs? My LinkedIn is below.\n\nlinkedin.com/in/ram-b-650769397\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_PeopleTec.pdf",
@@ -38487,7 +38506,11 @@
       "angle": "Strong full-stack .NET and React foundation with enterprise security expertise in financial compliance translates directly to PeopleTec's internal business-critical applications",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@peopletec.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "845aba9abe02": {
     "id": "845aba9abe02",
@@ -44719,5 +44742,43 @@
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@provisionusa.com"
     }
+  },
+  "979e7fc4e2d7": {
+    "id": "979e7fc4e2d7",
+    "title": "JPMorgan Private Client Relationship Manager - Palo Alto, CA",
+    "company": "JPMorgan Chase Bank, N.A.",
+    "location": "Palo Alto, Santa Clara County",
+    "salary": "$120,555 - $120,555",
+    "description": "At JPMorgan Private Client, we are devoted to providing distinguished experiences that resonate with our affluent clientele, ensuring they feel valued and delighted by our unparalleled expertise. As a Relationship Manager in JPMorgan Private Client, you will nurture and develop high-net-worth client relationships by earning their trust, comprehensively understanding their unique aspirations, and offering bespoke solutions and tailored advice. You will empower clients to explore the vast financi\u2026",
+    "url": "https://www.adzuna.com/details/5732507579?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-17T20:36:06.942080+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 12
+  },
+  "d919f3f78cf1": {
+    "id": "d919f3f78cf1",
+    "title": "Sr. BizTalk Programmer",
+    "company": "ECCLESIASTES INC",
+    "location": "Newark, New Castle County",
+    "salary": "$181,139 - $181,139",
+    "description": "We need following information when you apply to Ecclesiastes requirements. 1) Resume 2) Passport 3) Work Authorization As a Senior IT Applications Programmer, you will play a key role in designing, developing, and maintaining BizTalk integrations, ensuring seamless application support across multiple platforms. You will collaborate with various teams, including application programmers, QA analysts, and business partners, to deliver high-impact software solutions using methodologies such as Wate\u2026",
+    "url": "https://www.adzuna.com/details/5732462289?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-17T20:36:07.386601+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
   }
 }
