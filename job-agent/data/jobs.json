@@ -39041,7 +39041,7 @@
     "recruiter_name": "Robert Half Recruiting Team",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"CSS-in-JS libraries (Styled Components, Emotion), State management (Redux, Zustand), Testing libraries (React Testing Library, Cypress)\", \"Backend\": \"GraphQL, gRPC, Message queues (RabbitMQ, Kafka), Caching strategies (Redis), API documentation (Swagger/OpenAPI)\", \"Cloud / DevOps\": \"Docker containerization, Kubernetes orchestration, Infrastructure as Code (Terraform), AWS services, Monitoring/Logging (ELK, Datadog)\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Architected and deployed scalable cloud infrastructure using [Docker/Kubernetes/Terraform] supporting [X] concurrent users with [Y]% uptime\"}",
     "email_draft": "Subject: Full Stack .NET/React Developer with Financial Services Security Background\n\nHi Robert Half Team,\n\nYour Full Stack Developer role caught my attention because it aligns directly with what I've been building for the past four years\u2014modern .NET/React applications in regulated financial environments where security isn't optional.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage across transaction-critical modules, and migrated a legacy payment portal to microservices architecture that eliminated duplicate transaction issues. I've also handled SOX and PCI-DSS compliance across customer-facing APIs, so I understand the audit and security requirements your client likely faces.\n\nWould a 15-minute call make sense to discuss how my background fits what you're looking for? LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 92,
     "resume_pdf": "/tmp/Ram_Burri_Robert_Half.pdf",
@@ -39066,7 +39066,11 @@
       "angle": "Exceptional technical match with 4+ years full-stack .NET/React experience plus enterprise security expertise in financial applications\u2014exactly the modern web app development skills Robert Half's client needs.",
       "recruiter_name": "Robert Half Recruiting Team",
       "recruiter_email": "jacksonville@roberthalf.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "c9c30ed6e359": {
     "id": "c9c30ed6e359",
@@ -39083,7 +39087,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, Accessibility (WCAG)\", \"Backend\": \"Java, Python, Go, gRPC, GraphQL\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), Kubernetes, Docker, Terraform, Jenkins\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Led migration of legacy WCF services to ASP.NET Core microservices, reducing latency by 40% and improving system scalability for enterprise fintech operations\"}",
     "email_draft": "Subject: .NET Developer with PCI-DSS Compliance Experience in Payment Systems\n\nFiserv processes billions of transactions daily, which means your engineering teams can't afford onboarding lag on compliance requirements. I've spent the last several years building transaction systems under SOX and PCI-DSS constraints, so I understand why that audit trail matters and how to architect for it from day one.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and migrated a legacy payment portal to microservices\u2014eliminating duplicate transaction issues that were costing real money. All on the Microsoft stack your teams already use.\n\nWould you have 15 minutes this week to discuss how I could contribute to Fiserv's payment infrastructure? My LinkedIn is below.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 88,
     "resume_pdf": "/tmp/Ram_Burri_Fiserv.pdf",
@@ -39113,7 +39117,11 @@
       "angle": "Financial sector compliance experience (SOX/PCI-DSS) plus full Microsoft stack expertise makes this candidate immediately productive in Fiserv's payment processing environment",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@fiserv.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "85e80d50ef4d": {
     "id": "85e80d50ef4d",
@@ -39130,7 +39138,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"CSS3 (foundational level mentioned in JD, have SCSS/CSS3)\", \"Backend\": \"Gen AI integration (mentioned in JD must-haves)\", \"Cloud / DevOps\": \"Azure-specific Gen AI services (Azure Cognitive Services, Azure OpenAI)\", \"Testing\": \"Testing frameworks beyond Jest (unit/integration testing patterns)\"}, \"priority_bullets\": [1, 2, 4, 6], \"extra_bullet\": \"Implemented Gen AI features using Azure OpenAI services to enhance user-facing applications, reducing manual processing time by X%\"}",
     "email_draft": "Subject: .NET Developer with Financial Services Security Background\n\nHi,\n\nI came across Carman Solutions Group while researching companies doing meaningful .NET development work. Your focus on delivering robust software solutions caught my attention, and I wanted to reach out directly.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage on critical transaction modules. I also modernized a legacy payment portal into a microservices architecture and secured APIs to SOX/PCI-DSS compliance\u2014so I understand what it takes to ship production code in regulated environments.\n\nWould you be open to a 15-minute call to discuss how I might contribute to your team? You can find more about my background at linkedin.com/in/ram-b-650769397.\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Carman_Solutions_Gro.pdf",
@@ -39159,7 +39167,11 @@
       "angle": "Strong full-stack .NET developer with proven Azure and React expertise, plus valuable enterprise security experience in financial applications that demonstrates production-ready development skills.",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@carmansolutionsgroup.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "e3fb07b40891": {
     "id": "e3fb07b40891",
@@ -39176,7 +39188,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18, RxJS, Reactive Forms\", \"Backend\": \"Microservices architecture, WCF, ERP Systems Integration\", \"Cloud / DevOps\": \"Azure Event Hub, Azure DevOps CI/CD pipelines\", \"Testing\": \"Jest advanced patterns, integration testing\"}, \"priority_bullets\": [1, 2, 6, 4], \"extra_bullet\": \"Optimized Oracle PL/SQL queries achieving 40%+ performance improvement on legacy systems while maintaining data integrity\"}",
     "email_draft": "Subject: Full Stack .NET Developer - Exact Stack Match (ASP.NET Core, React, Angular, Azure)\n\nHi,\n\nAkaasa's focus on delivering technology solutions across diverse client environments caught my attention\u2014that kind of work requires developers who can hit the ground running with production-ready skills, not just framework familiarity.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. All while keeping APIs compliant with SOX and PCI-DSS requirements.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_Akaasa_Technologies.pdf",
@@ -39203,7 +39215,11 @@
       "angle": "Strong full-stack .NET developer with exact tech stack match including ASP.NET Core, React, Angular, and Azure - exceeds technical requirements though experience level skews mid-to-senior rather than entry-mid",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@akaasatech.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "00dafd027258": {
     "id": "00dafd027258",
@@ -39284,7 +39300,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18\", \"Backend\": \"WCF, ERP Systems Integration\", \"Cloud / DevOps\": \"Azure Event Hub advanced patterns, Azure DevOps at scale\", \"Testing\": \"Integration testing frameworks\"}, \"priority_bullets\": [1, 2, 6, 4], \"extra_bullet\": \"Architected and deployed microservices solutions on Azure cloud platform, reducing latency by 40% and improving system scalability for enterprise applications\"}",
     "email_draft": "Subject: .NET Developer with Azure Microservices & Financial Compliance Background\n\nHi,\n\nNTT Data's work delivering enterprise solutions for financial services clients caught my attention. Building scalable, compliant systems for regulated industries is exactly where I've spent the last several years, and I'd like to bring that experience to your team.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, and secured APIs to SOX/PCI-DSS standards. I've maintained 85%+ test coverage across critical transaction modules throughout.\n\nWould you have 15 minutes this week or next to discuss the Sr .NET Developer role? I'd welcome the chance to learn more about what you're building.\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 85,
     "resume_pdf": "/tmp/Ram_Burri_NTT_Data_Americas__I.pdf",
@@ -39316,7 +39332,11 @@
       "angle": "Strong full-stack .NET developer with cloud-native Azure expertise and enterprise security compliance experience in financial applications - ideal for scalable application development",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@nttdata.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "4b9935cd4517": {
     "id": "4b9935cd4517",
@@ -45250,5 +45270,269 @@
       "recruiter_name": "Charles Schwab Talent Acquisition",
       "recruiter_email": "schwabtalent@schwab.com"
     }
+  },
+  "b94e3e2e7792": {
+    "id": "b94e3e2e7792",
+    "title": "Senior Full Stack Developer (.NET/C#/Angular)",
+    "company": "bdo consulting",
+    "location": "Oak Brook Mall, DuPage County",
+    "salary": "$118,686 - $118,686",
+    "description": "The Senior Software Developer will work with cutting edge technology, deliver high quality solutions across various local industries, and driving solutions with a team working on holistic software development projects that range in size and scope, as well as receive continuous career development opportunities. This role will perform hands-on customized development and unit testing of full-stack software solutions. The Senior Software Developer owns and participates in consulting relationships w\u2026",
+    "url": "https://www.adzuna.com/details/5733234851?utm_medium=api&utm_source=8b64f8b7",
+    "portal": "Adzuna",
+    "scraped_at": "2026-05-18T15:36:32.781765+00:00",
+    "status": "ai_ready",
+    "recruiter_email": "careers@bdo.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Angular 14/18 hands-on experience, RxJS advanced patterns\", \"Backend\": \"WCF services, ERP Systems Integration depth\", \"Cloud / DevOps\": \"Azure DevOps pipeline optimization, Azure Event Hub advanced patterns\", \"Testing\": \"Integration testing frameworks, performance testing tools\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Architected and led migration of legacy .NET Framework services to .NET Core/8, reducing deployment time by 40% and improving system scalability for enterprise clients\"}",
+    "email_draft": "Subject: .NET/Angular Developer with Financial Compliance Experience\n\nHi,\n\nBDO's work with financial services clients caught my attention\u2014compliance-heavy environments where software decisions have real audit implications. That's exactly where I've spent the last several years building systems.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices that eliminated duplicate transactions. All of it SOX and PCI-DSS compliant. I work across the full stack\u2014.NET/C#, Angular, Azure\u2014and I'm used to the documentation and rigor consulting clients expect.\n\nWould you have 15 minutes to discuss how I might contribute to BDO's technical consulting work?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 82,
+    "resume_pdf": "/tmp/Ram_Burri_bdo_consulting.pdf",
+    "fit_analysis": {
+      "score": 82,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "Angular",
+        "TypeScript",
+        "SQL Server",
+        "Azure",
+        "Azure DevOps",
+        "Entity Framework Core",
+        "xUnit",
+        "Git",
+        "REST APIs"
+      ],
+      "gaps": [
+        "Consulting experience not explicitly mentioned",
+        "Full project lifecycle ownership in consulting context"
+      ],
+      "angle": "Strong full-stack .NET developer with Angular expertise, Azure cloud experience, and financial sector compliance background\u2014ideal for BDO's enterprise consulting projects",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@bdo.com"
+    }
+  },
+  "5ef580045cad": {
+    "id": "5ef580045cad",
+    "title": "UI Developer (.NET C#/AWS)",
+    "company": "Gainwell Technologies",
+    "location": "Remote",
+    "salary": "Not listed",
+    "description": "Be part of a team that unleashes the power of leading-edge technologies to help improve the health and well-being of those most vulnerable in our country and communities. Working at Gainwell carries its rewards. You\u2019ll have an incredible opportunity to grow your career in a company that values work flexibility, learning, and career development. You\u2019ll add to your technical credentials and certifications while enjoying a generous, flexible vacation policy and educational assistance. We also have comprehensive leadership and technical development academies to help build your skills and capabilities.\nSummary\nAs\u00a0UI/UX Developer at Gainwell, you can contribute your skills as we harness the power of technology to help our clients improve the health and well-being of the members they serve \u2014 a co",
+    "url": "https://jobicy.com/jobs/143682-ui-developer-net-c-aws",
+    "portal": "Jobicy",
+    "scraped_at": "2026-05-18T15:36:35.432401+00:00",
+    "status": "ai_ready",
+    "recruiter_email": "careers@gainwelltechnologies.com",
+    "recruiter_name": "Hiring Manager",
+    "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Accessibility (WCAG), Figma/Design Tools, CSS-in-JS libraries, Component Testing (React Testing Library)\", \"Backend\": \"gRPC, GraphQL, Message Queues (RabbitMQ/Kafka), Caching strategies (Redis)\", \"Cloud / DevOps\": \"AWS (Lambda, ECS, S3, RDS), Infrastructure as Code (Terraform/CloudFormation), Kubernetes, Docker\", \"Testing\": \"E2E Testing (Cypress/Playwright), Load Testing, Integration Testing frameworks\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Architected and deployed AWS-based microservices infrastructure using Lambda and ECS, reducing deployment time by 40% through Infrastructure as Code practices\"}",
+    "email_draft": "Subject: .NET UI Developer with Healthcare-Adjacent Compliance Experience\n\nHi,\n\nGainwell's work modernizing state health and human services systems caught my attention\u2014particularly the scale of transactions you're processing and the compliance requirements that come with government healthcare platforms.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture and secured APIs to SOX/PCI-DSS standards\u2014the kind of regulated environment work that translates directly to healthcare systems. My .NET/C# and React/Angular experience is extensive, and cloud patterns transfer readily from Azure to AWS.\n\nWould you have 15 minutes this week to discuss how I might contribute to your UI development team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 78,
+    "resume_pdf": "/tmp/Ram_Burri_Gainwell_Technologie.pdf",
+    "fit_analysis": {
+      "score": 78,
+      "matched_skills": [
+        "C#",
+        ".NET",
+        "React.js",
+        "Angular",
+        "TypeScript",
+        "JavaScript",
+        "Node.js",
+        "Azure",
+        "Docker",
+        "Kubernetes",
+        "SQL Server",
+        "PostgreSQL",
+        "Entity Framework Core",
+        "Git",
+        "JWT",
+        "OAuth2"
+      ],
+      "gaps": [
+        "AWS experience (job specifies AWS, candidate has Azure)",
+        "Explicit UI/UX design skills",
+        "Healthcare domain experience",
+        "Figma/design tool proficiency"
+      ],
+      "angle": "Strong full-stack .NET developer with extensive frontend framework experience in React and Angular, plus enterprise security expertise\u2014cloud skills transfer readily from Azure to AWS",
+      "recruiter_name": "Hiring Manager",
+      "recruiter_email": "careers@gainwelltechnologies.com"
+    }
+  },
+  "7ffa5721c079": {
+    "id": "7ffa5721c079",
+    "title": "Software-Ingenieur PCS7 Elektrotechnik (m/w/d)",
+    "company": "KURT Personal GmbH",
+    "location": "Pinneberg",
+    "salary": "Not listed",
+    "description": "Gemeinsam mehr Bewegen !\nF\u00fcr unseren Kunden aus Hamburg/Kreis Pinneberg suchen wir im Rahmen der Arbeitnehmer\u00fcberlassung mit Option der \u00dcbernahme einem Software-Ingenieur PCS7 Elektrotechnik (m/w/d).\nAufgaben\n\u2022 Entwicklung und Programmierung von Automatisierungsl\u00f6sungen mit Siemens PCS7\n\u2022 Erstellung und Anpassung von Steuerungssoftware f\u00fcr industrielle Anlagen\n\u2022 Projektierung und Konfiguration von Prozessleitsystemen\n\u2022 Durchf\u00fchrung von Funktionspr\u00fcfungen, Tests und Inbetriebnahmen\n\u2022 Analyse und Optimierung bestehender Automatisierungssysteme\n\u2022 Abstimmung mit Projektleitung, Elektrokonstruktion und Kunden\n\u2022 Erstellung und Pflege technischer Dokumentationen\nQualifikation\n\u2022 Studium der Elektrotechnik, Automatisierungstechnik oder Weiterbildung zum staatlich gepr\u00fcften Techniker (Elektrotechnik",
+    "url": "https://www.arbeitnow.com/jobs/companies/kurt-personal-gmbh/software-ingenieur-pcs7-elektrotechnik-pinneberg-275905",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.687543+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "72b909b2e5cf": {
+    "id": "72b909b2e5cf",
+    "title": "Social Media Marketing (Personal Brand - Case Study)",
+    "company": "retentionclub GmbH",
+    "location": "Remote",
+    "salary": "Not listed",
+    "description": "Hey! \ud83d\udc4b Ich bin Julian, 27, Gr\u00fcnder von retentionclub - einer Klaviyo-Agentur f\u00fcr E-Commerce Brands. Neben der Agenturarbeit baue ich gerade meine Personal Brand auf. LinkedIn, Instagram, YouTube, TikTok - das volle Programm.\nAktuell arbeite ich daf\u00fcr mit professionellen externen Dienstleistern. Wenn sich die M\u00f6glichkeit ergeben w\u00fcrde, w\u00fcrde ich es aber auch anders l\u00f6sen. Wenn das f\u00fcr dich Interessant klingt, h\u00e4ttest du dadurch die Chance noch innerhalb deines Studiums die erste gro\u00dfe Case Study zu erzielen. Jemand, der nah dran ist, mitdenkt und mit mir zusammen Content auf ein Level bringt, das auff\u00e4llt. Kein 08/15-Social-Media-Praktikum, sondern echte Verantwortung ab Tag 1.\nAufgaben\n\nDu schneidest und produzierst Short-Form und Long-Form Video Content f\u00fcr LinkedIn, Instagram, YouTube & ",
+    "url": "https://www.arbeitnow.com/jobs/companies/retentionclub-gmbh/social-media-marketing-personal-brand-case-study-geisa-336634",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.688492+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "27b50d09523e": {
+    "id": "27b50d09523e",
+    "title": "Junior E-Commerce Manager",
+    "company": "Anio",
+    "location": "Bremen",
+    "salary": "Not listed",
+    "description": "\u00dcber Anio\nKindheit steht unter Druck. Smartphones erreichen Kinder immer fr\u00fcher und bringen s\u00fcchtigmachende Technologie, Bildschirmabh\u00e4ngigkeit und Cybermobbing mit sich. Anio existiert, um das zu \u00e4ndern. Unsere Smartwatches geben Kindern die Verbindung, die sie brauchen \u2013 und nichts, was sie nicht brauchen \u2013 und erm\u00f6glichen eine sicherere, ges\u00fcndere Kindheit ohne Smartphone. Als eine der beliebtesten Kinder-Smartwatches Europas beweist Anio, dass Profit und positiver Impact kein Widerspruch sind. Bei uns zu arbeiten bedeutet, etwas aufzubauen, das wirklich z\u00e4hlt.\nDeine Rolle\nDu \u00fcbernimmst eigenverantwortlich Aufgaben rund um Online-Marketing, Produktdaten, Marktpl\u00e4tze und tagesaktuelle Shop-Prozesse. Durch dich bekommen unsere Kunden was sie brauchen. Daf\u00fcr arbeitest du eng mit unserem Se",
+    "url": "https://www.arbeitnow.com/jobs/companies/anio/junior-e-commerce-manager-bremen-44225",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.689606+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "43e876044538": {
+    "id": "43e876044538",
+    "title": "Senior Network Engineer (m/w/d)",
+    "company": "DWWA Personalberatung GmbH",
+    "location": "Frankfurt am Main",
+    "salary": "Not listed",
+    "description": "Du suchst einen sicheren Job als Senior Network Engineer (m/w/d)? Du willst kein klassisches Standard-Hosting betreiben, sondern hochverf\u00fcgbare Core-Infrastrukturen via BGP Anycast und Infrastructure as Code aktiv aufbauen, automatisieren und skalieren?\nAufgaben\nDas bieten wir dir schon ab dem Erstgespr\u00e4ch mit uns:\n\nGratis Karriereberatung: Wir zeigen Dir Karriere- und Verdienstm\u00f6glichkeiten auf. Ganz ehrlich und objektiv.\nWertvolles Insider Know-how: Wir geben Dir schon im Erstgespr\u00e4ch die Insights, die in keiner Stellenanzeige stehen.\nDie schnellste Abk\u00fcrzung: Auf dem schnellsten Weg zum Kennenlernen. Wir haben den direkten Draht zu den Verantwortlichen!\nMaximale Erfolgsquote: 98% unserer Kandidat*innen werden direkt zum Erstgespr\u00e4ch eingeladen.\nAlternative Jobangebote: Wenn dieser Job n",
+    "url": "https://www.arbeitnow.com/jobs/companies/dwwa-personalberatung-gmbh/senior-network-engineer-frankfurt-am-main-250513",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.690942+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 15
+  },
+  "5d636c72b836": {
+    "id": "5d636c72b836",
+    "title": "Freiberufliche Codierer / \u00dcbersetzer (m/w/d) Philippinisch (Tagalog) -> Englisch",
+    "company": "ASKi & Data Intelligence GmbH",
+    "location": "Hamburg",
+    "salary": "Not listed",
+    "description": "Wir sind ein seit 1953 etabliertes Marktforschungs-Dienstleistungsunternehmen aus Hamburg. Wir koordinieren internationale Feld- und Datenerhebungen und liefern ma\u00dfgeschneiderte Research-L\u00f6sungen. Daf\u00fcr suchen wir dich im Business Development \u2013 mit Fokus auf Neukund:innen und Partnernetzwerk.\nAufgaben\n\u00dcbersetzung von Umfrageantworten aus dem Tagalog ins Englische\nCoding offener Antworten (Kategorisierung und Kodierung der Antworttexte f\u00fcr die statistische Auswertung)\nVerg\u00fctung:\n14 \u20ac pro Stunde\nVerf\u00fcgbarkeit: Ab sofort\nStabiler und schneller Internetanschluss erforderlich\nQualifikation\nSehr gute bis muttersprachliche Kenntnisse in Tagalog und Englisch\nErfahrung im \u00dcbersetzen und/oder Coding von Umfragetexten von Vorteil\nBenefits\nFlexible Zeiteinteilung\n100 % Remote / Homeoffice (weltweit m\u00f6",
+    "url": "https://www.arbeitnow.com/jobs/companies/aski-data-intelligence-gmbh/freiberufliche-codierer-ubersetzer-philippinisch-tagalog-englisch-hamburg-333538",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.691550+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 5
+  },
+  "1b1d9f6cc680": {
+    "id": "1b1d9f6cc680",
+    "title": "Senior Kotlin Backend Engineer (m/f/d)",
+    "company": "Flix",
+    "location": "M\u00fcnchen, Bayern, Germany",
+    "salary": "Not listed",
+    "description": "We're looking for a talented\u00a0Senior Kotlin\u00a0Engineer (m/f/d) to join us in Berlin or Munich.\u00a0\u00a0\nIn the Foundation Division of FlixTech, our Finance Technology Stream helps the business grow efficiently by delivering smart, compliant, and automated finance solutions. We keep things simple for our internal users so they can spend less time on manual tasks and more time on what matters. The team you will join is not focused on user-facing experiences or polished UIs. Our success is measured by data correctness, consistency, and trustworthiness, even in complex and evolving business scenarios.\u00a0You'll\u00a0be part of a self-managed, cross-functional team with a Product Owner and fellow Software Engineers, directly supporting new country launches, new business models, and the continuous evolution of Fl",
+    "url": "https://www.arbeitnow.com/jobs/companies/flix/senior-kotlin-backend-engineer-munchen-123695",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.694921+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 38
+  },
+  "9c315fc92ca2": {
+    "id": "9c315fc92ca2",
+    "title": "Senior Data Scientist",
+    "company": "SumUp",
+    "location": "Berlin, Berlin, Germany",
+    "salary": "Not listed",
+    "description": "About the Role\nAt SumUp, we're on a mission to empower small businesses across the globe by providing a vast set of simple and affordable business tools to help them start, run, and grow their businesses. Lending at SumUp is a mature, scaled business with a strong and proven credit risk foundation. Our core models and decisioning frameworks are already robust and in production; as our portfolio grows, our challenge is safely extracting marginal gains from a complex system where changes are incremental and the stakes are high. As a Senior Data Scientist, you will be highly hands-on and embedded in day-to-day lending decisions. This role exists to strengthen our ability to improve what already works, reduce operational risk, and ensure long-term reliability as we scale into new markets. You ",
+    "url": "https://www.arbeitnow.com/jobs/companies/sumup/senior-data-scientist-berlin-239731",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.703045+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
+  },
+  "3cdcba345585": {
+    "id": "3cdcba345585",
+    "title": "Senior PHP Software Engineer",
+    "company": "Atolls",
+    "location": "Berlin, Berlin, Germany",
+    "salary": "Not listed",
+    "description": "\n\nAtolls is the world's largest community-driven shopping platform, active in 20+ markets.\u00a0\nWe help millions make smarter spending decisions across discovery, evaluation, and (re-)purchase by connecting people with the right brands and retailers.\nOur 1,000+ team across 10 countries builds products used every day at global scale, where you'll have real ownership and see your impact. Want to shape the destinations people rely on to shop with confidence? Keep reading.\n\nAbout This Role:\nWe are looking for a Senior PHP Software Engineer to join our Engineering team in Berlin. At Atolls, your role will be instrumental in helping us developing and scaling our core web applications and community platforms, ensuring high performance and reliability, creating exceptional user experiences and empower",
+    "url": "https://www.arbeitnow.com/jobs/companies/atolls/senior-php-software-engineer-berlin-263175",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.705576+00:00",
+    "status": "skipped_low_score",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": 25
+  },
+  "cb0b3a5035f1": {
+    "id": "cb0b3a5035f1",
+    "title": "Senior Applied Scientist, Operations Research",
+    "company": "Wolt - English",
+    "location": "Berlin, Berlin, Germany",
+    "salary": "Not listed",
+    "description": "About Wolt\nAt Wolt, we create technology that brings joy, simplicity and earnings to the neighborhoods of the world. In 2014 we started with delivery of restaurant food. Now we're building the delivery of (almost) everything and you'll find us in over 500 cities in 30 countries around the world. In 2022 we joined forces with DoorDash and together we keep on dreaming big and expanding across the globe.Working at Wolt isn't always easy, but it's definitely exciting. Here you'll learn more, build more, and ship more than in most other companies. You'll be challenged a lot, but also have a lot of fun on the way. So, if you're a self-starter with drive and entrepreneurial spirit, this could be the ride of your life.Our Applied Scientists at Wolt build and deploy Applied Science and Machine Lear",
+    "url": "https://www.arbeitnow.com/jobs/companies/wolt-english/senior-applied-scientist-operations-research-berlin-127726",
+    "portal": "Arbeitnow",
+    "scraped_at": "2026-05-18T15:36:36.707231+00:00",
+    "status": "skipped_irrelevant",
+    "recruiter_email": "",
+    "recruiter_name": "",
+    "tailored_resume": null,
+    "email_draft": null,
+    "email_sent": false,
+    "email_sent_at": null,
+    "fit_score": null
   }
 }
