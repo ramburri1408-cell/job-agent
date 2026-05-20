@@ -1,8 +1,6 @@
 """
-Job Scraper — LinkedIn via Apify
-Scrapes LinkedIn Jobs for .NET/full-stack positions in the US.
-Uses curious_coder/linkedin-jobs-scraper actor.
-Pre-filters irrelevant and non-US jobs before AI scoring.
+Job Scraper — LinkedIn via Apify + Adzuna fallback
+LinkedIn uses search URL format required by curious_coder/linkedin-jobs-scraper
 """
 
 import json, os, time, hashlib, requests
@@ -111,10 +109,22 @@ def archive_old_skipped(jobs: dict, days: int = 3) -> None:
 
 # ── SOURCE 1: LINKEDIN VIA APIFY ─────────────────────────────────────────────
 
+def build_linkedin_url(query: str) -> str:
+    """Build LinkedIn jobs search URL for the Apify actor."""
+    encoded = query.replace(" ", "%20")
+    return (
+        f"https://www.linkedin.com/jobs/search/"
+        f"?keywords={encoded}"
+        f"&location=United%20States"
+        f"&f_TPR=r604800"    # past week
+        f"&f_JT=F%2CC"       # full-time + contract
+        f"&sortBy=DD"        # sort by date
+    )
+
 def scrape_linkedin(query: str) -> list:
     """
     Scrape LinkedIn Jobs via Apify curious_coder/linkedin-jobs-scraper.
-    No cookies required — uses public LinkedIn job listings.
+    Actor requires a LinkedIn search URL as input.
     """
     jobs = []
     if not APIFY_TOKEN:
@@ -124,14 +134,13 @@ def scrape_linkedin(query: str) -> list:
         from apify_client import ApifyClient
         apify = ApifyClient(APIFY_TOKEN)
 
+        search_url = build_linkedin_url(query)
         print(f"  [LinkedIn] Searching: '{query}'...")
 
         run = apify.actor("curious_coder/linkedin-jobs-scraper").call(
             run_input={
-                "keyword":    query,
-                "location":   "United States",
-                "count":      25,
-                "datePosted": "r604800",  # past week in seconds
+                "urls":  [search_url],
+                "count": 25,
             },
         )
 
@@ -140,7 +149,8 @@ def scrape_linkedin(query: str) -> list:
 
         for item in items:
             title   = str(item.get("title", "") or item.get("jobTitle", ""))
-            company = str(item.get("company", "") or item.get("companyName", "Unknown"))
+            company = str(item.get("company", "") or
+                         item.get("companyName", "Unknown"))
             loc     = str(item.get("location", "United States"))
             desc    = str(item.get("description", "") or
                          item.get("jobDescription", ""))[:1000]
@@ -168,10 +178,10 @@ def scrape_linkedin(query: str) -> list:
     return jobs
 
 
-# ── SOURCE 2: ADZUNA (fallback) ───────────────────────────────────────────────
+# ── SOURCE 2: ADZUNA ─────────────────────────────────────────────────────────
 
 def scrape_adzuna(query: str, max_days: int = 3) -> list:
-    """Adzuna API as fallback if LinkedIn has issues."""
+    """Adzuna API — US jobs fallback."""
     jobs = []
     if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
         return jobs
@@ -196,7 +206,9 @@ def scrape_adzuna(query: str, max_days: int = 3) -> list:
             job_url = str(item.get("redirect_url", ""))
             if not is_relevant(title, desc, loc):
                 continue
-            jobs.append(new_job(title, company, loc, salary, desc, job_url, "Adzuna"))
+            jobs.append(new_job(
+                title, company, loc, salary, desc, job_url, "Adzuna"
+            ))
         time.sleep(1)
         print(f"  [Adzuna] {len(jobs)} relevant jobs for '{query}'")
     except Exception as e:
@@ -211,16 +223,14 @@ def run_scraper() -> int:
     queries = cfg.get("job_queries", ["software engineer"])
     jobs    = load_jobs()
     added   = 0
+    stats   = {"LinkedIn": 0, "Adzuna": 0}
 
     archive_old_skipped(jobs)
-
-    stats = {"LinkedIn": 0, "Adzuna": 0}
 
     for query in queries:
         query = str(query)
         print(f"\n[Scraper] Query: '{query}'")
 
-        # Primary: LinkedIn
         for job in scrape_linkedin(query):
             if job["id"] not in jobs:
                 jobs[job["id"]] = job
@@ -228,7 +238,6 @@ def run_scraper() -> int:
                 stats["LinkedIn"] += 1
                 print(f"  + LinkedIn: {job['title']} @ {job['company']}")
 
-        # Fallback: Adzuna
         for job in scrape_adzuna(query, max_days=3):
             if job["id"] not in jobs:
                 jobs[job["id"]] = job
