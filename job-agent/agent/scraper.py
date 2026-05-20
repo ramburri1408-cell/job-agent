@@ -133,7 +133,6 @@ def scrape_linkedin(query: str) -> list:
                 "count":      25,
                 "datePosted": "r604800",  # past week in seconds
             },
-            timeout_secs=120,
         )
 
         items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
