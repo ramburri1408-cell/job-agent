@@ -41,9 +41,11 @@ jobs:
           APIFY_API_KEY:      ${{ secrets.APIFY_API_KEY }}
           APOLLO_API_KEY:     ${{ secrets.APOLLO_API_KEY }} 
           HUNTER_API_KEY:     ${{ secrets.HUNTER_API_KEY }}
-          EMAIL_MIN_DELAY_SECONDS:   45
-          MAX_EMAILS_PER_RUN: 5
+          EMAIL_MIN_DELAY_SECONDS:   60
+          MAX_EMAILS_PER_RUN: 20
           MAX_RECRUITER_JOBS_PER_RUN: 15
+          JOB_LOOKBACK_HOURS: 24
+          MAX_RESULTS_PER_SOURCE: 25
         run: python agent/pipeline.py
 
       - name: Commit updated data
