@@ -1,11 +1,8 @@
 """
-Job Scraper — Multi-source
-Sources:
-1. Adzuna API         — general job board
-2. Remotive API       — remote jobs
-3. Jobicy API         — remote tech jobs (free)
-4. Arbeitnow API      — remote/EU jobs (free)
-5. Apify Google Jobs  — aggregates LinkedIn, Indeed, Glassdoor, company sites
+Job Scraper — LinkedIn via Apify
+Scrapes LinkedIn Jobs for .NET/full-stack positions in the US.
+Uses curious_coder/linkedin-jobs-scraper actor.
+Pre-filters irrelevant and non-US jobs before AI scoring.
 """
 
 import json, os, time, hashlib, requests
@@ -26,9 +23,30 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
+APIFY_TOKEN    = os.environ.get("APIFY_API_KEY", "")
 ADZUNA_APP_ID  = os.environ.get("ADZUNA_APP_ID", "")
 ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY", "")
-APIFY_TOKEN    = os.environ.get("APIFY_API_KEY", "")
+
+IRRELEVANT_KEYWORDS = [
+    "sales", "marketing", "nurse", "driver", "retail manager",
+    "accountant", "lawyer", "teacher", "cook", "electrician",
+    "plumber", "mechanic", "warehouse", "social media",
+]
+
+RELEVANT_KEYWORDS = [
+    ".net", "c#", "asp.net", "dotnet", "csharp", "react",
+    "angular", "typescript", "azure", "full stack", "fullstack",
+    "software engineer", "software developer", "backend",
+    "frontend", "python", "node", "api", "cloud", "devops",
+    "ai", "machine learning", "automation",
+]
+
+NON_US_MARKERS = [
+    "germany", "deutschland", "gmbh", "m/w/d", "m/f/d",
+    "united kingdom", "london", "uk only", "canada only",
+    "india only", "australia only", "paris", "berlin",
+    "münchen", "amsterdam", "remote - eu", "remote eu",
+]
 
 
 def load_jobs() -> dict:
@@ -45,8 +63,19 @@ def make_id(title: str, company: str) -> str:
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
-def new_job(title, company, location, salary, description, url,
-            portal, recruiter_email="") -> dict:
+def is_relevant(title: str, description: str, location: str) -> bool:
+    title_lower = title.lower()
+    desc_lower  = (description or "").lower()
+    loc_lower   = (location or "").lower()
+    if any(k in loc_lower or k in desc_lower for k in NON_US_MARKERS):
+        return False
+    if any(k in title_lower for k in IRRELEVANT_KEYWORDS):
+        return False
+    combined = f"{title_lower} {desc_lower}"
+    return any(k in combined for k in RELEVANT_KEYWORDS)
+
+def new_job(title, company, location, salary, description,
+            url, portal, recruiter_email="") -> dict:
     return {
         "id":              make_id(title, company),
         "title":           title,
@@ -80,9 +109,70 @@ def archive_old_skipped(jobs: dict, days: int = 3) -> None:
                 pass
 
 
-# ── SOURCE 1: ADZUNA ─────────────────────────────────────────────────────────
+# ── SOURCE 1: LINKEDIN VIA APIFY ─────────────────────────────────────────────
+
+def scrape_linkedin(query: str) -> list:
+    """
+    Scrape LinkedIn Jobs via Apify curious_coder/linkedin-jobs-scraper.
+    No cookies required — uses public LinkedIn job listings.
+    """
+    jobs = []
+    if not APIFY_TOKEN:
+        print("  [LinkedIn] No Apify token — skipping")
+        return jobs
+    try:
+        from apify_client import ApifyClient
+        apify = ApifyClient(APIFY_TOKEN)
+
+        print(f"  [LinkedIn] Searching: '{query}'...")
+
+        run = apify.actor("curious_coder/linkedin-jobs-scraper").call(
+            run_input={
+                "keyword":    query,
+                "location":   "United States",
+                "count":      25,
+                "datePosted": "r604800",  # past week in seconds
+            },
+            timeout_secs=120,
+        )
+
+        items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
+        print(f"  [LinkedIn] Raw: {len(items)} results")
+
+        for item in items:
+            title   = str(item.get("title", "") or item.get("jobTitle", ""))
+            company = str(item.get("company", "") or item.get("companyName", "Unknown"))
+            loc     = str(item.get("location", "United States"))
+            desc    = str(item.get("description", "") or
+                         item.get("jobDescription", ""))[:1000]
+            job_url = str(item.get("jobUrl", "") or
+                         item.get("url", "") or
+                         item.get("applyUrl", ""))
+            salary  = str(item.get("salary", "") or "Not listed")
+
+            if not title or not company:
+                continue
+            if not is_relevant(title, desc, loc):
+                continue
+
+            jobs.append(new_job(
+                title, company, loc, salary,
+                desc, job_url, "LinkedIn"
+            ))
+
+        time.sleep(2)
+        print(f"  [LinkedIn] {len(jobs)} relevant jobs for '{query}'")
+
+    except Exception as e:
+        print(f"  [LinkedIn] Error: {str(e)[:100]}")
+
+    return jobs
+
+
+# ── SOURCE 2: ADZUNA (fallback) ───────────────────────────────────────────────
 
 def scrape_adzuna(query: str, max_days: int = 3) -> list:
+    """Adzuna API as fallback if LinkedIn has issues."""
     jobs = []
     if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
         return jobs
@@ -91,7 +181,8 @@ def scrape_adzuna(query: str, max_days: int = 3) -> list:
             f"https://api.adzuna.com/v1/api/jobs/us/search/1"
             f"?app_id={ADZUNA_APP_ID}&app_key={ADZUNA_APP_KEY}"
             f"&results_per_page=20&what={quote(query)}"
-            f"&content-type=application/json&sort_by=date&max_days_old={max_days}"
+            f"&content-type=application/json&sort_by=date"
+            f"&max_days_old={max_days}"
         )
         resp = requests.get(url, headers=HEADERS, timeout=15)
         data = resp.json()
@@ -104,149 +195,13 @@ def scrape_adzuna(query: str, max_days: int = 3) -> list:
             salary  = f"${int(sm):,} - ${int(sx):,}" if sm and sx else "Not listed"
             desc    = str(item.get("description", ""))
             job_url = str(item.get("redirect_url", ""))
+            if not is_relevant(title, desc, loc):
+                continue
             jobs.append(new_job(title, company, loc, salary, desc, job_url, "Adzuna"))
         time.sleep(1)
-        print(f"  [Adzuna] Found {len(jobs)} jobs for '{query}'")
+        print(f"  [Adzuna] {len(jobs)} relevant jobs for '{query}'")
     except Exception as e:
         print(f"  [Adzuna] Error: {e}")
-    return jobs
-
-
-# ── SOURCE 2: REMOTIVE ───────────────────────────────────────────────────────
-
-def scrape_remotive(query: str) -> list:
-    jobs = []
-    try:
-        url  = (
-            f"https://remotive.com/api/remote-jobs"
-            f"?search={quote(query)}&category=software-dev&limit=10"
-        )
-        resp = requests.get(url, timeout=15)
-        data = resp.json()
-        for item in data.get("jobs", []):
-            title   = str(item.get("title", ""))
-            company = str(item.get("company_name", ""))
-            desc    = BeautifulSoup(
-                str(item.get("description", "")), "html.parser"
-            ).get_text()[:800]
-            jobs.append(new_job(
-                title, company, "Remote",
-                str(item.get("salary", "Not listed")),
-                desc, str(item.get("url", "")), "Remotive",
-                str(item.get("company_email", "")),
-            ))
-        time.sleep(1)
-        print(f"  [Remotive] Found {len(jobs)} jobs for '{query}'")
-    except Exception as e:
-        print(f"  [Remotive] Error: {e}")
-    return jobs
-
-
-# ── SOURCE 3: JOBICY ─────────────────────────────────────────────────────────
-
-def scrape_jobicy(query: str) -> list:
-    """Jobicy — free remote tech jobs API."""
-    jobs = []
-    try:
-        url  = f"https://jobicy.com/api/v2/remote-jobs?tag={quote(query)}&count=10"
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        data = resp.json()
-        for item in data.get("jobs", []):
-            title   = str(item.get("jobTitle", ""))
-            company = str(item.get("companyName", ""))
-            desc    = BeautifulSoup(
-                str(item.get("jobDescription", "")), "html.parser"
-            ).get_text()[:800]
-            job_url = str(item.get("url", ""))
-            salary  = str(item.get("annualSalaryMin", "")) or "Not listed"
-            jobs.append(new_job(
-                title, company, "Remote", salary, desc, job_url, "Jobicy"
-            ))
-        time.sleep(1)
-        print(f"  [Jobicy] Found {len(jobs)} jobs for '{query}'")
-    except Exception as e:
-        print(f"  [Jobicy] Error: {e}")
-    return jobs
-
-
-# ── SOURCE 4: ARBEITNOW ──────────────────────────────────────────────────────
-
-def scrape_arbeitnow(query: str) -> list:
-    """Arbeitnow — free remote job board API."""
-    jobs = []
-    try:
-        url  = f"https://www.arbeitnow.com/api/job-board-api?search={quote(query)}"
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        data = resp.json()
-        for item in data.get("data", [])[:10]:
-            title   = str(item.get("title", ""))
-            company = str(item.get("company_name", ""))
-            desc    = BeautifulSoup(
-                str(item.get("description", "")), "html.parser"
-            ).get_text()[:800]
-            job_url = str(item.get("url", ""))
-            loc     = "Remote" if item.get("remote") else str(item.get("location", "US"))
-            jobs.append(new_job(
-                title, company, loc, "Not listed", desc, job_url, "Arbeitnow"
-            ))
-        time.sleep(1)
-        print(f"  [Arbeitnow] Found {len(jobs)} jobs for '{query}'")
-    except Exception as e:
-        print(f"  [Arbeitnow] Error: {e}")
-    return jobs
-
-
-# ── SOURCE 5: APIFY GOOGLE JOBS ──────────────────────────────────────────────
-
-def scrape_google_jobs(query: str) -> list:
-    """
-    Use Apify Google Jobs scraper.
-    Aggregates jobs from LinkedIn, Indeed, Glassdoor, and company sites.
-    """
-    jobs = []
-    if not APIFY_TOKEN:
-        return jobs
-    try:
-        from apify_client import ApifyClient
-        apify = ApifyClient(APIFY_TOKEN)
-
-        print(f"  [Google Jobs] Searching: {query}...")
-        run = apify.actor("apify/google-jobs-scraper").call(
-            run_input={
-                "queries":       [f"{query} United States"],
-                "maxResults":    20,
-                "datePosted":    "past3days",
-                "countryCode":   "us",
-                "languageCode":  "en",
-            },
-            timeout_secs=90,
-        )
-
-        items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
-
-        for item in items:
-            title   = str(item.get("title", ""))
-            company = str(item.get("company", "Unknown"))
-            loc     = str(item.get("location", "US"))
-            desc    = str(item.get("description", ""))[:800]
-            job_url = str(item.get("jobUrl", "") or item.get("url", ""))
-            salary  = str(item.get("salary", "Not listed") or "Not listed")
-            source  = item.get("via", "Google Jobs")
-
-            if not title or not job_url:
-                continue
-
-            jobs.append(new_job(
-                title, company, loc, salary, desc, job_url,
-                f"Google Jobs ({source})"
-            ))
-
-        time.sleep(2)
-        print(f"  [Google Jobs] Found {len(jobs)} jobs for '{query}'")
-
-    except Exception as e:
-        print(f"  [Google Jobs] Error: {str(e)[:80]}")
-
     return jobs
 
 
@@ -260,52 +215,31 @@ def run_scraper() -> int:
 
     archive_old_skipped(jobs)
 
-    # Use fewer queries for Google Jobs to save Apify credits
-    google_queries = queries[:3]
+    stats = {"LinkedIn": 0, "Adzuna": 0}
 
     for query in queries:
         query = str(query)
         print(f"\n[Scraper] Query: '{query}'")
 
-        # Adzuna — all queries
+        # Primary: LinkedIn
+        for job in scrape_linkedin(query):
+            if job["id"] not in jobs:
+                jobs[job["id"]] = job
+                added += 1
+                stats["LinkedIn"] += 1
+                print(f"  + LinkedIn: {job['title']} @ {job['company']}")
+
+        # Fallback: Adzuna
         for job in scrape_adzuna(query, max_days=3):
             if job["id"] not in jobs:
                 jobs[job["id"]] = job
                 added += 1
+                stats["Adzuna"] += 1
                 print(f"  + Adzuna: {job['title']} @ {job['company']}")
-
-        # Remotive — all queries
-        for job in scrape_remotive(query):
-            if job["id"] not in jobs:
-                jobs[job["id"]] = job
-                added += 1
-                print(f"  + Remotive: {job['title']} @ {job['company']}")
-
-        # Jobicy — all queries
-        for job in scrape_jobicy(query):
-            if job["id"] not in jobs:
-                jobs[job["id"]] = job
-                added += 1
-                print(f"  + Jobicy: {job['title']} @ {job['company']}")
-
-        # Arbeitnow — all queries
-        for job in scrape_arbeitnow(query):
-            if job["id"] not in jobs:
-                jobs[job["id"]] = job
-                added += 1
-                print(f"  + Arbeitnow: {job['title']} @ {job['company']}")
-
-    # Google Jobs — top 3 queries only (saves Apify credits)
-    print(f"\n[Scraper] Google Jobs search (top {len(google_queries)} queries)...")
-    for query in google_queries:
-        for job in scrape_google_jobs(str(query)):
-            if job["id"] not in jobs:
-                jobs[job["id"]] = job
-                added += 1
-                print(f"  + Google Jobs: {job['title']} @ {job['company']}")
 
     save_jobs(jobs)
     print(f"\n[Scraper] Done. {added} new jobs added. Total: {len(jobs)}")
+    print(f"  Sources: LinkedIn: {stats['LinkedIn']} | Adzuna: {stats['Adzuna']}")
     return added
 
 
