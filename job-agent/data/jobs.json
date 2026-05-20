@@ -41654,11 +41654,11 @@
     "portal": "Adzuna",
     "scraped_at": "2026-05-16T07:33:04.404808+00:00",
     "status": "ai_ready",
-    "recruiter_email": "careers@cdmsmith.com",
-    "recruiter_name": "Hiring Manager",
+    "recruiter_email": "",
+    "recruiter_name": "",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, WebGL/Canvas\", \"Backend\": \"Python, Java, Go, GraphQL, gRPC\", \"Cloud / DevOps\": \"Docker, Kubernetes, Terraform, AWS (EC2, S3, Lambda), GCP, Jenkins, GitHub Actions\"}, \"priority_bullets\": [6, 2, 1, 4], \"extra_bullet\": \"Architected microservices deployment strategy using containerization and orchestration tools, reducing infrastructure costs and improving scalability\"}",
     "email_draft": "Subject: Full Stack Developer with Azure + Compliance Experience\n\nHi,\n\nCDM Smith's engineering and construction projects require software that's both reliable and secure\u2014exactly the kind of work I've been doing in financial services, where downtime and security gaps aren't an option.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions. I also secured APIs to SOX/PCI-DSS standards\u2014experience that translates directly to the compliance rigor engineering firms need.\n\nWould you have 15 minutes to discuss how I could contribute to CDM Smith's cloud-based solutions? My LinkedIn is linkedin.com/in/ram-b-650769397.\n\nBest,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_CDM_Smith.pdf",
@@ -41690,7 +41690,14 @@
       "angle": "Strong full-stack developer with proven Azure cloud expertise and CI/CD toolchain experience who can immediately contribute to cloud-based engineering solutions while bringing enterprise-grade security practices from financial sector compliance work.",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@cdmsmith.com"
-    }
+    },
+    "recruiters": [],
+    "recruiter_source": "none",
+    "skip_email": false,
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "47dc049a6d57": {
     "id": "47dc049a6d57",
@@ -41751,7 +41758,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Blazor, WebAssembly\", \"Backend\": \"WCF, ERP Systems Integration experience\", \"Cloud / DevOps\": \"Azure DevOps pipeline optimization, GIS integration knowledge\", \"Testing\": \"End-to-end testing frameworks, performance testing\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Experience with Blazor WebAssembly or server-side Blazor development for full-stack .NET applications\"}",
     "email_draft": "Subject: Full Stack .NET Developer with Production Blazor Experience\n\nHi,\n\nI noticed Kforce is staffing for a Blazor developer on transportation software. I've been working with Blazor and .NET full-stack in production environments, so I wanted to reach out directly.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into microservices\u2014all while keeping everything SOX and PCI-DSS compliant. I'm comfortable across the full stack with Azure cloud infrastructure.\n\nWould you have 15 minutes this week to discuss the role? Here's my LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 85,
     "resume_pdf": "/tmp/Ram_Burri_Kforce_Technology_St.pdf",
@@ -41776,7 +41783,11 @@
       "angle": "Strong .NET full-stack developer with direct Blazor experience plus Azure cloud expertise\u2014ready to contribute immediately to state-of-the-art transportation software development",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@kforce.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "01c7dd8054d7": {
     "id": "01c7dd8054d7",
@@ -41856,7 +41867,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Svelte, Web Components, accessibility (WCAG)\", \"Backend\": \"Java, Python, Go, gRPC, message queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Terraform, monitoring/logging tools\"}, \"priority_bullets\": [6, 2, 1, 4], \"extra_bullet\": \"Mentored junior developers on full-stack best practices and code review processes\"}",
     "email_draft": "Subject: Full Stack Developer + Azure DevOps Experience\n\nHi,\n\nI noticed CDM Smith's focus on cloud-based solutions and collaborative DevOps culture. Having built and deployed production systems on Azure with CI/CD pipelines through Azure DevOps, I'd like to bring that experience to your engineering team.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage across critical transaction modules, and modernized a legacy payment portal into microservices\u2014eliminating duplicate transaction issues. I also secured APIs to SOX/PCI-DSS compliance for customer-facing systems.\n\nWould you have 15 minutes this week to discuss how I could contribute to your team?\n\nRam Burri\nhttps://www.linkedin.com/in/ram-b-650769397/",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 82,
     "resume_pdf": "/tmp/Ram_Burri_CDM_Smith.pdf",
@@ -41887,7 +41898,11 @@
       "angle": "Strong full-stack developer with proven Azure cloud expertise and CI/CD experience through Azure DevOps, directly aligning with their cloud-based solutions and collaborative DevOps culture focus",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@cdmsmith.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "9c29a88734c1": {
     "id": "9c29a88734c1",
@@ -41990,7 +42005,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"Vue.js, Webpack, Responsive Design patterns\", \"Backend\": \".NET Framework (legacy), gRPC, Message queues (RabbitMQ, Kafka)\", \"Cloud / DevOps\": \"AWS services, Kubernetes, Docker containerization, Infrastructure as Code\", \"Testing\": \"Integration testing frameworks, E2E testing (Cypress, Playwright), Performance testing\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Mentored 3+ junior developers on .NET and React best practices, establishing code review standards that reduced production bugs by 30%\"}",
     "email_draft": "Subject: Full Stack Developer \u2013 .NET/React with Enterprise Compliance Experience\n\nHi,\n\nNeodym's focus on delivering robust enterprise software caught my attention. Building systems that need to be both performant and audit-ready is exactly the kind of challenge I've spent the last few years solving.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, while maintaining 85%+ test coverage across critical transaction modules. I also modernized a legacy payment portal into a microservices architecture that eliminated duplicate transactions, and secured APIs to SOX/PCI-DSS standards across customer-facing systems.\n\nWould you be open to a 15-minute call to discuss how I could contribute to your team? My LinkedIn is below if helpful.\n\nlinkedin.com/in/ram-b-650769397\n\nThanks,\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 88,
     "resume_pdf": "/tmp/Ram_Burri_Neodym_Technologies.pdf",
@@ -42016,7 +42031,11 @@
       "angle": "Strong full-stack match with .NET/React expertise plus Azure cloud and security compliance background ideal for enterprise software delivery role",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@neodymtech.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "206779806202": {
     "id": "206779806202",
@@ -42033,7 +42052,7 @@
     "recruiter_name": "Hiring Manager",
     "tailored_resume": "{\"missing_skills\": {\"Frontend\": \"HTML/XHTML/DHTML/CSS fundamentals (though you have HTML5, CSS3/SCSS)\", \"Backend\": \"ASP.NET 2.0 (you have modern versions)\", \"Cloud / DevOps\": \"Azure deployment/infrastructure knowledge beyond CI/CD\", \"Testing\": \"Integration testing frameworks, end-to-end testing tools\"}, \"priority_bullets\": [1, 2, 6, 7], \"extra_bullet\": \"Architected full-stack .NET 8 and React solutions deployed on Azure cloud infrastructure, reducing API response times by 40% and ensuring 99.9% uptime\"}",
     "email_draft": "Subject: .NET/React Developer - Built Compliant Financial Systems\n\nHi,\n\nK&K's focus on placing technical talent in financial services caught my attention. I've spent the last four years building exactly the kind of systems your clients need\u2014full-stack .NET applications with React frontends in heavily regulated environments.\n\nAt Jefferson Bank, I built a fraud case management system that cut manual analyst review time significantly, maintained 85%+ test coverage on critical transaction modules, and modernized a legacy payment portal into a microservices architecture. I've also secured APIs to SOX and PCI-DSS compliance\u2014useful experience for clients in banking or fintech.\n\nWorth a 15-minute call to discuss roles you're staffing? My LinkedIn: https://www.linkedin.com/in/ram-b-650769397/\n\nRam Burri",
-    "email_sent": false,
+    "email_sent": true,
     "email_sent_at": null,
     "fit_score": 88,
     "resume_pdf": "/tmp/Ram_Burri_K_K_Global_Talent_So.pdf",
@@ -42060,7 +42079,11 @@
       "angle": "Strong full-stack .NET/React developer with 4+ years experience and modern tech stack that exceeds requirements - legacy ASP.NET 2.0 mention likely outdated job posting",
       "recruiter_name": "Hiring Manager",
       "recruiter_email": "careers@kkglobaltalent.com"
-    }
+    },
+    "emails_sent_to": [
+      "Ram.burri1408@gmail.com"
+    ],
+    "ram_alerted": true
   },
   "132e0c2569aa": {
     "id": "132e0c2569aa",
