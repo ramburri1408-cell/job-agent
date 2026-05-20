@@ -25,7 +25,7 @@ GMAIL_USER         = os.environ.get("GMAIL_USER", "").strip()
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
 RAM_EMAIL          = "Ram.burri1408@gmail.com"
 
-MAX_EMAILS_PER_RUN      = int(os.environ.get("MAX_EMAILS_PER_RUN", "15"))
+MAX_EMAILS_PER_RUN      = int(os.environ.get("MAX_EMAILS_PER_RUN", "20"))
 EMAIL_MIN_DELAY_SECONDS = int(os.environ.get("EMAIL_MIN_DELAY_SECONDS", "8"))
 
 JOB_BOARDS = ["adzuna.com", "indeed.com", "ziprecruiter.com",
