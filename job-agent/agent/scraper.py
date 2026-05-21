@@ -1,5 +1,5 @@
 """
-Universal Job Scraper V4
+Universal Job Scraper V5
 
 Sources:
 - LinkedIn via Apify REST
@@ -8,11 +8,12 @@ Sources:
 - Remotive
 
 Fixes:
-- LinkedIn company extraction
-- Google company extraction
-- URL-based duplicate IDs
-- 24-hour lookback
-- Better relevance filtering
+- Extracts job links from many possible fields: link, applyUrl, jobUrl, url, canonicalUrl, etc.
+- Prints full job URLs, not truncated URLs
+- Stores full job URL in jobs.json
+- Extracts LinkedIn company names correctly
+- Uses URL-based duplicate IDs
+- Uses 24-hour lookback
 """
 
 import json
@@ -177,6 +178,56 @@ def extract_company(item):
     return clean(company) or "Unknown"
 
 
+def extract_job_url(item: dict) -> str:
+    """
+    Universal URL extractor across LinkedIn, Google, Adzuna, Remotive,
+    Greenhouse, Lever, Ashby, Workday, SmartRecruiters, Jobvite, Dice, etc.
+    """
+    fields = [
+        "url",
+        "link",
+        "applyUrl",
+        "apply_url",
+        "jobUrl",
+        "job_url",
+        "canonicalUrl",
+        "canonical_url",
+        "externalApplyLink",
+        "externalApplyUrl",
+        "redirectUrl",
+        "redirect_url",
+        "absolute_url",
+        "hostedUrl",
+        "applicationUrl",
+        "applyLink",
+        "detailsUrl",
+    ]
+
+    for field in fields:
+        value = item.get(field)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    nested = [
+        ("jobAd", "url"),
+        ("job", "url"),
+        ("apply", "url"),
+        ("application", "url"),
+        ("links", "apply"),
+        ("links", "self"),
+        ("metadata", "url"),
+    ]
+
+    for parent, child in nested:
+        obj = item.get(parent)
+        if isinstance(obj, dict):
+            value = obj.get(child)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+
+    return ""
+
+
 def infer_company_from_url(url):
     try:
         host = urlparse(url).netloc.lower().replace("www.", "")
@@ -204,8 +255,9 @@ def is_relevant(title, description="", location=""):
     t = clean(title).lower()
     d = clean(description).lower()
     l = clean(location).lower()
+    all_text = f"{t} {d} {l}"
 
-    if any(x in f"{t} {d} {l}" for x in NON_US):
+    if any(x in all_text for x in NON_US):
         return False
 
     if any(x in t for x in IRRELEVANT):
@@ -324,12 +376,22 @@ def scrape_linkedin(query):
         title = clean(item.get("title") or item.get("jobTitle") or "")
         company = extract_company(item)
         location = clean(item.get("location") or "United States")
-        description = clean(item.get("description") or item.get("jobDescription") or "")
-        url = clean(item.get("jobUrl") or item.get("url") or item.get("applyUrl") or "")
+        description = clean(
+            item.get("description")
+            or item.get("descriptionText")
+            or item.get("jobDescription")
+            or item.get("descriptionHtml")
+            or ""
+        )
+        url = clean(extract_job_url(item))
         salary = clean(item.get("salary") or "Not listed")
 
         if not title:
             continue
+
+        if not url:
+            print(f"  ! Missing LinkedIn URL for: {title} @ {company}")
+            print(f"    Keys: {list(item.keys())}")
 
         if not is_relevant(title, description, location):
             continue
@@ -384,7 +446,7 @@ def scrape_google_portals(query):
 
         for block in items:
             for result in block.get("organicResults", []) or []:
-                url = result.get("url") or result.get("link") or ""
+                url = clean(extract_job_url(result))
                 raw_title = result.get("title") or ""
                 desc = result.get("description") or result.get("snippet") or ""
 
@@ -450,7 +512,7 @@ def scrape_adzuna(query):
             company = item.get("company", {}).get("display_name", "Unknown")
             location = item.get("location", {}).get("display_name", "US")
             desc = item.get("description", "")
-            redirect = item.get("redirect_url", "")
+            redirect = extract_job_url(item)
 
             salary = "Not listed"
             if item.get("salary_min") and item.get("salary_max"):
@@ -492,7 +554,7 @@ def scrape_remotive(query):
             title = item.get("title", "")
             company = item.get("company_name", "")
             desc = BeautifulSoup(item.get("description", ""), "html.parser").get_text()[:3000]
-            job_url = item.get("url", "")
+            job_url = extract_job_url(item)
             salary = item.get("salary", "Not listed")
 
             if is_relevant(title, desc, "Remote United States"):
@@ -551,7 +613,7 @@ def run_scraper():
             stats[job["portal"]] = stats.get(job["portal"], 0) + 1
 
             print(f"  + {job['portal']}: {job['title']} @ {job['company']}")
-            print(f"    URL: {job['url'][:100]}")
+            print(f"    URL: {job['url']}")
 
     save_jobs(jobs)
 
