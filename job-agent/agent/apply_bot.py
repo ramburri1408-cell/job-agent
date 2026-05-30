@@ -80,7 +80,7 @@ def ai_answer(question: str, options: list = None) -> str:
         return "4"
     try:
         return client.messages.create(
-            model="claude-haiku-4-5-20251001", max_tokens=60,
+            model="claude-opus-4-8", max_tokens=60,
             system="Answer job application questions for Ram Burri, Full Stack .NET Developer, 4 years exp, authorized to work in US. Brief answers only.",
             messages=[{"role": "user", "content": f"Q: {question}\nOptions: {options}\nA:"}]
         ).content[0].text.strip()
