@@ -1,14 +1,14 @@
 """
 AI Engine — scores job fit, generates ATS resume, drafts email.
-Pure Python — no Node.js, no LibreOffice.
+Model: claude-opus-4-8
 """
 
 import json, os
 from pathlib import Path
 import anthropic
 
-client    = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-DATA_FILE = Path("data/jobs.json")
+client      = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+DATA_FILE   = Path("data/jobs.json")
 CONFIG_FILE = Path("data/config.json")
 
 def load_jobs():
@@ -20,25 +20,27 @@ def save_jobs(jobs):
 def load_config():
     return json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
 
-def claude(system, user, max_tokens=500):
+def claude(system, user, max_tokens=500, temperature=0.3):
     return client.messages.create(
-        model="claude-opus-4-5", max_tokens=max_tokens,
+        model="claude-opus-4-8",
+        max_tokens=max_tokens,
+        temperature=temperature,
         system=system,
         messages=[{"role": "user", "content": user}],
     ).content[0].text.strip()
 
-# ── Keyword pre-filter ─────────────────────────────────────────────────────
+# ── Keyword pre-filter ────────────────────────────────────────────────────────
 RELEVANT = [
     "net", "c#", "csharp", "asp", "react", "angular", "full stack",
     "fullstack", "software engineer", "software developer", "application developer",
-    "frontend", "backend", "azure", "dotnet", "typescript", "node"
+    "frontend", "backend", "azure", "dotnet", "typescript", "node", "python", "ai"
 ]
 
 def is_relevant(job):
-    text = (job.get("title","") + " " + job.get("description","")[:300]).lower()
+    text = (job.get("title", "") + " " + job.get("description", "")[:300]).lower()
     return any(kw in text for kw in RELEVANT)
 
-# ── Step 1: Fit analysis ───────────────────────────────────────────────────
+# ── Step 1: Fit analysis ──────────────────────────────────────────────────────
 def analyze_fit(job, profile):
     raw = claude(
         system=(
@@ -53,22 +55,23 @@ def analyze_fit(job, profile):
             f"Job: {job['title']} at {job['company']}\n"
             f"Location: {job['location']}\n"
             f"Description:\n{job['description'][:1500]}\n\n"
-            f"Candidate skills: {profile.get('skills','')}\n"
-            f"Summary: {profile.get('summary','')}"
+            f"Candidate skills: {profile.get('skills', '')}\n"
+            f"Summary: {profile.get('summary', '')}"
         ),
         max_tokens=400,
+        temperature=0.2,
     )
     try:
-        d = json.loads(raw.replace("```json","").replace("```","").strip())
+        d = json.loads(raw.replace("```json", "").replace("```", "").strip())
         d["score"] = int(d.get("score", 0))
         return d
     except Exception:
-        return {"score":0,"matched_skills":[],"gaps":[],"angle":"Strong background",
-                "recruiter_name":"Hiring Manager","recruiter_email":""}
+        return {"score": 0, "matched_skills": [], "gaps": [], "angle": "Strong background",
+                "recruiter_name": "Hiring Manager", "recruiter_email": ""}
 
-# ── Step 2: Draft email ────────────────────────────────────────────────────
+# ── Step 2: Draft email ───────────────────────────────────────────────────────
 def draft_email(job, profile, analysis):
-    recruiter = job.get("recruiter_name") or analysis.get("recruiter_name","Hiring Manager")
+    recruiter = job.get("recruiter_name") or analysis.get("recruiter_name", "Hiring Manager")
     return claude(
         system=(
             f"You are {profile['name']}. Write a concise cold outreach email. "
@@ -79,15 +82,16 @@ def draft_email(job, profile, analysis):
         user=(
             f"To: {recruiter} at {job['company']}\n"
             f"Role: {job['title']}\n"
-            f"Angle: {analysis.get('angle','')}\n"
-            f"Achievements: {profile.get('achievements','')}\n"
-            f"LinkedIn: {profile.get('linkedin','')}\n"
+            f"Angle: {analysis.get('angle', '')}\n"
+            f"Achievements: {profile.get('achievements', '')}\n"
+            f"LinkedIn: {profile.get('linkedin', '')}\n"
             f"Name: {profile['name']}"
         ),
         max_tokens=500,
+        temperature=0.7,
     )
 
-# ── Main ───────────────────────────────────────────────────────────────────
+# ── Main ──────────────────────────────────────────────────────────────────────
 def run_ai_engine():
     config      = load_config()
     profile     = config.get("profile", {})
@@ -99,7 +103,7 @@ def run_ai_engine():
     from ats_resume import generate_ats_resume
 
     new_jobs = [j for j in jobs.values() if j.get("status") == "new"]
-    print(f"[AI Engine] Min score: {min_score} | Max per run: {max_per_run} | New jobs: {len(new_jobs)}")
+    print(f"[AI Engine] Model: claude-opus-4-8 | Min score: {min_score} | Max per run: {max_per_run} | New jobs: {len(new_jobs)}")
 
     for jid, job in jobs.items():
         if job.get("status") != "new":
@@ -125,7 +129,7 @@ def run_ai_engine():
             jobs[jid]["status"] = "error"; save_jobs(jobs); continue
 
         score = int(analysis.get("score", 0))
-        print(f"  → Score: {score}/100 — {analysis.get('angle','')}")
+        print(f"  → Score: {score}/100 — {analysis.get('angle', '')}")
 
         if score < min_score:
             print(f"  ✗ Below threshold {min_score}")
