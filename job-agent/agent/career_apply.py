@@ -1,6 +1,7 @@
 """
-Career Page Apply Bot — Uses Apify Google Search to find career pages
-Avoids CAPTCHA by using Apify's Google Search actor
+Career Page Apply Bot — iCIMS and Workday
+Option 2: Googles company career page directly instead of Adzuna redirects
+Semi-automated: fills form, emails Ram screenshot + link to submit
 """
 
 import os, json, re, time
@@ -10,26 +11,18 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
-from apify_client import ApifyClient
 
-GMAIL_USER  = os.environ.get("GMAIL_USER", "")
-GMAIL_PASS  = os.environ.get("GMAIL_APP_PASSWORD", "")
-APIFY_TOKEN = os.environ.get("APIFY_API_KEY", "")
-RAM_EMAIL   = "Ram.burri1408@gmail.com"
-DATA_FILE   = Path("data/jobs.json")
-LOG_FILE    = Path("data/career_apply_log.jsonl")
+GMAIL_USER = os.environ.get("GMAIL_USER", "")
+GMAIL_PASS = os.environ.get("GMAIL_APP_PASSWORD", "")
+RAM_EMAIL  = "Ram.burri1408@gmail.com"
+DATA_FILE  = Path("data/jobs.json")
+LOG_FILE   = Path("data/career_apply_log.jsonl")
 
 JOB_BOARDS = [
     "adzuna.com", "adzuna.co.uk", "indeed.com", "dice.com",
     "ziprecruiter.com", "monster.com", "glassdoor.com",
     "linkedin.com", "remotive.com", "simplyhired.com",
-    "careerbuilder.com",
-]
-
-ATS_PLATFORMS = [
-    "workday", "myworkdayjobs", "icims", "greenhouse.io",
-    "lever.co", "taleo", "jobvite", "smartrecruiters",
-    "successfactors", "breezy.hr",
+    "careerbuilder.com", "jobs/careers",
 ]
 
 PROFILE = {
@@ -70,9 +63,6 @@ def now_iso():
 def is_job_board(url: str) -> bool:
     return any(board in url.lower() for board in JOB_BOARDS)
 
-def is_ats_url(url: str) -> bool:
-    return any(ats in url.lower() for ats in ATS_PLATFORMS)
-
 def detect_platform(page) -> str:
     url  = page.url.lower()
     html = page.content().lower()
@@ -91,61 +81,76 @@ def detect_platform(page) -> str:
     if has_form: return "generic_form"
     return "listing_page"
 
-def find_career_page_apify(company: str, job_title: str) -> str:
+def google_company_career_page(page, company: str, job_title: str) -> str:
     """
-    Use Apify Google Search actor to find company career page.
-    Handles CAPTCHA automatically — no manual browser needed.
+    Google search to find the actual company career page URL.
+    Returns the best career page URL found.
     """
-    if not APIFY_TOKEN:
-        print(f"  ! No Apify token")
-        return ""
-
     queries = [
-        f'"{company}" careers apply {job_title} site:myworkdayjobs.com OR site:icims.com OR site:greenhouse.io OR site:lever.co',
-        f'"{company}" official careers apply jobs',
-        f'{company} careers {job_title} apply now',
+        f'"{company}" careers apply {job_title} site:workday.com OR site:icims.com OR site:greenhouse.io OR site:lever.co',
+        f'"{company}" official careers page apply now',
+        f'{company} careers jobs apply',
     ]
-
-    apify = ApifyClient(APIFY_TOKEN)
 
     for query in queries:
         try:
-            print(f"  → Apify searching: {query[:70]}...")
-            run = apify.actor("apify/google-search-scraper").call(
-                run_input={
-                    "queries":        query,
-                    "maxPagesPerQuery": 1,
-                    "resultsPerPage": 10,
-                    "languageCode":   "en",
-                    "countryCode":    "us",
-                },
-                timeout_secs=60,
-            )
+            search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}&num=5"
+            page.goto(search_url, timeout=20000, wait_until="domcontentloaded")
+            page.wait_for_timeout(2000)
 
-            items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
+            body = page.inner_text("body").lower()
+            if "unusual traffic" in body or "captcha" in body:
+                print(f"  ! Google CAPTCHA")
+                break
 
-            for item in items:
-                results = item.get("organicResults", [])
-                for result in results:
-                    url = result.get("url", "")
-                    if not url:
+            # Find links to career pages
+            links = page.query_selector_all('a[href]')
+            for link in links:
+                try:
+                    href = link.get_attribute("href") or ""
+                    if not href.startswith("http"):
                         continue
-                    if is_job_board(url):
+                    if is_job_board(href):
                         continue
                     # Prefer ATS platform URLs
-                    if is_ats_url(url):
-                        print(f"  ✓ ATS career page found: {url[:70]}")
-                        return url
-                    # Accept company career pages
-                    if any(k in url.lower() for k in ["career", "jobs", "apply"]):
-                        if not is_job_board(url):
-                            print(f"  ✓ Career page found: {url[:70]}")
-                            return url
+                    if any(ats in href.lower() for ats in
+                           ["workday", "icims", "greenhouse", "lever",
+                            "taleo", "jobvite", "careers", "jobs"]):
+                        if company.lower().split()[0][:4] in href.lower() or \
+                           any(w in href.lower() for w in ["career", "jobs", "apply"]):
+                            print(f"  → Career page found: {href[:70]}")
+                            return href
+                except:
+                    pass
+
+            time.sleep(2)
 
         except Exception as e:
-            print(f"  ! Apify search error: {str(e)[:80]}")
-            continue
+            print(f"  ! Google search error: {str(e)[:60]}")
 
+    return ""
+
+def find_apply_link_on_page(page) -> str:
+    """Find Apply button link on a job listing page."""
+    for sel in [
+        'a:has-text("Apply Now")',
+        'a:has-text("Apply for this job")',
+        'button:has-text("Apply Now")',
+        '[data-testid*="apply"]',
+        'a[href*="apply"]',
+        'a[href*="workday"]',
+        'a[href*="icims"]',
+        'a[href*="greenhouse"]',
+        'a[href*="lever"]',
+    ]:
+        try:
+            el = page.query_selector(sel)
+            if el and el.is_visible():
+                href = el.get_attribute("href") or ""
+                if href and not is_job_board(href):
+                    return href
+        except:
+            pass
     return ""
 
 def ai_answer(question: str, options: list = None) -> str:
@@ -195,8 +200,8 @@ def ai_answer(question: str, options: list = None) -> str:
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         opts   = f"\nOptions: {options}" if options else ""
         return client.messages.create(
-            model="claude-haiku-4-5-20251001", max_tokens=80,
-            system="Answer job application questions for Ram Burri, Full Stack .NET Developer, 4 years exp, OPT visa. Brief direct answers.",
+            model="claude-opus-4-8", max_tokens=80,
+            system="Answer job application form questions for Ram Burri, Full Stack .NET Developer, 4 years exp, OPT visa, authorized to work in US. Brief direct answers.",
             messages=[{"role": "user", "content": f"Q: {question}{opts}\nA:"}]
         ).content[0].text.strip()
     except:
@@ -207,7 +212,7 @@ def generate_cover_letter(job: dict) -> str:
         import anthropic
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         return client.messages.create(
-            model="claude-haiku-4-5-20251001", max_tokens=300,
+            model="claude-opus-4-8", max_tokens=300,
             system="Write a 3-sentence professional cover letter for Ram Burri. Be specific and confident.",
             messages=[{"role": "user", "content":
                 f"Job: {job['title']} at {job['company']}\nWrite cover letter:"}]
@@ -324,6 +329,7 @@ def send_review_email(job: dict, screenshot: bytes, apply_url: str, fields_fille
         msg["From"]    = GMAIL_USER
         msg["To"]      = RAM_EMAIL
         msg["Subject"] = f"🔔 Review & Submit: {job['title']} @ {job['company']}"
+
         body = f"""Hi Ram,
 
 Your application form has been auto-filled and is ready for review!
@@ -344,7 +350,7 @@ What was auto-filled:
 ✓ Years of experience: 4
 ✓ Education: MS CS, Florida Atlantic University (2025)
 ✓ LinkedIn: linkedin.com/in/ramburri
-✓ Salary: $110,000
+✓ Salary expectation: $110,000
 ✓ Resume PDF uploaded
 ✓ Cover letter generated
 
@@ -352,15 +358,18 @@ What was auto-filled:
 
 Best,
 Job Agent Bot"""
+
         msg.attach(MIMEText(body, "plain"))
         if screenshot:
             img = MIMEImage(screenshot, _subtype="png")
             img.add_header("Content-Disposition", "attachment",
                            filename=f"filled_{job['company'][:20]}.png")
             msg.attach(img)
+
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(GMAIL_USER, GMAIL_PASS)
             server.send_message(msg)
+
         print(f"  ✓ Review email sent to Ram")
         return True
     except Exception as e:
@@ -368,14 +377,18 @@ Job Agent Bot"""
         return False
 
 def handle_application_form(page, job: dict, resume_pdf: str) -> dict:
+    """Fill application form step by step — stop at Submit."""
     result   = {"filled": 0, "screenshot": None, "url": page.url, "ready": False}
     platform = detect_platform(page)
     print(f"  → Platform: {platform}")
 
+    # Workday: click Apply button
     if platform == "workday":
         for asel in [
             '[data-automation-id="applyButton"]',
-            'a:has-text("Apply")', 'button:has-text("Apply")',
+            'a:has-text("Apply")',
+            'button:has-text("Apply")',
+            'a:has-text("Apply Now")',
         ]:
             try:
                 btn = page.query_selector(asel)
@@ -388,13 +401,16 @@ def handle_application_form(page, job: dict, resume_pdf: str) -> dict:
 
     for step in range(8):
         page.wait_for_timeout(2000)
+
         upload_resume(page, resume_pdf)
         n = fill_all_fields(page, job)
         result["filled"] += n
         print(f"  → Step {step+1}: filled {n} fields")
+
         result["screenshot"] = page.screenshot(full_page=True)
         result["url"]        = page.url
 
+        # Stop at Submit
         submit_btn = None
         for sel in [
             'button:has-text("Submit")',
@@ -411,10 +427,11 @@ def handle_application_form(page, job: dict, resume_pdf: str) -> dict:
             except: pass
 
         if submit_btn:
-            print(f"  → Submit reached — stopping for Ram!")
+            print(f"  → Submit button reached — stopping for Ram!")
             result["ready"] = True
             break
 
+        # Click Next
         next_clicked = False
         for sel in [
             'button:has-text("Next")',
@@ -439,6 +456,48 @@ def handle_application_form(page, job: dict, resume_pdf: str) -> dict:
             break
 
     return result
+
+def navigate_to_career_page(page, company: str, job_title: str) -> str:
+    """
+    Find the actual company career page using Google search.
+    Returns the URL of the application form.
+    """
+    print(f"  → Googling career page for {company}...")
+    career_url = google_company_career_page(page, company, job_title)
+
+    if not career_url:
+        print(f"  ! No career page found via Google")
+        return ""
+
+    # Navigate to found URL
+    try:
+        page.goto(career_url, timeout=30000, wait_until="domcontentloaded")
+        page.wait_for_timeout(3000)
+        final_url = page.url
+        print(f"  → Landed on: {final_url[:70]}")
+
+        # If still on listing page, find Apply button
+        platform = detect_platform(page)
+        if platform == "listing_page":
+            apply_link = find_apply_link_on_page(page)
+            if apply_link:
+                if not apply_link.startswith("http"):
+                    from urllib.parse import urljoin
+                    apply_link = urljoin(final_url, apply_link)
+                page.goto(apply_link, timeout=30000, wait_until="domcontentloaded")
+                page.wait_for_timeout(3000)
+                print(f"  → Navigated to apply form: {page.url[:70]}")
+
+        platform = detect_platform(page)
+        if platform == "listing_page":
+            print(f"  ! Still on listing page")
+            return ""
+
+        return page.url
+
+    except Exception as e:
+        print(f"  ! Navigation error: {str(e)[:60]}")
+        return ""
 
 def get_resume_pdf(jobs: dict) -> str:
     for jid, job in jobs.items():
@@ -504,27 +563,16 @@ def run_career_apply():
             job_title = job.get("title", "")
             print(f"\n  [{job_title} @ {company}] Score:{job.get('fit_score')}/100")
 
-            # Use Apify to find career page (no CAPTCHA)
-            career_url = find_career_page_apify(company, job_title)
+            # Google the company career page directly
+            apply_url = navigate_to_career_page(page, company, job_title)
 
-            if not career_url:
-                print(f"  ! No career page found — skipping")
+            if not apply_url:
+                print(f"  ! Could not find career page — skipping")
                 jobs[jid]["career_applied"]    = True
-                jobs[jid]["career_apply_skip"] = "no_career_page"
+                jobs[jid]["career_apply_skip"] = "no_career_page_found"
                 continue
 
-            # Navigate to career page
-            try:
-                page.goto(career_url, timeout=30000, wait_until="domcontentloaded")
-                page.wait_for_timeout(3000)
-                print(f"  → Landed on: {page.url[:70]}")
-            except Exception as e:
-                print(f"  ! Navigation error: {str(e)[:60]}")
-                jobs[jid]["career_applied"]    = True
-                jobs[jid]["career_apply_skip"] = "navigation_failed"
-                continue
-
-            # Fill form
+            # Fill the application form
             result = handle_application_form(page, job, resume_pdf)
 
             if result["filled"] > 0:
@@ -541,7 +589,7 @@ def run_career_apply():
                 jobs[jid]["career_applied"]    = True
                 jobs[jid]["career_applied_at"] = now_iso()
                 applied += 1
-                print(f"  ✓ {result['filled']} fields filled — review email sent!")
+                print(f"  ✓ {result['filled']} fields filled — review email sent to Ram!")
             else:
                 print(f"  ! No fields filled — skipping")
                 jobs[jid]["career_applied"]    = True
@@ -552,7 +600,7 @@ def run_career_apply():
         browser.close()
 
     DATA_FILE.write_text(json.dumps(jobs, indent=2))
-    print(f"\n[Career Apply] Done. {applied} forms filled, emails sent to Ram.")
+    print(f"\n[Career Apply] Done. {applied} forms filled, review emails sent to Ram.")
     return applied
 
 if __name__ == "__main__":
