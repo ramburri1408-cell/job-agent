@@ -100,51 +100,244 @@ MASTER_RESUME = {
 }
 
 
-# ── Step 1: AI Enhancement ────────────────────────────────────────────────────
+# ── Step 1: AI Enhancement (3-stage pipeline) ──────────────────────────────────
+#
+# STAGE A — Extract requirements: pull the concrete business + technical
+#           requirements out of the JD so the model has a checklist instead
+#           of a wall of text to vaguely "match against".
+# STAGE B — Match against real background: for each requirement, decide
+#           honestly whether Ram's actual experience supports it, partially
+#           supports it, or is a genuine gap. Nothing is invented here.
+# STAGE C — Write humanized resume content: using only the requirements
+#           confirmed as real matches in Stage B, rewrite summary, skills,
+#           and bullets in natural human language — not keyword stuffing.
+#
+# This keeps each Claude call small and focused (avoids truncation) and
+# keeps the "never fabricate" rule enforceable at the matching stage,
+# before any prose gets written.
 
-def enhance_for_job(job: dict) -> dict:
-    """claude-opus-4-8 tailors resume content for this specific job."""
+def _claude_json(system: str, user: str, max_tokens: int) -> dict:
+    """Single Claude call returning a parsed JSON dict."""
     result = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=2000,
-        temperature=0.3,
-        system=(
-            "You are an expert ATS resume optimizer. Tailor this resume for maximum ATS match. "
-            "Rules:\n"
-            "1. Add missing JD keywords naturally into existing bullets — never invent fake experience\n"
-            "2. Reorder bullets to put most relevant first\n"
-            "3. Enhance summary to mirror JD language and keywords\n"
-            "4. Add missing technical skills to skills section only if they appear in JD\n"
-            "5. Never change company names, dates, education, or fabricate achievements\n"
-            "6. Return ONLY valid JSON, no markdown, no backticks\n"
-            'JSON format: { "summary": "...", '
-            '"skills": {"AI & Agents":"...","Frontend":"...","Backend":"...","ORM / Data":"...","Database":"...",'
-            '"Messaging":"...","Security":"...","Cloud / DevOps":"...","Testing":"...",'
-            '"Version Control":"...","Tools":"...","Methodologies":"..."}, '
-            '"exp0_bullets": ["..."], "exp1_bullets": ["..."], "exp2_bullets": ["..."], '
-            '"exp0_env": "...", "exp1_env": "...", "exp2_env": "..." }'
-        ),
-        messages=[{"role": "user", "content": (
-            f"Job Title: {job['title']}\nCompany: {job['company']}\n"
-            f"Job Description:\n{job['description'][:2000]}\n\n"
-            f"Current Summary:\n{MASTER_RESUME['summary']}\n\n"
-            f"Current Skills:\n" +
-            "\n".join(f"{k}: {v}" for k, v in MASTER_RESUME['skills'].items()) +
-            f"\n\nExperience 0 (Jefferson Bank) bullets:\n" +
-            "\n".join(f"- {b}" for b in MASTER_RESUME['experience'][0]['bullets']) +
-            f"\n\nExperience 1 (Techbion) bullets:\n" +
-            "\n".join(f"- {b}" for b in MASTER_RESUME['experience'][1]['bullets']) +
-            f"\n\nExperience 2 (Unisys) bullets:\n" +
-            "\n".join(f"- {b}" for b in MASTER_RESUME['experience'][2]['bullets'])
-        )}]
-    ).content[0].text.strip()
+        max_tokens=max_tokens,
+        system=system,
+        messages=[{"role": "user", "content": user}],
+    )
+    raw   = result.content[0].text.strip()
+    clean = raw.replace("```json", "").replace("```", "").strip()
+    return json.loads(clean)
+
+
+def _flatten_background() -> str:
+    """Plain-text dump of Ram's real experience for the matching stage."""
+    lines = [f"Summary: {MASTER_RESUME['summary']}", "", "Skills:"]
+    for k, v in MASTER_RESUME["skills"].items():
+        lines.append(f"  {k}: {v}")
+    lines.append("")
+    for exp in MASTER_RESUME["experience"]:
+        lines.append(f"{exp['title']} @ {exp['company']} ({exp['dates']})")
+        for b in exp["bullets"]:
+            lines.append(f"  - {b}")
+        lines.append(f"  Environment: {exp['env']}")
+        lines.append("")
+    edu = MASTER_RESUME["education"]
+    lines.append(f"Education: {edu['degree']}, {edu['school']} ({edu['dates']}), GPA {edu['gpa']}")
+    return "\n".join(lines)
+
+
+def extract_requirements(job: dict) -> dict:
+    """
+    STAGE A — Pull concrete business and technical requirements out of the
+    job description. Returns a structured checklist instead of raw JD text.
+    """
+    system = (
+        "You extract structured requirements from job descriptions for resume "
+        "tailoring. Read the JD and pull out two separate lists:\n"
+        "1. technical_requirements — specific technologies, languages, frameworks, "
+        "tools, platforms, certifications (e.g. '.NET 8', 'Azure', '5+ years', 'AWS').\n"
+        "2. business_requirements — domain/process expectations that aren't a tech "
+        "stack item (e.g. 'SOX compliance experience', 'Agile/Scrum delivery', "
+        "'cross-functional stakeholder collaboration', 'on-call rotation', "
+        "'regulated industry experience', 'client-facing communication').\n"
+        "Keep each item short (a few words). Order both lists by how central "
+        "they seem to the role, most important first. Cap each list at 10 items.\n"
+        "Return ONLY valid JSON, no markdown, no backticks, no trailing commas.\n"
+        '{"technical_requirements": ["..."], "business_requirements": ["..."]}'
+    )
+    user = f"Job Title: {job['title']}\nCompany: {job['company']}\n\nJob Description:\n{job['description'][:2500]}"
 
     try:
-        clean = result.replace("```json", "").replace("```", "").strip()
-        return json.loads(clean)
+        return _claude_json(system, user, max_tokens=600)
     except Exception as e:
-        print(f"  ! AI enhancement parse error: {e}")
-        return {}
+        print(f"  ! Stage A (extract requirements) failed: {e}")
+        return {"technical_requirements": [], "business_requirements": []}
+
+
+def match_requirements(requirements: dict) -> dict:
+    """
+    STAGE B — Honestly match each requirement against Ram's real background.
+    This is the truthfulness gate: anything not genuinely supported here
+    must not be claimed in the prose stage.
+    """
+    system = (
+        "You are doing an honest gap analysis between a candidate's real "
+        "background and a job's requirements. For EACH requirement given, "
+        "classify it as one of:\n"
+        "  'match'    — candidate has direct, real experience with this\n"
+        "  'partial'  — candidate has adjacent/transferable experience, not exact\n"
+        "  'gap'      — candidate has no real experience with this\n"
+        "Be strict and honest — do not stretch 'partial' into 'match'. This "
+        "classification controls what the resume is allowed to claim, so "
+        "accuracy matters more than making the candidate look good.\n"
+        "Return ONLY valid JSON, no markdown, no backticks, no trailing commas.\n"
+        '{"matches": [{"requirement":"...", "status":"match|partial|gap", '
+        '"evidence":"short phrase pointing to the real bullet/skill, or empty if gap"}]}'
+    )
+    user = (
+        f"Candidate background:\n{_flatten_background()}\n\n"
+        f"Requirements to classify:\n" +
+        "\n".join(f"- {r}" for r in
+                   requirements.get("technical_requirements", []) +
+                   requirements.get("business_requirements", []))
+    )
+
+    try:
+        return _claude_json(system, user, max_tokens=1200)
+    except Exception as e:
+        print(f"  ! Stage B (match requirements) failed: {e}")
+        return {"matches": []}
+
+
+def enhance_for_job(job: dict) -> dict:
+    """
+    Full pipeline: extract requirements → match honestly → write humanized
+    resume content using only confirmed matches/partials. Returns a dict
+    merged with 'requirements_analysis' for visibility/debugging, plus the
+    standard summary/skills/bullets/env fields the PDF generator expects.
+    """
+    print(f"  → Extracting JD requirements...")
+    requirements = extract_requirements(job)
+    tech_reqs  = requirements.get("technical_requirements", [])
+    biz_reqs   = requirements.get("business_requirements", [])
+    print(f"    {len(tech_reqs)} technical, {len(biz_reqs)} business requirements found")
+
+    print(f"  → Matching against real background...")
+    match_result = match_requirements(requirements)
+    matches = match_result.get("matches", [])
+
+    confirmed = [m for m in matches if m.get("status") in ("match", "partial")]
+    gaps      = [m for m in matches if m.get("status") == "gap"]
+    print(f"    {len(confirmed)} confirmed/partial, {len(gaps)} honest gaps")
+
+    # Build a constraint string for the prose stage: only these requirements
+    # are allowed to be emphasized/woven in.
+    confirmed_str = "; ".join(
+        f"{m['requirement']} ({m['status']}: {m.get('evidence', '')})" for m in confirmed
+    ) or "none confirmed — write from existing background only"
+
+    jd_header = (
+        f"Job Title: {job['title']}\nCompany: {job['company']}\n"
+        f"Job Description:\n{job['description'][:1200]}"
+    )
+
+    # ── CALL: Summary + Skills (humanized, gap-aware) ────────────────────────
+    system1 = (
+        "You are a skilled resume writer helping a real engineer tailor his resume "
+        "for a specific job — not an ATS keyword-stuffing bot. Write the way a "
+        "thoughtful human would after actually reading the job description.\n\n"
+        "You are given a pre-verified list of requirements the candidate genuinely "
+        "matches or partially matches. ONLY emphasize those — do not introduce any "
+        "requirement not on this list, even if it appears in the JD.\n\n"
+        "Hard rules:\n"
+        "1. Sound human. Vary sentence length and structure — don't chain "
+        "comma-separated buzzwords. Write like a person describing their own work.\n"
+        "2. Avoid generic AI-resume phrases like 'proven track record', "
+        "'results-driven', 'leveraging cutting-edge', 'passionate about'.\n"
+        "3. The summary should read like 3-4 natural sentences, not a keyword list.\n"
+        "4. Stay strictly truthful — only the confirmed/partial requirements below "
+        "may be emphasized; framing can shift, the underlying facts cannot.\n"
+        "Return ONLY valid JSON, no markdown, no backticks, no trailing commas.\n"
+        '{"summary": "one paragraph", '
+        '"skills": {"AI & Agents":"...","Frontend":"...","Backend":"...","ORM / Data":"...",'
+        '"Database":"...","Messaging":"...","Security":"...","Cloud / DevOps":"...",'
+        '"Testing":"...","Version Control":"...","Tools":"...","Methodologies":"..."}}'
+    )
+    user1 = (
+        f"{jd_header}\n\n"
+        f"Confirmed/partial requirements (only these may be emphasized):\n{confirmed_str}\n\n"
+        f"Current Summary:\n{MASTER_RESUME['summary']}\n\n"
+        "Current Skills:\n" +
+        "\n".join(f"{k}: {v}" for k, v in MASTER_RESUME["skills"].items())
+    )
+
+    # ── CALL: Bullets + Envs (humanized, gap-aware) ──────────────────────────
+    system2 = (
+        "You are a skilled resume writer helping a real engineer tailor his resume "
+        "for a specific job — not an ATS keyword-stuffing bot.\n\n"
+        "You are given a pre-verified list of requirements the candidate genuinely "
+        "matches or partially matches. ONLY weave those into bullets — never bolt on "
+        "a requirement not on this list, even if the JD mentions it.\n\n"
+        "Hard rules:\n"
+        "1. Sound human. Each bullet should read like something he'd actually say "
+        "in an interview, not a string of keywords separated by commas.\n"
+        "2. Vary sentence structure across bullets — don't start every bullet with "
+        "the same verb pattern or pack in three buzzwords per line.\n"
+        "3. Naturally weave in 1-2 confirmed requirements per bullet ONLY where they "
+        "genuinely fit what he already did.\n"
+        "4. Keep bullets under 200 characters, action-verb-led, specific and concrete.\n"
+        "5. Never fabricate tools, metrics, or outcomes not grounded in the original bullet.\n"
+        "6. Keep all 9 Jefferson Bank bullets, all 6 Techbion bullets, all 5 Unisys bullets.\n"
+        "7. Update env strings to reflect confirmed requirements naturally.\n"
+        "Return ONLY valid JSON, no markdown, no backticks, no trailing commas.\n"
+        '{"exp0_bullets":["..."],"exp1_bullets":["..."],"exp2_bullets":["..."],'
+        '"exp0_env":"...","exp1_env":"...","exp2_env":"..."}'
+    )
+    user2 = (
+        f"{jd_header}\n\n"
+        f"Confirmed/partial requirements (only these may be emphasized):\n{confirmed_str}\n\n"
+        "Jefferson Bank bullets (rewrite all 9):\n" +
+        "\n".join(f"- {b}" for b in MASTER_RESUME["experience"][0]["bullets"]) +
+        "\n\nTechbion bullets (rewrite all 6):\n" +
+        "\n".join(f"- {b}" for b in MASTER_RESUME["experience"][1]["bullets"]) +
+        "\n\nUnisys bullets (rewrite all 5):\n" +
+        "\n".join(f"- {b}" for b in MASTER_RESUME["experience"][2]["bullets"]) +
+        "\n\nCurrent envs:\n"
+        f"exp0_env: {MASTER_RESUME['experience'][0]['env']}\n"
+        f"exp1_env: {MASTER_RESUME['experience'][1]['env']}\n"
+        f"exp2_env: {MASTER_RESUME['experience'][2]['env']}"
+    )
+
+    result = {
+        "requirements_analysis": {
+            "technical_requirements": tech_reqs,
+            "business_requirements":  biz_reqs,
+            "confirmed": confirmed,
+            "gaps":      gaps,
+        }
+    }
+
+    print(f"  → Writing humanized summary + skills...")
+    try:
+        part1 = _claude_json(system1, user1, max_tokens=1200)
+        result.update(part1)
+        print(f"  ✓ Summary + skills written")
+    except Exception as e:
+        print(f"  ! Summary/skills generation failed: {e} — using master")
+
+    print(f"  → Writing humanized bullets...")
+    try:
+        part2 = _claude_json(system2, user2, max_tokens=2000)
+        result.update(part2)
+        print(f"  ✓ Bullets written")
+    except Exception as e:
+        print(f"  ! Bullets generation failed: {e} — using master bullets")
+
+    if gaps:
+        gap_list = ", ".join(g["requirement"] for g in gaps[:5])
+        print(f"  ℹ Honest gaps (not claimed): {gap_list}")
+
+    return result
 
 
 # ── Step 2: PDF Generation ────────────────────────────────────────────────────
@@ -348,12 +541,16 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
 
 # ── Main Entry Point ──────────────────────────────────────────────────────────
 
-def generate_ats_resume(job: dict, output_dir: str = "/tmp") -> dict:
+def generate_ats_resume(job: dict, output_dir: str = None) -> dict:
     """
     1. claude-opus-4-8 enhances resume for this job
     2. Generates ATS-optimized PDF
     Returns pdf_path, pdf_bytes, enhanced data.
     """
+    import tempfile
+    if output_dir is None:
+        output_dir = str(__import__("pathlib").Path(tempfile.gettempdir()) / "job_agent_resumes")
+    __import__("pathlib").Path(output_dir).mkdir(parents=True, exist_ok=True)
     print(f"  → Enhancing resume for: {job['title']} @ {job['company']}")
     enhanced  = enhance_for_job(job)
 
