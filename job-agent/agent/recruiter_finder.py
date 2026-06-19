@@ -167,7 +167,6 @@ def ai_validate_recruiter(name: str, title: str, email: str, company: str) -> bo
         response = client_ai.messages.create(
             model="claude-opus-4-8",
             max_tokens=5,
-            temperature=0,
             messages=[{"role": "user", "content": (
                 f"Is this person likely a recruiter, HR, or talent acquisition contact?\n"
                 f"Company: {company}\nName: {name or 'Unknown'}\n"
