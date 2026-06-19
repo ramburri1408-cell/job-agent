@@ -1,49 +1,405 @@
 """
-Universal Job Scraper V5
-
+Job Scraper — Production Grade, US-Only
 Sources:
-- LinkedIn via Apify REST
-- Google portal discovery via Apify REST
-- Adzuna
-- Remotive
+1. Adzuna API      — official US jobs API (country=us)
+2. Remotive API    — remote tech jobs, filtered for US eligibility
+3. LinkedIn (Apify)— largest job board, filtered via US allowlist
+4. Google Jobs     — per-state "site:" searches across major US job boards
 
-Fixes:
-- Extracts job links from many possible fields: link, applyUrl, jobUrl, url, canonicalUrl, etc.
-- Prints full job URLs, not truncated URLs
-- Stores full job URL in jobs.json
-- Extracts LinkedIn company names correctly
-- Uses URL-based duplicate IDs
-- Uses 24-hour lookback
+US FILTERING STRATEGY (allowlist, not denylist):
+A job is considered US-based if its location field contains:
+  - "united states", "usa", "u.s."
+  - a full US state name (e.g. "California", "Florida")
+  - a US state abbreviation as a standalone token (e.g. ", CA", ", FL")
+  - "remote" combined with no foreign country marker
+Anything else (foreign cities, foreign countries, ambiguous "Remote" with
+no US signal) is REJECTED. This is the inverse of a denylist — instead of
+trying to enumerate every foreign city/country (which is an endless list),
+we only accept jobs that positively match a US location signal.
+
+Deduplicates by title+company+url hash.
 """
 
-import json
-import os
-import time
-import hashlib
-import re
-import requests
-from pathlib import Path
-from urllib.parse import quote, urlparse
+import json, os, re, time, hashlib
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from urllib.parse import quote
+
+import requests
 from bs4 import BeautifulSoup
 
-DATA_FILE = Path("data/jobs.json")
+DATA_FILE   = Path("data/jobs.json")
 CONFIG_FILE = Path("data/config.json")
 
-APIFY_TOKEN = os.environ.get("APIFY_API_KEY", "").strip()
-ADZUNA_APP_ID = os.environ.get("ADZUNA_APP_ID", "").strip()
-ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY", "").strip()
-
-JOB_LOOKBACK_HOURS = int(os.environ.get("JOB_LOOKBACK_HOURS", "24"))
-MAX_RESULTS_PER_SOURCE = int(os.environ.get("MAX_RESULTS_PER_SOURCE", "40"))
-
 HEADERS = {
-    "User-Agent": "Mozilla/5.0",
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    ),
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-PORTAL_SITES = [
-    "linkedin.com/jobs",
+ADZUNA_APP_ID  = os.environ.get("ADZUNA_APP_ID", "")
+ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY", "")
+APIFY_TOKEN    = os.environ.get("APIFY_API_KEY", "")
+
+
+# ── US LOCATION ALLOWLIST ─────────────────────────────────────────────────────
+
+US_STATES = {
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+    "california": "CA", "colorado": "CO", "connecticut": "CT", "delaware": "DE",
+    "florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID",
+    "illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+    "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN",
+    "mississippi": "MS", "missouri": "MO", "montana": "MT", "nebraska": "NE",
+    "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC",
+    "north dakota": "ND", "ohio": "OH", "oklahoma": "OK", "oregon": "OR",
+    "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+    "vermont": "VT", "virginia": "VA", "washington": "WA",
+    "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+    "district of columbia": "DC",
+}
+
+US_STATE_ABBRS = set(US_STATES.values())
+
+US_COUNTRY_MARKERS = [
+    "united states", "usa", "u.s.a", "u.s.", "(us)",
+]
+
+def _has_standalone_us(loc: str) -> bool:
+    """Catch 'US' as a standalone token, e.g. 'Remote - US', 'Remote, US'."""
+    tokens = re.split(r"[,\-/\s]+", loc.upper().strip())
+    return "US" in tokens
+
+# Major US cities — helps catch "San Francisco" / "New York City" with no state
+US_MAJOR_CITIES = [
+    "new york city", "san francisco", "los angeles", "chicago", "boston",
+    "seattle", "austin", "denver", "atlanta", "dallas", "houston",
+    "phoenix", "philadelphia", "san diego", "miami", "minneapolis",
+    "detroit", "portland", "nashville", "charlotte", "raleigh",
+    "washington dc", "san jose", "columbus", "indianapolis",
+    "jacksonville", "san antonio", "fort worth", "el paso",
+    "memphis", "baltimore", "milwaukee", "albuquerque", "tucson",
+    "sacramento", "kansas city", "mesa", "omaha", "colorado springs",
+    "raleigh", "long beach", "virginia beach", "oakland", "tampa",
+    "tulsa", "arlington", "new orleans", "wichita", "cleveland",
+    "boca raton", "fort lauderdale", "orlando", "tampa bay",
+]
+
+# Explicit foreign-country / region markers — used as a final safety check
+# even when a location string contains an ambiguous term like "Remote"
+FOREIGN_MARKERS = [
+    "india", "pakistan", "bangladesh", "philippines", "nigeria", "kenya",
+    "vietnam", "indonesia", "sri lanka", "nepal", "egypt", "ghana",
+    "germany", "deutschland", "gmbh", "m/w/d", "m/f/d", "austria",
+    "switzerland", "united kingdom", "england", "scotland", "wales",
+    "ireland", "france", "spain", "italy", "portugal", "netherlands",
+    "belgium", "poland", "romania", "bulgaria", "hungary", "czech",
+    "ukraine", "russia", "greece", "turkey", "israel",
+    "canada", "mexico", "brazil", "argentina", "colombia", "chile",
+    "peru", "australia", "new zealand", "singapore", "malaysia",
+    "thailand", "japan", "china", "hong kong", "taiwan", "south korea",
+    "south africa", "morocco", "uae", "dubai", "saudi arabia", "qatar",
+    "remote - eu", "remote eu", "emea", "apac", "latam",
+    "hyderabad", "bangalore", "bengaluru", "mumbai", "delhi", "pune",
+    "chennai", "kolkata", "noida", "gurgaon", "gurugram", "telangana",
+    "karnataka", "maharashtra", "tamil nadu", "islamabad", "lahore",
+    "karachi", "budapest", "athens", "warsaw", "lisbon", "porto",
+    "krakow", "bucharest", "manila", "jakarta", "ho chi minh",
+]
+
+
+def is_us_location(location: str, description: str = "") -> bool:
+    """
+    Allowlist check: a job is US-based ONLY if its location string
+    positively matches a US signal AND has no foreign marker.
+    """
+    loc = (location or "").lower().strip()
+    desc_snip = (description or "").lower()[:300]
+
+    # Hard reject: explicit foreign marker in location
+    if any(marker in loc for marker in FOREIGN_MARKERS):
+        return False
+
+    # Positive signals in location string
+    if any(marker in loc for marker in US_COUNTRY_MARKERS):
+        return True
+
+    if _has_standalone_us(loc):
+        return True
+
+    if any(state in loc for state in US_STATES.keys()):
+        return True
+
+    if any(city in loc for city in US_MAJOR_CITIES):
+        return True
+
+    # Check for standalone state abbreviation, e.g. "Boston, MA" or "Remote - TX"
+    tokens = re.split(r"[,\-/\s]+", loc.upper())
+    if any(tok in US_STATE_ABBRS for tok in tokens):
+        return True
+
+    # "Remote" with no foreign marker and no other location info —
+    # check description for a US signal as a tiebreaker
+    if "remote" in loc:
+        if any(marker in desc_snip for marker in FOREIGN_MARKERS):
+            return False
+        if any(marker in desc_snip for marker in US_COUNTRY_MARKERS):
+            return True
+        if any(state in desc_snip for state in US_STATES.keys()):
+            return True
+        # Ambiguous remote with zero signals either way — reject to be safe
+        return False
+
+    # No US signal found at all — reject
+    return False
+
+
+# ── RELEVANCE FILTER ──────────────────────────────────────────────────────────
+
+IRRELEVANT_KEYWORDS = [
+    "sales", "marketing", "nurse", "driver", "retail manager",
+    "accountant", "lawyer", "attorney", "teacher", "cook", "chef",
+    "electrician", "plumber", "mechanic", "warehouse", "forklift",
+    "registered nurse", "rn ", "phlebotomist", "dental", "hygienist",
+    "real estate agent", "insurance agent", "loan officer",
+    "construction", "hvac", "welder", "machinist", "custodian",
+]
+
+RELEVANT_KEYWORDS = [
+    ".net", "c#", "asp.net", "dotnet", "csharp", "react", "angular",
+    "typescript", "javascript", "azure", "full stack", "fullstack",
+    "software engineer", "software developer", "backend", "back-end",
+    "frontend", "front-end", "python", "node.js", "node", "api",
+    "cloud", "devops", "ai engineer", "machine learning", "automation",
+    "engineer", "developer", "programmer", "sde", "web developer",
+]
+
+
+def is_relevant(title: str, description: str) -> bool:
+    t = (title or "").lower()
+    d = (description or "").lower()[:600]
+
+    if any(k in t for k in IRRELEVANT_KEYWORDS):
+        return False
+
+    combined = f"{t} {d}"
+    return any(k in combined for k in RELEVANT_KEYWORDS)
+
+
+# ── HELPERS ───────────────────────────────────────────────────────────────────
+
+def load_jobs() -> dict:
+    return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
+
+def save_jobs(jobs: dict) -> None:
+    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+    DATA_FILE.write_text(json.dumps(jobs, indent=2))
+
+def load_config() -> dict:
+    return json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
+
+def make_id(title: str, company: str, url: str = "") -> str:
+    raw = f"{title.lower().strip()}-{company.lower().strip()}-{url.lower().strip()}"
+    return hashlib.md5(raw.encode()).hexdigest()[:12]
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+def clean(text) -> str:
+    return re.sub(r"\s+", " ", str(text or "")).strip()
+
+def strip_html(text: str) -> str:
+    return BeautifulSoup(str(text or ""), "html.parser").get_text()
+
+def new_job(title, company, location, salary, description, url, portal,
+            recruiter_email="") -> dict:
+    return {
+        "id":              make_id(title, company, url),
+        "title":           clean(title),
+        "company":         clean(company),
+        "location":        clean(location) or "United States",
+        "salary":          clean(salary) or "Not listed",
+        "description":     clean(description),
+        "url":             clean(url),
+        "portal":          portal,
+        "scraped_at":      now_iso(),
+        "status":          "new",
+        "recruiter_email": recruiter_email,
+        "recruiter_name":  "",
+        "tailored_resume": None,
+        "email_draft":     None,
+        "email_sent":      False,
+        "email_sent_at":   None,
+        "fit_score":       None,
+    }
+
+def archive_old_skipped(jobs: dict, days: int = 3) -> None:
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    skip_statuses = {"skipped_low_score", "skipped_irrelevant", "skipped_non_us", "no_email"}
+    for job in jobs.values():
+        if job.get("status") in skip_statuses:
+            try:
+                scraped_dt = datetime.fromisoformat(job.get("scraped_at", ""))
+                if scraped_dt < cutoff:
+                    job["status"] = "archived"
+            except Exception:
+                pass
+
+
+# ── SOURCE 1: ADZUNA (official US API) ───────────────────────────────────────
+
+def scrape_adzuna(query: str, max_days: int = 1) -> list:
+    """Official Adzuna API, country=us — already geo-restricted by Adzuna."""
+    jobs = []
+    if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
+        print("  [Adzuna] Missing API credentials — skipping")
+        return jobs
+    try:
+        url = (
+            f"https://api.adzuna.com/v1/api/jobs/us/search/1"
+            f"?app_id={ADZUNA_APP_ID}&app_key={ADZUNA_APP_KEY}"
+            f"&results_per_page=20&what={quote(query)}"
+            f"&content-type=application/json&sort_by=date"
+            f"&max_days_old={max_days}"
+        )
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        data = resp.json()
+
+        for item in data.get("results", []):
+            title   = str(item.get("title", ""))
+            company = str(item.get("company", {}).get("display_name", "Unknown"))
+            loc     = str(item.get("location", {}).get("display_name", "United States"))
+            sm      = item.get("salary_min")
+            sx      = item.get("salary_max")
+            salary  = f"${int(sm):,} - ${int(sx):,}" if sm and sx else "Not listed"
+            desc    = str(item.get("description", ""))
+            job_url = str(item.get("redirect_url", ""))
+
+            if not is_relevant(title, desc):
+                continue
+            # Adzuna /us/ endpoint is already US-restricted, but double check
+            if not is_us_location(loc, desc):
+                continue
+
+            jobs.append(new_job(title, company, loc, salary, desc, job_url, "Adzuna"))
+
+        time.sleep(1)
+        print(f"  [Adzuna] {len(jobs)} relevant US jobs for '{query}'")
+
+    except Exception as e:
+        print(f"  [Adzuna] Error: {str(e)[:100]}")
+
+    return jobs
+
+
+# ── SOURCE 2: REMOTIVE ────────────────────────────────────────────────────────
+
+def scrape_remotive(query: str) -> list:
+    """Remotive — remote tech jobs. Filtered for US eligibility."""
+    jobs = []
+    try:
+        url = (
+            f"https://remotive.com/api/remote-jobs"
+            f"?search={quote(query)}&category=software-dev&limit=20"
+        )
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        data = resp.json()
+
+        for item in data.get("jobs", []):
+            title       = str(item.get("title", ""))
+            company     = str(item.get("company_name", ""))
+            desc        = strip_html(item.get("description", ""))[:1500]
+            candidate_loc = str(item.get("candidate_required_location", "")) or "Remote"
+            job_url     = str(item.get("url", ""))
+            salary      = str(item.get("salary", "")) or "Not listed"
+
+            if not is_relevant(title, desc):
+                continue
+            if not is_us_location(candidate_loc, desc):
+                continue
+
+            jobs.append(new_job(
+                title, company, candidate_loc, salary, desc, job_url,
+                "Remotive", str(item.get("company_email", ""))
+            ))
+
+        time.sleep(1)
+        print(f"  [Remotive] {len(jobs)} relevant US jobs for '{query}'")
+
+    except Exception as e:
+        print(f"  [Remotive] Error: {str(e)[:100]}")
+
+    return jobs
+
+
+# ── SOURCE 3: LINKEDIN (via Apify) ────────────────────────────────────────────
+
+def scrape_linkedin(query: str) -> list:
+    """LinkedIn jobs via Apify, filtered for US locations."""
+    jobs = []
+    if not APIFY_TOKEN:
+        return jobs
+    try:
+        from apify_client import ApifyClient
+        apify = ApifyClient(APIFY_TOKEN)
+
+        print(f"  [LinkedIn] Searching: {query}")
+        run = apify.actor("bebity/linkedin-jobs-scraper").call(
+            run_input={
+                "title": query,
+                "location": "United States",
+                "rows": 40,
+                "publishedAt": "r86400",  # past 24 hours
+            },
+            timeout_secs=120,
+        )
+
+        items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
+        print(f"  [LinkedIn] Raw: {len(items)}")
+
+        for item in items:
+            title   = str(item.get("title", ""))
+            company = str(item.get("companyName", ""))
+            loc     = str(item.get("location", "United States"))
+            desc    = strip_html(item.get("descriptionHtml", "") or item.get("description", ""))[:1500]
+            job_url = str(item.get("link", "") or item.get("applyUrl", ""))
+            salary  = str(item.get("salary", "")) or "Not listed"
+
+            if not title or not company:
+                continue
+            if not is_relevant(title, desc):
+                continue
+            if not is_us_location(loc, desc):
+                continue
+
+            jobs.append(new_job(title, company, loc, salary, desc, job_url, "LinkedIn"))
+
+        print(f"  [LinkedIn] {len(jobs)} relevant US jobs for '{query}'")
+
+    except Exception as e:
+        print(f"  [LinkedIn] Error: {str(e)[:120]}")
+
+    return jobs
+
+
+# ── SOURCE 4: GOOGLE — PER-STATE SITE SEARCHES ───────────────────────────────
+
+# A small rotating sample of states to search per run (avoids 50x API calls
+# every run). Big tech/job hub states are weighted more heavily.
+STATE_ROTATION = [
+    "California", "Texas", "New York", "Florida", "Washington",
+    "Massachusetts", "Illinois", "Georgia", "North Carolina",
+    "Virginia", "Colorado", "Arizona", "Pennsylvania", "Ohio",
+    "New Jersey", "Remote",
+]
+
+JOB_SITES = [
     "dice.com/job-detail",
     "indeed.com/viewjob",
     "ziprecruiter.com/jobs",
@@ -54,572 +410,134 @@ PORTAL_SITES = [
     "myworkdayjobs.com",
     "icims.com",
     "smartrecruiters.com",
-    "ashbyhq.com",
-    "jobs.jobvite.com",
 ]
 
-IRRELEVANT = [
-    "sales",
-    "marketing",
-    "nurse",
-    "driver",
-    "retail",
-    "accountant",
-    "lawyer",
-    "teacher",
-    "cook",
-    "warehouse",
-    "mechanic",
-    "paid media",
-    "copywriter",
-    "office assistant",
-]
+def _yesterday_str() -> str:
+    return (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
 
-RELEVANT = [
-    ".net",
-    "c#",
-    "asp.net",
-    "dotnet",
-    "csharp",
-    "react",
-    "angular",
-    "typescript",
-    "azure",
-    "aws",
-    "full stack",
-    "fullstack",
-    "software engineer",
-    "software developer",
-    "backend",
-    "frontend",
-    "api",
-    "cloud",
-    "devops",
-    "microservices",
-    "ai",
-    "machine learning",
-    "automation",
-]
-
-NON_US = [
-    "germany",
-    "deutschland",
-    "gmbh",
-    "m/w/d",
-    "m/f/d",
-    "united kingdom",
-    "london",
-    "uk only",
-    "canada only",
-    "india only",
-    "australia only",
-    "paris",
-    "berlin",
-    "remote eu",
-    "remote - eu",
-]
-
-
-def load_jobs():
-    return json.loads(DATA_FILE.read_text()) if DATA_FILE.exists() else {}
-
-
-def save_jobs(jobs):
-    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DATA_FILE.write_text(json.dumps(jobs, indent=2))
-
-
-def load_config():
-    return json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
-
-
-def now_iso():
-    return datetime.now(timezone.utc).isoformat()
-
-
-def clean(text):
-    return re.sub(r"\s+", " ", str(text or "")).strip()
-
-
-def make_id(title, company, url=""):
-    raw = f"{title.lower().strip()}-{company.lower().strip()}-{url.lower().strip()}"
-    return hashlib.md5(raw.encode()).hexdigest()[:12]
-
-
-def get_nested(d, path, default=""):
-    cur = d
-    for key in path.split("."):
-        if not isinstance(cur, dict):
-            return default
-        cur = cur.get(key)
-    return cur or default
-
-
-def extract_company(item):
-    company = (
-        item.get("companyName")
-        or item.get("company_name")
-        or item.get("company")
-        or item.get("companyTitle")
-        or get_nested(item, "companyDetails.name")
-        or get_nested(item, "companyDetails.companyName")
-        or get_nested(item, "companyInfo.name")
-        or ""
-    )
-
-    if isinstance(company, dict):
-        company = (
-            company.get("name")
-            or company.get("companyName")
-            or company.get("title")
-            or ""
+def scrape_google_jobs_by_state(query: str, state: str) -> list:
+    """
+    Google site: search restricted to a specific US state, past 24hr,
+    across major job board domains.
+    """
+    jobs = []
+    try:
+        sites_clause = " OR ".join(f"site:{s}" for s in JOB_SITES)
+        search_q = (
+            f'"{query}" "{state}" software developer job '
+            f'after:{_yesterday_str()} ({sites_clause})'
+        )
+        search_url = (
+            f"https://www.google.com/search"
+            f"?q={quote(search_q)}&tbs=qdr:d&hl=en&gl=us"
         )
 
-    return clean(company) or "Unknown"
+        resp = requests.get(search_url, headers=HEADERS, timeout=20)
+        if resp.status_code != 200:
+            return jobs
 
+        soup = BeautifulSoup(resp.text, "html.parser")
 
-def extract_job_url(item: dict) -> str:
-    """
-    Universal URL extractor across LinkedIn, Google, Adzuna, Remotive,
-    Greenhouse, Lever, Ashby, Workday, SmartRecruiters, Jobvite, Dice, etc.
-    """
-    fields = [
-        "url",
-        "link",
-        "applyUrl",
-        "apply_url",
-        "jobUrl",
-        "job_url",
-        "canonicalUrl",
-        "canonical_url",
-        "externalApplyLink",
-        "externalApplyUrl",
-        "redirectUrl",
-        "redirect_url",
-        "absolute_url",
-        "hostedUrl",
-        "applicationUrl",
-        "applyLink",
-        "detailsUrl",
-    ]
-
-    for field in fields:
-        value = item.get(field)
-        if isinstance(value, str) and value.strip():
-            return value.strip()
-
-    nested = [
-        ("jobAd", "url"),
-        ("job", "url"),
-        ("apply", "url"),
-        ("application", "url"),
-        ("links", "apply"),
-        ("links", "self"),
-        ("metadata", "url"),
-    ]
-
-    for parent, child in nested:
-        obj = item.get(parent)
-        if isinstance(obj, dict):
-            value = obj.get(child)
-            if isinstance(value, str) and value.strip():
-                return value.strip()
-
-    return ""
-
-
-def infer_company_from_url(url):
-    try:
-        host = urlparse(url).netloc.lower().replace("www.", "")
-        parts = host.split(".")
-        if len(parts) >= 2:
-            return parts[-2].replace("-", " ").title()
-        return host.title()
-    except Exception:
-        return "Unknown"
-
-
-def infer_title_company(raw_title, url):
-    raw_title = clean(raw_title)
-
-    for sep in [" - ", " | ", " at ", " @ "]:
-        if sep in raw_title:
-            parts = [clean(p) for p in raw_title.split(sep) if clean(p)]
-            if len(parts) >= 2:
-                return parts[0], parts[-1]
-
-    return raw_title or "Software Developer", infer_company_from_url(url)
-
-
-def is_relevant(title, description="", location=""):
-    t = clean(title).lower()
-    d = clean(description).lower()
-    l = clean(location).lower()
-    all_text = f"{t} {d} {l}"
-
-    if any(x in all_text for x in NON_US):
-        return False
-
-    if any(x in t for x in IRRELEVANT):
-        return False
-
-    return any(x in f"{t} {d}" for x in RELEVANT)
-
-
-def is_portal_url(url):
-    url = (url or "").lower()
-    return any(site in url for site in PORTAL_SITES)
-
-
-def new_job(title, company, location, salary, description, url, portal, recruiter_email=""):
-    title = clean(title)
-    company = clean(company) or "Unknown"
-    url = clean(url)
-
-    return {
-        "id": make_id(title, company, url),
-        "title": title,
-        "company": company,
-        "location": clean(location) or "United States",
-        "salary": clean(salary) or "Not listed",
-        "description": clean(description)[:3000],
-        "url": url,
-        "portal": portal,
-        "scraped_at": now_iso(),
-        "status": "new",
-        "company_domain": "",
-        "recruiter_email": recruiter_email,
-        "recruiter_name": "",
-        "tailored_resume": None,
-        "email_draft": None,
-        "email_sent": False,
-        "email_sent_at": None,
-        "fit_score": None,
-    }
-
-
-def archive_old_skipped(jobs, days=3):
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-
-    for job in jobs.values():
-        if job.get("status") in {"skipped_low_score", "skipped_irrelevant", "no_email"}:
+        for script in soup.find_all("script", type="application/ld+json"):
             try:
-                if datetime.fromisoformat(job.get("scraped_at", "")) < cutoff:
-                    job["status"] = "archived"
+                data  = json.loads(script.string or "")
+                items = data if isinstance(data, list) else [data]
+                for item in items:
+                    if item.get("@type") not in ("JobPosting", "jobPosting"):
+                        continue
+
+                    title   = clean(item.get("title", ""))
+                    org     = item.get("hiringOrganization", {})
+                    company = clean(org.get("name", "") if isinstance(org, dict) else "")
+                    loc_raw = item.get("jobLocation", {})
+                    if isinstance(loc_raw, list):
+                        loc_raw = loc_raw[0] if loc_raw else {}
+                    addr = loc_raw.get("address", {}) if isinstance(loc_raw, dict) else {}
+                    location = clean(
+                        addr.get("addressLocality", "") or
+                        addr.get("addressRegion", "") or
+                        state
+                    )
+                    desc = strip_html(item.get("description", ""))[:1500]
+                    job_url = clean(item.get("url") or item.get("sameAs") or "")
+
+                    if not title or not company:
+                        continue
+                    if not is_relevant(title, desc):
+                        continue
+                    if not is_us_location(location or state, desc):
+                        continue
+
+                    jobs.append(new_job(
+                        title, company, location or state, "Not listed",
+                        desc, job_url, "Google Jobs"
+                    ))
+
             except Exception:
-                pass
+                continue
 
+        time.sleep(2)
 
-def apify_run_actor(actor_id, run_input):
-    if not APIFY_TOKEN:
-        return []
-
-    try:
-        url = (
-            "https://api.apify.com/v2/acts/"
-            f"{actor_id.replace('/', '~')}"
-            "/run-sync-get-dataset-items"
-        )
-
-        res = requests.post(
-            url,
-            params={"token": APIFY_TOKEN, "timeout": 180},
-            json=run_input,
-            timeout=240,
-        )
-
-        if res.status_code >= 400:
-            print(f"  [Apify] Error {res.status_code}: {res.text[:180]}")
-            return []
-
-        return res.json()
-
-    except Exception as exc:
-        print(f"  [Apify] Error: {str(exc)[:160]}")
-        return []
-
-
-def build_linkedin_url(query):
-    return (
-        "https://www.linkedin.com/jobs/search/"
-        f"?keywords={quote(query)}"
-        "&location=United%20States"
-        "&f_TPR=r86400"
-        "&f_JT=F%2CC"
-        "&sortBy=DD"
-    )
-
-
-def scrape_linkedin(query):
-    jobs = []
-
-    if not APIFY_TOKEN:
-        print("  [LinkedIn] Missing APIFY_API_KEY")
-        return jobs
-
-    print(f"  [LinkedIn] Searching: {query}")
-
-    items = apify_run_actor(
-        "curious_coder/linkedin-jobs-scraper",
-        {
-            "urls": [build_linkedin_url(query)],
-            "count": MAX_RESULTS_PER_SOURCE,
-        },
-    )
-
-    print(f"  [LinkedIn] Raw: {len(items)}")
-
-    if items:
-        print(f"  [LinkedIn] Sample keys: {list(items[0].keys())[:15]}")
-
-    for item in items:
-        title = clean(item.get("title") or item.get("jobTitle") or "")
-        company = extract_company(item)
-        location = clean(item.get("location") or "United States")
-        description = clean(
-            item.get("description")
-            or item.get("descriptionText")
-            or item.get("jobDescription")
-            or item.get("descriptionHtml")
-            or ""
-        )
-        url = clean(extract_job_url(item))
-        salary = clean(item.get("salary") or "Not listed")
-
-        if not title:
-            continue
-
-        if not url:
-            print(f"  ! Missing LinkedIn URL for: {title} @ {company}")
-            print(f"    Keys: {list(item.keys())}")
-
-        if not is_relevant(title, description, location):
-            continue
-
-        jobs.append(new_job(title, company, location, salary, description, url, "LinkedIn"))
-
-    print(f"  [LinkedIn] Relevant: {len(jobs)}")
-    return jobs
-
-
-def google_queries(query):
-    after = (datetime.now(timezone.utc) - timedelta(hours=JOB_LOOKBACK_HOURS)).strftime("%Y-%m-%d")
-    base = f'"{query}" software developer job United States after:{after}'
-
-    return [
-        f"{base} site:dice.com/job-detail",
-        f"{base} site:indeed.com/viewjob",
-        f"{base} site:ziprecruiter.com/jobs",
-        f"{base} site:monster.com/job-openings",
-        f"{base} site:builtin.com/job",
-        f"{base} site:greenhouse.io",
-        f"{base} site:lever.co",
-        f"{base} site:myworkdayjobs.com",
-        f"{base} site:icims.com",
-        f"{base} site:smartrecruiters.com",
-        f"{base} site:ashbyhq.com",
-        f"{base} site:jobs.jobvite.com",
-    ]
-
-
-def scrape_google_portals(query):
-    jobs = []
-
-    if not APIFY_TOKEN:
-        print("  [Google] Missing APIFY_API_KEY")
-        return jobs
-
-    for gq in google_queries(query):
-        print(f"  [Google] {gq[:95]}...")
-
-        items = apify_run_actor(
-            "apify/google-search-scraper",
-            {
-                "queries": gq,
-                "maxPagesPerQuery": 1,
-                "resultsPerPage": 10,
-                "countryCode": "us",
-                "languageCode": "en",
-                "mobileResults": False,
-            },
-        )
-
-        for block in items:
-            for result in block.get("organicResults", []) or []:
-                url = clean(extract_job_url(result))
-                raw_title = result.get("title") or ""
-                desc = result.get("description") or result.get("snippet") or ""
-
-                if not url or not is_portal_url(url):
-                    continue
-
-                title, company = infer_title_company(raw_title, url)
-
-                if is_relevant(title, desc, "United States"):
-                    jobs.append(
-                        new_job(
-                            title,
-                            company,
-                            "United States / Remote",
-                            "Not listed",
-                            desc,
-                            url,
-                            "Google",
-                        )
-                    )
-
-        time.sleep(1)
-
-    print(f"  [Google] Relevant: {len(jobs)}")
-    return jobs
-
-
-def resolve_url(url):
-    if not url or not url.startswith("http"):
-        return url
-
-    try:
-        res = requests.get(
-            url,
-            headers=HEADERS,
-            timeout=10,
-            allow_redirects=True,
-        )
-        return res.url or url
-    except Exception:
-        return url
-
-
-def scrape_adzuna(query):
-    jobs = []
-
-    if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
-        print("  [Adzuna] Missing credentials")
-        return jobs
-
-    try:
-        url = (
-            "https://api.adzuna.com/v1/api/jobs/us/search/1"
-            f"?app_id={ADZUNA_APP_ID}&app_key={ADZUNA_APP_KEY}"
-            f"&results_per_page=20&what={quote(query)}"
-            "&content-type=application/json&sort_by=date&max_days_old=1"
-        )
-
-        data = requests.get(url, headers=HEADERS, timeout=20).json()
-
-        for item in data.get("results", []):
-            title = item.get("title", "")
-            company = item.get("company", {}).get("display_name", "Unknown")
-            location = item.get("location", {}).get("display_name", "US")
-            desc = item.get("description", "")
-            redirect = extract_job_url(item)
-
-            salary = "Not listed"
-            if item.get("salary_min") and item.get("salary_max"):
-                salary = f"${int(item['salary_min']):,} - ${int(item['salary_max']):,}"
-
-            if is_relevant(title, desc, location):
-                jobs.append(
-                    new_job(
-                        title,
-                        company,
-                        location,
-                        salary,
-                        desc,
-                        resolve_url(redirect),
-                        "Adzuna",
-                    )
-                )
-
-        print(f"  [Adzuna] Relevant: {len(jobs)}")
-
-    except Exception as exc:
-        print(f"  [Adzuna] Error: {str(exc)[:120]}")
+    except Exception as e:
+        print(f"  [Google:{state}] Error: {str(e)[:80]}")
 
     return jobs
 
 
-def scrape_remotive(query):
-    jobs = []
+# ── MAIN ──────────────────────────────────────────────────────────────────────
 
-    try:
-        url = (
-            "https://remotive.com/api/remote-jobs"
-            f"?search={quote(query)}&category=software-dev&limit=20"
-        )
+def run_scraper() -> int:
+    cfg     = load_config()
+    queries = cfg.get("job_queries", ["software engineer"])
+    jobs    = load_jobs()
+    added   = 0
 
-        data = requests.get(url, timeout=20).json()
-
-        for item in data.get("jobs", []):
-            title = item.get("title", "")
-            company = item.get("company_name", "")
-            desc = BeautifulSoup(item.get("description", ""), "html.parser").get_text()[:3000]
-            job_url = extract_job_url(item)
-            salary = item.get("salary", "Not listed")
-
-            if is_relevant(title, desc, "Remote United States"):
-                jobs.append(
-                    new_job(
-                        title,
-                        company,
-                        "Remote / United States",
-                        salary,
-                        desc,
-                        job_url,
-                        "Remotive",
-                        item.get("company_email", ""),
-                    )
-                )
-
-        print(f"  [Remotive] Relevant: {len(jobs)}")
-
-    except Exception as exc:
-        print(f"  [Remotive] Error: {str(exc)[:120]}")
-
-    return jobs
-
-
-def run_scraper():
-    config = load_config()
-    queries = config.get("job_queries", ["software engineer"])
-
-    jobs = load_jobs()
     archive_old_skipped(jobs)
 
-    added = 0
-    stats = {
-        "LinkedIn": 0,
-        "Google": 0,
-        "Adzuna": 0,
-        "Remotive": 0,
-    }
+    # Rotate through states so each run covers a different slice of the US
+    run_index    = int(time.time()) // 21600  # changes every 6 hours
+    states_today = [
+        STATE_ROTATION[(run_index + i) % len(STATE_ROTATION)]
+        for i in range(4)  # 4 states per run, per query
+    ]
 
     for query in queries:
         query = str(query)
-        print(f"\n[Scraper] Query: {query}")
+        print(f"\n[Scraper] Query: '{query}'")
 
-        collected = []
-        collected.extend(scrape_linkedin(query))
-        collected.extend(scrape_google_portals(query))
-        collected.extend(scrape_adzuna(query))
-        collected.extend(scrape_remotive(query))
+        # Adzuna — official US-only API
+        for job in scrape_adzuna(query, max_days=1):
+            if job["id"] not in jobs:
+                jobs[job["id"]] = job
+                added += 1
+                print(f"  + Adzuna: {job['title']} @ {job['company']} ({job['location']})")
 
-        for job in collected:
-            if job["id"] in jobs:
-                continue
+        # Remotive — US-eligible remote jobs
+        for job in scrape_remotive(query):
+            if job["id"] not in jobs:
+                jobs[job["id"]] = job
+                added += 1
+                print(f"  + Remotive: {job['title']} @ {job['company']} ({job['location']})")
 
-            jobs[job["id"]] = job
-            added += 1
-            stats[job["portal"]] = stats.get(job["portal"], 0) + 1
+        # LinkedIn — US-filtered
+        for job in scrape_linkedin(query):
+            if job["id"] not in jobs:
+                jobs[job["id"]] = job
+                added += 1
+                print(f"  + LinkedIn: {job['title']} @ {job['company']} ({job['location']})")
 
-            print(f"  + {job['portal']}: {job['title']} @ {job['company']}")
-            print(f"    URL: {job['url']}")
+        # Google — per-state searches (rotates across run cycles)
+        for state in states_today:
+            print(f"  [Google:{state}] Searching '{query}'...")
+            for job in scrape_google_jobs_by_state(query, state):
+                if job["id"] not in jobs:
+                    jobs[job["id"]] = job
+                    added += 1
+                    print(f"  + Google ({state}): {job['title']} @ {job['company']} ({job['location']})")
 
     save_jobs(jobs)
-
-    print(f"\n[Scraper] Done. {added} new jobs added. Total: {len(jobs)}")
-    print("  Sources: " + " | ".join(f"{k}: {v}" for k, v in stats.items()))
-
+    print(f"\n[Scraper] Done. {added} new US jobs added. Total: {len(jobs)}")
+    print(f"[Scraper] States covered this run: {', '.join(states_today)}")
     return added
 
 
