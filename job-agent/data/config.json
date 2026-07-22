@@ -1,32 +1,32 @@
 {
   "job_queries": [
-  ".NET developer",
-  "full stack .NET developer",
-  "ASP.NET Core developer",
-  "full stack React .NET engineer",
-  "C# React developer",
-  ".NET React developer remote",
-  "full stack developer React Azure",
-  "software engineer .NET React",
-  "full stack developer ASP.NET",
-  "Angular .NET developer",
-  "full stack Angular developer",
-  "Angular ASP.NET Core engineer",
-  "C# Angular developer remote"
+  "Java full stack developer",
+  "Java Spring Boot developer",
+  "full stack developer Java React",
+  "senior software engineer Java",
+  "Spring Boot microservices engineer",
+  "full stack engineer Java Kafka",
+  "Java developer AWS",
+  "backend engineer Java Spring",
+  "full stack developer React Java",
+  "software engineer Generative AI Java",
+  "Java developer Kubernetes Docker",
+  "senior full stack developer Spring Cloud"
   ],
   "location": ["remote", "onsite", "hybrid"] ,
   "min_fit_score": 50,
   "auto_apply_enabled": true,
   "min_apply_score": 75,
+  "max_career_applies_per_run": 10,
   "profile": {
-    "name": "Ram Burri",
-    "email": "Ram.Burri1408@gmail.com",
-    "phone": "+1 (954) 445-4339",
-    "linkedin": "https://www.linkedin.com/in/ram-b-650769397/",
+    "name": "Janaki Ram Reddy",
+    "email": "janakiram.b1408@gmail.com",
+    "phone": "+1 984-357-4658",
+    "linkedin": "https://www.linkedin.com/in/janakiram58/",
     "github": "github.com/yourusername",
-    "title": ".Full-Stack .NET Developer",
-    "summary": "Full-Stack .NET Developer with 4+ years of experience building scalable enterprise applications using ASP.NET Core, React, and Azure. Specialized in microservices, high-performance REST APIs, and event-driven systems. Strong background in secure financial applications with OAuth2, JWT, and SOX/PCI-DSS compliance.",
-    "skills": "C#, .NET 8, ASP.NET Core, React.js, Next.js, Angular 14/18, TypeScript, JavaScript, Node.js, Express.js, Blazor, Entity Framework Core, SQL Server, PostgreSQL, Azure, Azure DevOps, Docker, Kubernetes, JWT, OAuth2, IdentityServer4, xUnit, Jest, Jenkins, Git",
-    "achievements": "Built fraud case management system reducing manual analyst review time at Jefferson Bank. Maintained 85%+ test coverage across critical transaction modules. Modernized legacy payment portal into microservices architecture preventing duplicate transactions. Secured APIs to SOX/PCI-DSS compliance across customer-facing systems."
+    "title": "Senior Software Engineer",
+    "summary": "Full Stack Developer with 4+ years of experience delivering Java, Spring Boot, React, REST APIs, cloud integrations, and secure enterprise applications across client environments. Experienced in microservices, CI/CD, Docker, Kubernetes, SQL, Kafka, and automated testing. Skilled in Generative AI, LLMs, RAG, OpenAI, prompt engineering, and LangChain, connecting intelligent features to reliable enterprise software delivery.",
+    "skills": "Java 17, Spring Boot, Spring Cloud, Spring MVC, Spring Security, Hibernate, JPA, Microservices, WebFlux, Spring Batch, React.js, Angular 10/16, Next.js, Redux, RxJS, TypeScript, JavaScript, Node.js, Express.js, Apache Kafka, RabbitMQ, AWS SQS, AWS (EC2, Lambda, S3, API Gateway, ECS, EKS), Azure AKS, Docker, Kubernetes, Jenkins, GitHub Actions, Terraform, PostgreSQL, MySQL, MongoDB, Oracle, Cassandra, Redis, OAuth2, JWT, AWS Cognito, Okta, JUnit 5, Mockito, Cypress, Playwright, Generative AI, LLMs, RAG, OpenAI, LangChain, Prompt Engineering",
+    "achievements": "Architected a scalable microservices framework at U.S. Bank processing 15M+ requests daily with 99.99% uptime. Built a Rust-based microservices architecture at Walmart processing 20M+ daily transactions with reduced latency. Added GenAI support (OpenAI, RAG, LangChain) to summarize service issues, speeding up incident response for banking support teams."
   }
 }

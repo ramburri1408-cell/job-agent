@@ -172,8 +172,8 @@ IRRELEVANT_KEYWORDS = [
 ]
 
 RELEVANT_KEYWORDS = [
-    ".net", "c#", "asp.net", "dotnet", "csharp", "react", "angular",
-    "typescript", "javascript", "azure", "full stack", "fullstack",
+    "java", "spring", "spring boot", "microservices", "kafka", "react", "angular",
+    "typescript", "javascript", "aws", "azure", "full stack", "fullstack",
     "software engineer", "software developer", "backend", "back-end",
     "frontend", "front-end", "python", "node.js", "node", "api",
     "cloud", "devops", "ai engineer", "machine learning", "automation",

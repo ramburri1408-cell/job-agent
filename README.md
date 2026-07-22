@@ -41,6 +41,41 @@ Control it in `data/config.json`:
 Other Easy Apply portals (Indeed, ZipRecruiter, Monster, JobRight) are
 currently stubbed out — they block headless browsers/bot traffic.
 
+### Career pages (Workday / Greenhouse / Lever / iCIMS / SmartRecruiters)
+
+`agent/career_bot.py` runs right after the Dice bot, in the same pipeline
+step. Instead of live-searching, it works off the jobs already scraped and
+scored earlier in the run: any job whose `fit_score` (computed by
+`ai_engine.py` from its actual requirements) is at or above
+`min_apply_score` is a candidate. For each candidate it opens the job's
+URL (following any tracking redirect first), figures out which career
+platform the final page belongs to, and applies:
+
+| Platform | Account needed? | Reliability |
+|---|---|---|
+| Greenhouse | No — guest form | Reliable, standard form fields |
+| Lever | No — guest form | Reliable, standard form fields |
+| Workday | Yes — creates one automatically | Best-effort; wizard steps vary per company |
+| iCIMS / SmartRecruiters | Usually no | Best-effort; layout varies per company |
+
+Workday requires a candidate account per company tenant. Set these secrets
+to let it create one automatically:
+
+| Secret name | Value |
+|---|---|
+| `WORKDAY_EMAIL` | Your email (defaults to `profile.email` in config.json if unset) |
+| `WORKDAY_PASSWORD` | A password used to create your Workday account on each new tenant |
+
+Other config knobs (in `data/config.json`):
+
+- `"max_career_applies_per_run": 10` — cap on how many career-page
+  applications it will attempt per pipeline run.
+
+Every submission (Dice or career page) is logged to `data/apply_log.jsonl`,
+and each job in `data/jobs.json` gets `career_applied`,
+`career_apply_platform`, and `career_apply_note` fields recording the
+outcome, so nothing is ever double-applied to.
+
 ---
 
 ## Setup (15 minutes)

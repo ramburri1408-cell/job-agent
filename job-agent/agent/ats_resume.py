@@ -14,89 +14,98 @@ import anthropic
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 MASTER_RESUME = {
-    "name":    "Ram Burri",
-    "contact": "Ram.burri1408@gmail.com  |  Ph: 9544454339  |  linkedin.com/in/ramburri",
+    "name":    "Janaki Ram Reddy",
+    "contact": "janakiram.b1408@gmail.com  |  Ph: +1 984-357-4658  |  linkedin.com/in/janakiram58",
     "summary": (
-        "AI Engineer and Full-Stack .NET Developer with 4+ years of experience designing, "
-        "deploying, and operating agentic AI systems and enterprise applications. Recently "
-        "built and shipped a fully autonomous AI agent in production using Anthropic Claude API "
-        "— orchestrating multi-step workflows, REST API integrations, human-in-the-loop "
-        "validation, and responsible AI guardrails running every 6 hours unattended. "
-        "Specialized in LLM integration, prompt engineering, agentic workflow design, "
-        "ASP.NET Core, React, Angular, and cloud-native architectures on Azure. Strong "
-        "compliance background with SOX/PCI-DSS in financial services. MS in Computer Science "
-        "with coursework in Conversational AI, Deep Learning, and Cloud Computing."
+        "Full Stack Developer with 4+ years of experience delivering Java, Spring Boot, React, "
+        "REST APIs, cloud integrations, and secure enterprise applications across client "
+        "environments. Experienced in microservices, CI/CD, Docker, Kubernetes, SQL, Kafka, and "
+        "automated testing, supporting scalable backend services with measurable delivery "
+        "quality improvements for modern distributed applications. Skilled in Generative AI, "
+        "LLMs, RAG, OpenAI, prompt engineering, and LangChain, connecting intelligent features "
+        "with reliable enterprise software delivery through secure API integration patterns. "
+        "Collaborative engineer applying Agile, Jira, Git, observability, and performance "
+        "tuning to refine requirements, resolve defects, and improve maintainable production "
+        "releases for cross-functional delivery teams."
     ),
     "skills": {
-        "AI & Agents":     "Anthropic Claude API, OpenAI, LLM Integration, Prompt Engineering, Agentic Workflows, Tool Orchestration, Human-in-the-Loop, RAG Concepts",
-        "Frontend":        "React.js, Next.js, Angular 14/18, TypeScript, JavaScript (ES6+), HTML5, CSS3/SCSS, RxJS, Reactive Forms",
-        "Backend":         "C#, .NET Core, .NET 8, ASP.NET MVC, ASP.NET Core, Web API, RESTful APIs, Microservices, Python, Node.js, Express.js",
-        "ORM / Data":      "Entity Framework Core, ADO.NET, LINQ, Dapper",
-        "Database":        "SQL Server (T-SQL), Oracle (PL/SQL), PostgreSQL",
-        "Messaging":       "Azure Event Hub",
-        "Security":        "JWT, OAuth2, IdentityServer4, Role-Based Authorization, SOX/PCI-DSS Compliance, AI Guardrails",
-        "Cloud / DevOps":  "Azure, Azure DevOps, Oracle Cloud Infrastructure (OCI), Docker, Kubernetes, GitHub Actions, Jenkins, AWS",
-        "Testing":         "xUnit, Jest, TDD",
-        "Version Control": "Git, GitHub, Bitbucket",
-        "Tools":           "SSMS, Oracle SQL Developer, Cursor AI, GitHub Copilot, Jira, Apify, Hunter.io",
-        "Methodologies":   "SAFe Agile, Scrum, Code Reviews, Cross-functional Collaboration",
+        "Frontend":          "React.js, Angular 10/16, Next.js, Redux, RxJS, HTML5, CSS3/SCSS, TailwindCSS, Bootstrap, WebSockets",
+        "Backend":           "Java 17, Spring Boot, Spring Cloud, Spring MVC, Spring Security, Hibernate, JPA, Microservices, WebFlux, Spring Batch, Node.js, Express.js",
+        "Messaging":         "Apache Kafka, RabbitMQ, AWS SQS, Event-Driven Architectures",
+        "Database":          "PostgreSQL, MySQL, MongoDB, Oracle, Cassandra, Redis",
+        "Cloud / DevOps":    "AWS (EC2, Lambda, S3, API Gateway, ECS, EKS), Azure AKS & Functions, Docker, Kubernetes, Jenkins, GitHub Actions, Helm, Terraform",
+        "Security":          "OAuth2, JWT, AWS Cognito, Firebase Auth, Okta, SSO",
+        "Testing":           "JUnit 5, Mockito, Cypress, Jest, React Testing Library, Playwright, TDD",
+        "AI & Productivity": "Generative AI, LLMs, RAG, OpenAI, Prompt Engineering, LangChain, Cursor, GitHub Copilot",
+        "Version Control":   "Git, GitHub",
+        "Methodologies":     "Agile (Scrum), Domain-Driven Design (DDD), SOLID Principles, CI/CD Automation, System Design",
     },
     "experience": [
         {
-            "title":    "Full Stack Developer (.NET / React / Azure)",
-            "company":  "Jefferson Bank",
-            "location": "San Antonio, TX",
-            "dates":    "Nov 2024 – Present",
+            "title":    "Sr. Full Stack Developer",
+            "company":  "U.S. Bank",
+            "location": "Minneapolis, MN, USA",
+            "dates":    "October 2025 – Present",
             "bullets": [
-                "Built multi-step React.js workflows and dynamic forms for fraud case management using React Hook Form with role-based field visibility, reducing manual review time for fraud analysts.",
-                "Developed ASP.NET Core RESTful microservices for transaction lookup, account activity, and alert management with versioned endpoints and consistent error handling.",
-                "Built and maintained .NET 8 backend APIs integrated with Entity Framework Core and SQL Server, supporting internal banking dashboards and operational transaction workflows.",
-                "Built a shared React component library adopted across three internal banking applications, enforcing TypeScript strict mode and accessibility standards.",
-                "Integrated Azure Event Hub to consume real-time transaction event streams, triggering automated fraud alert notifications on the React dashboard.",
-                "Implemented JWT authentication with refresh token rotation and role-based route guards; remediated SOX/PCI-DSS compliance vulnerabilities in API input validation and React XSS exposure points.",
-                "Configured Azure DevOps CI/CD pipelines with build, test, and deploy stages; containerized services with Docker and managed Kubernetes deployments with zero-downtime rolling updates.",
-                "Set up monitoring, alerting, and audit logging for production AI agent workflows to track performance, detect failures, and ensure regulatory compliance.",
-                "Maintained 85%+ test coverage using Jest for React components and xUnit for .NET Core API layers across critical transaction and fraud modules.",
+                "Revolutionized operating systems management to enhance scalability, implementing automated monitoring solutions that reduced manual intervention by 60% and improved overall system performance under load.",
+                "Architected cloud-native architectures for distributed systems using NestJS, leading to a scalable microservices framework that processed 15M+ requests daily with 99.99% uptime across services.",
+                "Engineered cloud-native architectures leveraging object-oriented design principles while managing rotating on-call responsibilities, resulting in a 30% reduction in incident response time and improved system reliability.",
+                "Created secure Java Spring Boot services and React pages for banking users, giving teams smoother account features with fewer release issues during scheduled updates.",
+                "Added GenAI support with OpenAI, RAG, and LangChain to summarize service problems, so support teams understood issues faster during live banking incidents and alerts.",
+                "Prepared Docker containers, Kubernetes deployments, and Jenkins pipelines for microservices, making cloud releases safer, clearer, and easier for engineers during planned launches across environments.",
+                "Improved JUnit, Mockito, Postman, and Swagger checks for banking features, allowing testers to catch problems early before customers received broken updates in production systems.",
             ],
-            "env": "React.js, Node.js, Express.js, TypeScript, HTML5, CSS/SCSS, C#, .NET 8, ASP.NET Core, Entity Framework Core, SQL Server, T-SQL, Azure DevOps, Azure Event Hub, Docker, Kubernetes, JWT, xUnit, Jest, Jira, SAFe Agile.",
+            "env": "Java 17, Spring Boot, React.js, NestJS, OpenAI, RAG, LangChain, Docker, Kubernetes, Jenkins, JUnit, Mockito, Postman, Swagger, Agile.",
         },
         {
-            "title":    "Full Stack Developer",
-            "company":  "Techbion Software Systems Pvt Ltd",
-            "location": "India",
-            "dates":    "Jun 2022 – Aug 2023",
+            "title":    "Software Engineer",
+            "company":  "Walmart",
+            "location": "Bentonville, AR, USA",
+            "dates":    "August 2024 – September 2025",
             "bullets": [
-                "Led modernization of legacy ASP.NET WebForms and jQuery-based portals, re-architecting the backend into layered ASP.NET MVC and ASP.NET Core applications.",
-                "Implemented idempotent RESTful APIs using ASP.NET Core to decompose monolithic payment logic into maintainable service components, preventing duplicate transactions.",
-                "Built Angular 14 components for interactive client-side workflows alongside ASP.NET MVC Razor views, progressively modernizing the frontend while maintaining legacy compatibility.",
-                "Modernized data access using Entity Framework Core for new modules while retaining Dapper and ADO.NET in performance-critical legacy paths; optimized SQL Server stored procedures.",
-                "Secured API endpoints using OAuth2, JWT, and IdentityServer4, ensuring SOX and PCI-DSS compliance across customer-facing and internal systems.",
-                "Configured Jenkins and Azure DevOps pipelines for automated build, test, and deployment using Docker containerization.",
+                "Engineered a Rust-based microservices architecture utilizing Spark for data processing, enhancing computer networking capabilities that processed 20M+ daily transactions with reduced latency and improved system responsiveness.",
+                "Pioneered architecting solutions to overcome architectural challenges, enhancing system performance and reliability, which resulted in a 25% increase in application throughput and reduced latency significantly.",
+                "Spearheaded end-to-end delivery of cross-functional software projects, ensuring high-visibility production-quality code that increased deployment frequency by 50% and enhanced team collaboration across departments.",
+                "Built React and TypeScript screens connected to REST services, letting retail users follow simpler shopping paths and finish order tasks across web channels.",
+                "Tuned Java services, SQL queries, and Kafka messages for order processing, so systems managed busy traffic while keeping information accurate across store channels.",
+                "Clarified Jira stories, Git reviews, and Agile tasks with product partners, turning loose requests into planned work across each sprint and release cycle smoothly.",
+                "Checked GCP links, Cognos dashboards, and Jasper reports for warehouse teams, offering managers clearer supply chain details before daily planning and staffing review meetings.",
             ],
-            "env": "Angular 14, TypeScript, RxJS, HTML5, CSS/SCSS, C#, ASP.NET Core, .NET Core, ADO.NET, Entity Framework Core, Dapper, SQL Server, T-SQL, Oracle, PL/SQL, OAuth2, JWT, IdentityServer4, Jenkins, Azure DevOps, Docker, Jira, Agile/Scrum.",
+            "env": "Rust, Spark, React.js, TypeScript, Java, SQL, Apache Kafka, Jira, Git, Agile, GCP, Cognos, Jasper.",
         },
         {
-            "title":    ".NET Developer",
-            "company":  "Unisys Global Services India",
-            "location": "India",
-            "dates":    "Nov 2020 – May 2022",
+            "title":    "Associate Java Developer",
+            "company":  "Accenture",
+            "location": "Hyderabad, India",
+            "dates":    "January 2021 – July 2023",
             "bullets": [
-                "Developed and maintained ASP.NET MVC web applications in C# and .NET Framework with clean separation across presentation, business, and data access layers.",
-                "Built responsive front-end interfaces using HTML5, CSS3, and JavaScript within ASP.NET MVC Razor views with client-side validation and AJAX-based data loading.",
-                "Implemented and optimized T-SQL stored procedures, database views, and LINQ queries for SQL Server data access using ADO.NET and Entity Framework.",
-                "Designed and consumed WCF-based web services with XML/XSLT transformations to support enterprise data exchange and reporting.",
-                "Wrote xUnit tests following TDD practices; participated in code reviews within an Agile/Scrum team.",
+                "Spearheaded incident response strategies for connected devices in embedded systems, achieving 99.99% platform availability across distributed services while optimizing operational workflows and significantly reducing downtime incidents.",
+                "Consolidated data structures and algorithms to streamline processing workflows, achieving a 35% improvement in computational efficiency and reducing resource consumption across critical applications.",
+                "Optimized front-end web/mobile applications by implementing well-documented code and integrating Spark for data processing, which improved user experience and reduced load times by 40% across platforms.",
+                "Developed Java, Spring MVC, and Hibernate code for client applications, making features easier to add and older modules simpler to support during delivery cycles.",
+                "Delivered REST APIs, JDBC logic, and Oracle updates, so systems shared data cleanly while lowering rework for connected secure applications across client platforms.",
+                "Arranged Maven builds, Git branches, and Jenkins jobs for releases, providing teammates clear packages, traceable changes, and smoother deployments across shared environments each time.",
+                "Updated JUnit tests, Mockito checks, and support notes for application modules, enabling new developers to find bugs sooner after project handoffs from delivery teams.",
             ],
-            "env": "C#, .NET Framework, ASP.NET MVC, ADO.NET, Entity Framework, SQL Server, T-SQL, JavaScript, HTML5, CSS3, WCF, LINQ, XML/XSLT, xUnit, Agile/Scrum.",
+            "env": "Java, Spring MVC, Hibernate, REST APIs, JDBC, Oracle, Maven, Git, Jenkins, JUnit, Mockito, Agile/Scrum.",
         },
     ],
-    "education": {
-        "degree":   "Master of Science in Computer Science",
-        "school":   "Florida Atlantic University",
-        "location": "Boca Raton, FL",
-        "dates":    "Aug 2023 – May 2025",
-        "gpa":      "3.72 / 4.0",
-    },
+    "education": [
+        {
+            "degree":   "Master's in Computer Science",
+            "school":   "Florida Atlantic University",
+            "location": "Boca Raton, FL",
+            "dates":    "",
+            "gpa":      "",
+        },
+        {
+            "degree":   "Bachelor's in Information Technology",
+            "school":   "Sathyabama University",
+            "location": "Chennai, India",
+            "dates":    "",
+            "gpa":      "",
+        },
+    ],
 }
 
 
@@ -155,7 +164,7 @@ def extract_requirements(job: dict) -> dict:
         "You extract structured requirements from job descriptions for resume "
         "tailoring. Read the JD and pull out two separate lists:\n"
         "1. technical_requirements — specific technologies, languages, frameworks, "
-        "tools, platforms, certifications (e.g. '.NET 8', 'Azure', '5+ years', 'AWS').\n"
+        "tools, platforms, certifications (e.g. 'Spring Boot', 'AWS', '5+ years', 'Kafka').\n"
         "2. business_requirements — domain/process expectations that aren't a tech "
         "stack item (e.g. 'SOX compliance experience', 'Agile/Scrum delivery', "
         "'cross-functional stakeholder collaboration', 'on-call rotation', "
@@ -259,9 +268,9 @@ def enhance_for_job(job: dict) -> dict:
         "may be emphasized; framing can shift, the underlying facts cannot.\n"
         "Return ONLY valid JSON, no markdown, no backticks, no trailing commas.\n"
         '{"summary": "one paragraph", '
-        '"skills": {"AI & Agents":"...","Frontend":"...","Backend":"...","ORM / Data":"...",'
-        '"Database":"...","Messaging":"...","Security":"...","Cloud / DevOps":"...",'
-        '"Testing":"...","Version Control":"...","Tools":"...","Methodologies":"..."}}'
+        '"skills": {"Frontend":"...","Backend":"...","Messaging":"...","Database":"...",'
+        '"Cloud / DevOps":"...","Security":"...","Testing":"...","AI & Productivity":"...",'
+        '"Version Control":"...","Methodologies":"..."}}'
     )
     user1 = (
         f"{jd_header}\n\n"
@@ -287,7 +296,7 @@ def enhance_for_job(job: dict) -> dict:
         "genuinely fit what he already did.\n"
         "4. Keep bullets under 200 characters, action-verb-led, specific and concrete.\n"
         "5. Never fabricate tools, metrics, or outcomes not grounded in the original bullet.\n"
-        "6. Keep all 9 Jefferson Bank bullets, all 6 Techbion bullets, all 5 Unisys bullets.\n"
+        "6. Keep all 7 U.S. Bank bullets, all 7 Walmart bullets, all 7 Accenture bullets.\n"
         "7. Update env strings to reflect confirmed requirements naturally.\n"
         "Return ONLY valid JSON, no markdown, no backticks, no trailing commas.\n"
         '{"exp0_bullets":["..."],"exp1_bullets":["..."],"exp2_bullets":["..."],'
@@ -296,11 +305,11 @@ def enhance_for_job(job: dict) -> dict:
     user2 = (
         f"{jd_header}\n\n"
         f"Confirmed/partial requirements (only these may be emphasized):\n{confirmed_str}\n\n"
-        "Jefferson Bank bullets (rewrite all 9):\n" +
+        "U.S. Bank bullets (rewrite all 7):\n" +
         "\n".join(f"- {b}" for b in MASTER_RESUME["experience"][0]["bullets"]) +
-        "\n\nTechbion bullets (rewrite all 6):\n" +
+        "\n\nWalmart bullets (rewrite all 7):\n" +
         "\n".join(f"- {b}" for b in MASTER_RESUME["experience"][1]["bullets"]) +
-        "\n\nUnisys bullets (rewrite all 5):\n" +
+        "\n\nAccenture bullets (rewrite all 7):\n" +
         "\n".join(f"- {b}" for b in MASTER_RESUME["experience"][2]["bullets"]) +
         "\n\nCurrent envs:\n"
         f"exp0_env: {MASTER_RESUME['experience'][0]['env']}\n"
@@ -367,8 +376,8 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
     CW   = W - ML - MR
 
     c = canvas.Canvas(buf, pagesize=letter)
-    c.setTitle("Ram Burri - Resume")
-    c.setAuthor("Ram Burri")
+    c.setTitle(f"{MASTER_RESUME['name']} - Resume")
+    c.setAuthor(MASTER_RESUME["name"])
     y = H - MT
 
     def check_page(needed=0.3 * inch):
@@ -381,7 +390,7 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
         nonlocal y
         c.setFont("Helvetica-Bold", 20)
         c.setFillColorRGB(*BLUE)
-        c.drawCentredString(W / 2, y, "Ram Burri")
+        c.drawCentredString(W / 2, y, MASTER_RESUME["name"])
         y -= 16
 
     def draw_contact():
@@ -442,16 +451,27 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
     def draw_skills(skills_dict):
         nonlocal y
         for category, value in skills_dict.items():
-            check_page(0.2 * inch)
+            check_page(0.3 * inch)
             label = f"{category}: "
             c.setFont("Helvetica-Bold", 9)
             c.setFillColorRGB(*DARK)
             lw = c.stringWidth(label, "Helvetica-Bold", 9)
             c.drawString(ML, y, label)
-            # Truncate to fit one line
-            max_chars = int((CW - lw) / 5.2)
             c.setFont("Helvetica", 9)
-            c.drawString(ML + lw, y, value[:max_chars])
+            parts = [p.strip() for p in value.split(",") if p.strip()]
+            line, first = "", True
+            for part in parts:
+                test  = line + (", " if line else "") + part
+                max_w = CW - (lw if first else 0)
+                if c.stringWidth(test, "Helvetica", 9) > max_w and line:
+                    c.drawString(ML + (lw if first else 0), y, line)
+                    y -= 12
+                    check_page(0.2 * inch)
+                    line, first = part, False
+                else:
+                    line = test
+            if line:
+                c.drawString(ML + (lw if first else 0), y, line)
             y -= 13
 
     def draw_job(exp, bullets, env):
@@ -469,7 +489,8 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
         y -= 13
         for b in bullets:
             draw_bullet(b)
-        check_page(0.2 * inch)
+        y -= 4
+        check_page(0.3 * inch)
         env_label = "Environment: "
         lw = c.stringWidth(env_label, "Helvetica-BoldOblique", 8)
         c.setFont("Helvetica-BoldOblique", 8)
@@ -501,7 +522,6 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
     env0     = enhanced.get("exp0_env",     exp[0]["env"])
     env1     = enhanced.get("exp1_env",     exp[1]["env"])
     env2     = enhanced.get("exp2_env",     exp[2]["env"])
-    edu      = MASTER_RESUME["education"]
 
     draw_name()
     draw_contact()
@@ -516,23 +536,20 @@ def generate_ats_pdf(enhanced: dict) -> bytes:
     draw_job(exp[1], bullets1, env1)
     y -= 4
     draw_job(exp[2], bullets2, env2)
-    draw_section_header("Certifications")
-    c.setFont("Helvetica", 9)
-    c.setFillColorRGB(*DARK)
-    c.drawString(ML, y, "Oracle Cloud Infrastructure 2025 Developer Professional (1Z0-1084-25)  |  Oracle  |  2025")
-    y -= 13
     draw_section_header("Education")
-    c.setFont("Helvetica-Bold", 9.5)
-    c.setFillColorRGB(*DARK)
-    c.drawString(ML, y, edu["degree"])
-    y -= 13
-    c.setFont("Helvetica", 9)
-    c.setFillColorRGB(*GRAY)
-    c.drawString(ML, y, f"{edu['school']}, {edu['location']}  |  {edu['dates']}  |  GPA: {edu['gpa']}")
-    y -= 13
-    c.setFont("Helvetica", 9)
-    c.setFillColorRGB(*GRAY)
-    c.drawString(ML, y, "Relevant Coursework: Conversational AI, Deep Learning, Cloud Computing, Cloud Security, Data Science, Software Engineering, Information Retrieval")
+    for edu in MASTER_RESUME["education"]:
+        c.setFont("Helvetica-Bold", 9.5)
+        c.setFillColorRGB(*DARK)
+        c.drawString(ML, y, edu["degree"])
+        y -= 13
+        c.setFont("Helvetica", 9)
+        c.setFillColorRGB(*GRAY)
+        parts = [p for p in [
+            edu.get("school", ""), edu.get("location", ""), edu.get("dates", ""),
+            (f"GPA: {edu['gpa']}" if edu.get("gpa") else ""),
+        ] if p]
+        c.drawString(ML, y, "  |  ".join(parts))
+        y -= 13
 
     c.save()
     buf.seek(0)
@@ -557,8 +574,9 @@ def generate_ats_resume(job: dict, output_dir: str = None) -> dict:
     print(f"  → Generating ATS PDF...")
     pdf_bytes = generate_ats_pdf(enhanced)
 
-    safe     = "".join(ch if ch.isalnum() else "_" for ch in job['company'])[:20]
-    pdf_path = f"{output_dir}/Ram_Burri_{safe}.pdf"
+    safe      = "".join(ch if ch.isalnum() else "_" for ch in job['company'])[:20]
+    name_safe = MASTER_RESUME["name"].replace(" ", "_")
+    pdf_path  = f"{output_dir}/{name_safe}_{safe}.pdf"
     Path(pdf_path).write_bytes(pdf_bytes)
 
     print(f"  ✓ ATS PDF ready ({len(pdf_bytes):,} bytes)")
@@ -571,9 +589,9 @@ def generate_ats_resume(job: dict, output_dir: str = None) -> dict:
 
 if __name__ == "__main__":
     test_job = {
-        "title":       "Senior Full Stack .NET Developer",
+        "title":       "Senior Full Stack Java Developer",
         "company":     "TestCorp",
-        "description": "Looking for .NET developer with C#, ASP.NET Core, React, Azure, Docker, Kubernetes, GraphQL, Redis, SOLID principles, CI/CD GitHub Actions."
+        "description": "Looking for a Java developer with Spring Boot, React, AWS, Docker, Kubernetes, Kafka, REST APIs, SOLID principles, CI/CD GitHub Actions."
     }
     result = generate_ats_resume(test_job, "/tmp")
     print(f"PDF saved: {result['pdf_path']}")

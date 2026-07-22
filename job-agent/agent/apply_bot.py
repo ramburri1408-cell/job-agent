@@ -26,12 +26,12 @@ MIN_APPLY_SCORE    = int(CONFIG.get("min_apply_score", CONFIG.get("min_fit_score
 AUTO_APPLY_ENABLED = bool(CONFIG.get("auto_apply_enabled", True))
 
 PROFILE = {
-    "name": CFG_PROFILE.get("name", "Ram Burri"),
-    "email": CFG_PROFILE.get("email", "Ram.burri1408@gmail.com"),
-    "phone": CFG_PROFILE.get("phone", "9544454339"),
+    "name": CFG_PROFILE.get("name", "Janaki Ram Reddy"),
+    "email": CFG_PROFILE.get("email", "janakiram.b1408@gmail.com"),
+    "phone": CFG_PROFILE.get("phone", "+1 984-357-4658"),
     "location": "Boca Raton, FL",
     "experience": "4",
-    "title": CFG_PROFILE.get("title", "Full Stack .NET Developer"),
+    "title": CFG_PROFILE.get("title", "Senior Software Engineer"),
     "salary": "110000",
     "skills": CFG_PROFILE.get("skills", ""),
     "summary": CFG_PROFILE.get("summary", ""),
@@ -114,7 +114,7 @@ def get_resume_pdf(jobs):
     try:
         from ats_resume import generate_ats_resume
         r = generate_ats_resume({
-            "title": "Full Stack .NET Developer",
+            "title": PROFILE.get("title", "Senior Software Engineer"),
             "company": "Target",
             "description": ""
         }, "/tmp")
@@ -125,7 +125,7 @@ def get_resume_pdf(jobs):
 
 def get_queries():
     config = json.loads(CONFIG_FILE.read_text())
-    return config.get("job_queries", ["full stack .NET developer"])[:4]
+    return config.get("job_queries", ["full stack Java developer"])[:4]
 
 def ai_answer(question: str, options: list = None) -> str:
     q = question.lower()
@@ -152,7 +152,11 @@ def ai_answer(question: str, options: list = None) -> str:
     try:
         return client.messages.create(
             model="claude-opus-4-8", max_tokens=60,
-            system="Answer job application questions for Ram Burri, Full Stack .NET Developer, 4 years exp, authorized to work in US. Brief answers only.",
+            system=(
+                f"Answer job application questions for {PROFILE['name']}, "
+                f"{PROFILE['title']}, {PROFILE.get('experience', '4')} years exp, "
+                "authorized to work in US. Brief answers only."
+            ),
             messages=[{"role": "user", "content": f"Q: {question}\nOptions: {options}\nA:"}]
         ).content[0].text.strip()
     except:

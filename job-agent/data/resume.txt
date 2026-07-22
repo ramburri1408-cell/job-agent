@@ -1,57 +1,59 @@
-Ram Burri
-Full Stack .NET Developer
-Ram.burri1408@gmail.com | Ph: 9544454339
+Janaki Ram Reddy
+Senior Software Engineer
+janakiram.b1408@gmail.com | Ph: +1 984-357-4658 | LinkedIn: linkedin.com/in/janakiram58
 
 PROFESSIONAL SUMMARY
-Full-Stack .NET Developer with 4+ years of experience designing scalable enterprise applications using ASP.NET Core, React, and cloud-native architectures on Azure. Specialized in building microservices, high-performance REST APIs, and event-driven systems using .NET 8, Entity Framework Core, and SQL Server. Experienced in containerized deployments with Docker and Kubernetes and automated CI/CD pipelines with Azure DevOps. Strong background in secure financial applications implementing OAuth2, JWT authentication, and compliance standards (SOX/PCI-DSS). Passionate about building resilient, high-availability systems and collaborating in Agile product teams to deliver reliable software at scale.
+Full Stack Developer with 4+ years of experience delivering Java, Spring Boot, React, REST APIs, cloud integrations, and secure enterprise applications across client environments. Experienced in microservices, CI/CD, Docker, Kubernetes, SQL, Kafka, and automated testing, supporting scalable backend services with measurable delivery quality improvements for modern distributed applications. Skilled in Generative AI, LLMs, RAG, OpenAI, prompt engineering, and LangChain, connecting intelligent features with reliable enterprise software delivery through secure API integration patterns. Collaborative engineer applying Agile, Jira, Git, observability, and performance tuning to refine requirements, resolve defects, and improve maintainable production releases for cross-functional delivery teams.
 
 TECHNICAL SKILLS
-Frontend:      React.js, Next.js, Angular 14/18, TypeScript, JavaScript (ES6+), HTML5, CSS3/SCSS, RxJS, Reactive Forms
-Backend:       Node.js, Express.js, C#, .NET Core, .NET 8, ASP.NET MVC, ASP.NET Core, RESTful APIs, Microservices
-ORM / Data:    Entity Framework Core, ADO.NET, LINQ, Dapper
-Database:      SQL Server (T-SQL), PostgreSQL, Oracle (PL/SQL)
-Messaging:     Azure Event Hub
-Security:      JWT, OAuth2, IdentityServer4, Role-Based Authorization, SOX/PCI-DSS Compliance
-Cloud/DevOps:  Azure, Azure DevOps, Docker, Kubernetes, Jenkins, AWS
-Testing:       xUnit, Jest, TDD
-Version Control: Git, GitHub, Bitbucket
-Tools:         SSMS, Oracle SQL Developer, Cursor AI, GitHub Copilot, Jira
-Methodologies: SAFe Agile, Scrum, Code Reviews, Cross-functional Collaboration
+Frontend & UI:        React.js, Angular 10/16, Next.js, Redux, RxJS, HTML5, CSS3, SCSS, TailwindCSS, Bootstrap, React Query, WebSockets
+Backend & Frameworks: Spring Boot, Spring Cloud, Spring MVC, Spring Security, Hibernate, JPA, Microservices, WebFlux, Spring Batch
+Messaging:            Apache Kafka, RabbitMQ, AWS SQS, Event-Driven Architectures
+Languages:            Java 17, Python (Scripting & Automation), TypeScript, JavaScript, Node.js, SQL, PL/SQL, Rust
+Cloud & DevOps:       AWS (EC2, Lambda, S3, API Gateway, ECS, EKS), Azure AKS & Functions, Docker, Kubernetes, Jenkins, GitHub Actions, Helm, Terraform, Git
+Methodologies:        Agile (Scrum), Waterfall, System Design, Domain-Driven Design (DDD), SOLID Principles, CI/CD Automation
+AI & Productivity:    Cursor, Claude, GitHub Copilot, GPT models, RAG pipelines, Generative AI, LLMs, OpenAI, Prompt Engineering, LangChain
+Databases & Storage:  PostgreSQL, MySQL, MongoDB, Oracle, Cassandra, Redis, Supabase, Firebase
+APIs & Integration:   RESTful APIs, GraphQL, JWT, Stripe, OpenAI GPT Integration
+Testing & Quality:    JUnit 5, Mockito, Cypress, Jasmine, Karma, Jest, React Testing Library, Playwright, TDD
+Security:             OAuth2, JWT, AWS Cognito, Firebase Auth, Okta, SSO
+Data Engineering:     Spark
 
 PROFESSIONAL EXPERIENCE
 
-Full Stack Developer (.NET / React / Azure) | Jefferson Bank, San Antonio, TX | Nov 2024 – Present
-- Built multi-step React.js workflows and dynamic forms for fraud case management using React Hook Form with role-based field visibility, reducing manual review time for fraud analysts.
-- Developed ASP.NET Core RESTful microservices for transaction lookup, account activity, and alert management with versioned endpoints and consistent error handling.
-- Built and maintained .NET 8 backend APIs integrated with Entity Framework Core and SQL Server, supporting internal banking dashboards and operational transaction workflows.
-- Built a shared React component library adopted across three internal banking applications, enforcing TypeScript strict mode and accessibility standards.
-- Integrated Azure Event Hub to consume real-time transaction event streams, triggering automated fraud alert notifications on the React dashboard.
-- Implemented JWT authentication with refresh token rotation and role-based route guards; remediated SOX/PCI-DSS compliance vulnerabilities in API input validation and React XSS exposure points.
-- Configured Azure DevOps CI/CD pipelines with build, test, and deploy stages; containerized services with Docker and managed Kubernetes deployments with zero-downtime rolling updates.
-- Maintained 85%+ test coverage using Jest for React components and xUnit for .NET Core API layers across critical transaction and fraud modules.
-- Contributed to sprint planning, backlog grooming, and cross-team dependency coordination within a SAFe Agile environment.
-Environment: React.js, Node.js, Express.js, TypeScript, HTML5, CSS/SCSS, C#, .NET 8, ASP.NET Core, Entity Framework Core, SQL Server, T-SQL, Azure DevOps, Azure Event Hub, Docker, Kubernetes, JWT, xUnit, Jest, Jira, SAFe Agile.
+Sr. Full Stack Developer | U.S. Bank, Minneapolis, MN, USA | October 2025 – Present
+- Revolutionized operating systems management to enhance scalability, implementing automated monitoring solutions that reduced manual intervention by 60% and improved overall system performance under load.
+- Architected cloud-native architectures for distributed systems using NestJS, leading to a scalable microservices framework that processed 15M+ requests daily with 99.99% uptime across services.
+- Engineered cloud-native architectures leveraging object-oriented design principles while managing rotating on-call responsibilities, resulting in a 30% reduction in incident response time and improved system reliability.
+- Created secure Java Spring Boot services and React pages for banking users, giving teams smoother account features with fewer release issues during scheduled updates.
+- Added GenAI support with OpenAI, RAG, and LangChain to summarize service problems, so support teams understood issues faster during live banking incidents and alerts.
+- Prepared Docker containers, Kubernetes deployments, and Jenkins pipelines for microservices, making cloud releases safer, clearer, and easier for engineers during planned launches across environments.
+- Improved JUnit, Mockito, Postman, and Swagger checks for banking features, allowing testers to catch problems early before customers received broken updates in production systems.
+Environment: Java 17, Spring Boot, React.js, NestJS, OpenAI, RAG, LangChain, Docker, Kubernetes, Jenkins, JUnit, Mockito, Postman, Swagger, Agile.
 
-Full Stack Developer | Techbion Software Systems Pvt Ltd, India | Jun 2022 – Aug 2023
-- Contributed to modernization of legacy ASP.NET WebForms and jQuery-based portals, re-architecting the backend into layered ASP.NET MVC and ASP.NET Core applications.
-- Implemented idempotent RESTful APIs using ASP.NET Core to decompose monolithic payment logic into maintainable service components, preventing duplicate transactions.
-- Built Angular 14 components for interactive client-side workflows alongside ASP.NET MVC Razor views, progressively modernizing the frontend while maintaining legacy compatibility.
-- Participated in architectural discussions evaluating Azure Functions for event-driven processing as part of the cloud modernization roadmap.
-- Modernized data access using Entity Framework Core for new modules while retaining Dapper and ADO.NET in performance-critical legacy paths; optimized SQL Server stored procedures.
-- Secured API endpoints using OAuth2, JWT, and IdentityServer4, ensuring SOX and PCI-DSS compliance across customer-facing and internal systems.
-- Implemented structured exception handling, global error middleware, and resilient retry mechanisms to improve API reliability.
-- Configured Jenkins and Azure DevOps pipelines for automated build, test, and deployment using Docker containerization.
-Environment: Angular 14, TypeScript, RxJS, HTML5, CSS/SCSS, C#, ASP.NET Core, .NET Core, ADO.NET, Entity Framework Core, Dapper, SQL Server, T-SQL, Oracle, PL/SQL, OAuth2, JWT, IdentityServer4, Jenkins, Azure DevOps, Docker, Jira, Agile/Scrum.
+Software Engineer | Walmart, Bentonville, AR, USA | August 2024 – September 2025
+- Engineered a Rust-based microservices architecture utilizing Spark for data processing, enhancing computer networking capabilities that processed 20M+ daily transactions with reduced latency and improved system responsiveness.
+- Pioneered architecting solutions to overcome architectural challenges, enhancing system performance and reliability, which resulted in a 25% increase in application throughput and reduced latency significantly.
+- Spearheaded end-to-end delivery of cross-functional software projects, ensuring high-visibility production-quality code that increased deployment frequency by 50% and enhanced team collaboration across departments.
+- Built React and TypeScript screens connected to REST services, letting retail users follow simpler shopping paths and finish order tasks across web channels.
+- Tuned Java services, SQL queries, and Kafka messages for order processing, so systems managed busy traffic while keeping information accurate across store channels.
+- Clarified Jira stories, Git reviews, and Agile tasks with product partners, turning loose requests into planned work across each sprint and release cycle smoothly.
+- Checked GCP links, Cognos dashboards, and Jasper reports for warehouse teams, offering managers clearer supply chain details before daily planning and staffing review meetings.
+Environment: Rust, Spark, React.js, TypeScript, Java, SQL, Apache Kafka, Jira, Git, Agile, GCP, Cognos, Jasper.
 
-.NET Developer | Unisys Global Services India | Nov 2020 – May 2022
-- Developed and maintained ASP.NET MVC web applications in C# and .NET Framework with clean separation across presentation, business, and data access layers.
-- Built responsive front-end interfaces using HTML5, CSS3, and JavaScript within ASP.NET MVC Razor views with client-side validation and AJAX-based data loading.
-- Implemented and optimized T-SQL stored procedures, database views, and LINQ queries for SQL Server data access using ADO.NET and Entity Framework.
-- Designed and consumed WCF-based web services with XML/XSLT transformations to support enterprise data exchange and reporting.
-- Applied dependency injection, custom validation, and reusable ASP.NET user controls to improve maintainability across application modules.
-- Wrote xUnit tests following TDD practices; participated in code reviews within an Agile/Scrum team.
-Environment: C#, .NET Framework, ASP.NET MVC, ADO.NET, Entity Framework, SQL Server, T-SQL, JavaScript, HTML5, CSS3, WCF, LINQ, XML/XSLT, xUnit, Agile/Scrum.
+Associate Java Developer | Accenture, Hyderabad, India | January 2021 – July 2023
+- Spearheaded incident response strategies for connected devices in embedded systems, achieving 99.99% platform availability across distributed services while optimizing operational workflows and significantly reducing downtime incidents.
+- Consolidated data structures and algorithms to streamline processing workflows, achieving a 35% improvement in computational efficiency and reducing resource consumption across critical applications.
+- Optimized front-end web/mobile applications by implementing well-documented code and integrating Spark for data processing, which improved user experience and reduced load times by 40% across platforms.
+- Developed Java, Spring MVC, and Hibernate code for client applications, making features easier to add and older modules simpler to support during delivery cycles.
+- Delivered REST APIs, JDBC logic, and Oracle updates, so systems shared data cleanly while lowering rework for connected secure applications across client platforms.
+- Arranged Maven builds, Git branches, and Jenkins jobs for releases, providing teammates clear packages, traceable changes, and smoother deployments across shared environments each time.
+- Updated JUnit tests, Mockito checks, and support notes for application modules, enabling new developers to find bugs sooner after project handoffs from delivery teams.
+Environment: Java, Spring MVC, Hibernate, REST APIs, JDBC, Oracle, Maven, Git, Jenkins, JUnit, Mockito, Agile/Scrum.
 
 EDUCATION
-Master of Science in Computer Science
-Florida Atlantic University, Boca Raton, FL | Aug 2023 – May 2025 | GPA: 3.72 / 4.0
+Master's in Computer Science
+Florida Atlantic University, Boca Raton, FL
+
+Bachelor's in Information Technology
+Sathyabama University, Chennai, India

@@ -45,12 +45,17 @@ def main():
     # 5. AUTO-APPLY TO REQUIREMENT-MATCHED JOBS
     print("\n[5/5] AUTO-APPLYING TO MATCHED JOBS")
     print("-" * 40)
+    applied = 0
     try:
         from apply_bot import run_apply_bot
-        applied = run_apply_bot()
+        applied += run_apply_bot()
     except Exception as e:
         print(f"[Apply Bot] Error: {e}")
-        applied = 0
+    try:
+        from career_bot import run_career_bot
+        applied += run_career_bot()
+    except Exception as e:
+        print(f"[Career Bot] Error: {e}")
 
     print("\n" + "=" * 60)
     print("  PIPELINE COMPLETE")

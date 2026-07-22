@@ -1,7 +1,7 @@
 """
 Career Page Apply Bot — iCIMS and Workday
 Option 2: Googles company career page directly instead of Adzuna redirects
-Semi-automated: fills form, emails Ram screenshot + link to submit
+Semi-automated: fills form, emails the candidate a screenshot + link to submit
 """
 
 import os, json, re, time
@@ -12,11 +12,19 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-GMAIL_USER = os.environ.get("GMAIL_USER", "")
-GMAIL_PASS = os.environ.get("GMAIL_APP_PASSWORD", "")
-RAM_EMAIL  = "Ram.burri1408@gmail.com"
-DATA_FILE  = Path("data/jobs.json")
-LOG_FILE   = Path("data/career_apply_log.jsonl")
+GMAIL_USER  = os.environ.get("GMAIL_USER", "")
+GMAIL_PASS  = os.environ.get("GMAIL_APP_PASSWORD", "")
+DATA_FILE   = Path("data/jobs.json")
+LOG_FILE    = Path("data/career_apply_log.jsonl")
+CONFIG_FILE = Path("data/config.json")
+
+def load_config():
+    return json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
+
+CONFIG      = load_config()
+CFG_PROFILE = CONFIG.get("profile", {})
+
+RAM_EMAIL = CFG_PROFILE.get("email", "janakiram.b1408@gmail.com")
 
 JOB_BOARDS = [
     "adzuna.com", "adzuna.co.uk", "indeed.com", "dice.com",
@@ -25,28 +33,31 @@ JOB_BOARDS = [
     "careerbuilder.com", "jobs/careers",
 ]
 
+_full_name  = CFG_PROFILE.get("name", "Janaki Ram Reddy")
+_first, _, _last = _full_name.rpartition(" ")
+
 PROFILE = {
-    "first_name":   "Ram",
-    "last_name":    "Burri",
-    "full_name":    "Ram Burri",
-    "email":        "Ram.burri1408@gmail.com",
-    "phone":        "9544454339",
-    "phone_format": "(954) 445-4339",
+    "first_name":   _first or _full_name,
+    "last_name":    _last,
+    "full_name":    _full_name,
+    "email":        CFG_PROFILE.get("email", "janakiram.b1408@gmail.com"),
+    "phone":        CFG_PROFILE.get("phone", "+1 984-357-4658"),
+    "phone_format": CFG_PROFILE.get("phone", "+1 984-357-4658"),
     "city":         "Boca Raton",
     "state":        "Florida",
     "state_abbr":   "FL",
     "zip":          "33431",
     "country":      "United States",
-    "linkedin":     "https://www.linkedin.com/in/ramburri",
+    "linkedin":     CFG_PROFILE.get("linkedin", "https://www.linkedin.com/in/janakiram58/"),
     "experience":   "4",
-    "title":        "Full Stack .NET Developer",
+    "title":        CFG_PROFILE.get("title", "Senior Software Engineer"),
     "salary":       "110000",
     "authorized":   "Yes",
     "sponsorship":  "No",
     "visa":         "OPT",
     "university":   "Florida Atlantic University",
-    "degree":       "Master of Science in Computer Science",
-    "grad_year":    "2025",
+    "degree":       "Master's in Computer Science",
+    "grad_year":    "",
 }
 
 def load_jobs():
@@ -201,7 +212,11 @@ def ai_answer(question: str, options: list = None) -> str:
         opts   = f"\nOptions: {options}" if options else ""
         return client.messages.create(
             model="claude-opus-4-8", max_tokens=80,
-            system="Answer job application form questions for Ram Burri, Full Stack .NET Developer, 4 years exp, OPT visa, authorized to work in US. Brief direct answers.",
+            system=(
+                f"Answer job application form questions for {PROFILE['full_name']}, "
+                f"{PROFILE['title']}, {PROFILE['experience']} years exp, OPT visa, "
+                "authorized to work in US. Brief direct answers."
+            ),
             messages=[{"role": "user", "content": f"Q: {question}{opts}\nA:"}]
         ).content[0].text.strip()
     except:
@@ -213,15 +228,15 @@ def generate_cover_letter(job: dict) -> str:
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         return client.messages.create(
             model="claude-opus-4-8", max_tokens=300,
-            system="Write a 3-sentence professional cover letter for Ram Burri. Be specific and confident.",
+            system=f"Write a 3-sentence professional cover letter for {PROFILE['full_name']}. Be specific and confident.",
             messages=[{"role": "user", "content":
                 f"Job: {job['title']} at {job['company']}\nWrite cover letter:"}]
         ).content[0].text.strip()
     except:
         return (
             f"I am excited to apply for the {job['title']} position at {job['company']}. "
-            f"With 4+ years of enterprise .NET development experience with ASP.NET Core, "
-            f"React, and Azure, I am confident I will contribute immediately. "
+            f"With 4+ years of full stack Java, Spring Boot, and React development "
+            f"experience, I am confident I will contribute immediately. "
             f"I look forward to discussing how my background aligns with your needs."
         )
 
@@ -330,7 +345,7 @@ def send_review_email(job: dict, screenshot: bytes, apply_url: str, fields_fille
         msg["To"]      = RAM_EMAIL
         msg["Subject"] = f"🔔 Review & Submit: {job['title']} @ {job['company']}"
 
-        body = f"""Hi Ram,
+        body = f"""Hi {PROFILE['first_name']},
 
 Your application form has been auto-filled and is ready for review!
 
@@ -344,13 +359,13 @@ Your application form has been auto-filled and is ready for review!
 {apply_url}
 
 What was auto-filled:
-✓ Name, email, phone, address (Boca Raton, FL 33431)
+✓ Name, email, phone, address ({PROFILE['city']}, {PROFILE['state_abbr']} {PROFILE['zip']})
 ✓ Work authorization: Yes (OPT — authorized to work)
 ✓ Sponsorship required: No
-✓ Years of experience: 4
-✓ Education: MS CS, Florida Atlantic University (2025)
-✓ LinkedIn: linkedin.com/in/ramburri
-✓ Salary expectation: $110,000
+✓ Years of experience: {PROFILE['experience']}
+✓ Education: {PROFILE['degree']}, {PROFILE['university']}
+✓ LinkedIn: {PROFILE['linkedin']}
+✓ Salary expectation: ${int(PROFILE['salary']):,}
 ✓ Resume PDF uploaded
 ✓ Cover letter generated
 
@@ -507,7 +522,7 @@ def get_resume_pdf(jobs: dict) -> str:
     try:
         from ats_resume import generate_ats_resume
         r = generate_ats_resume({
-            "title": "Full Stack .NET Developer",
+            "title": PROFILE.get("title", "Senior Software Engineer"),
             "company": "Target", "description": ""
         }, "/tmp")
         return r["pdf_path"]

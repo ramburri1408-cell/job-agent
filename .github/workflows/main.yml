@@ -36,6 +36,8 @@ jobs:
           ADZUNA_APP_KEY:     ${{ secrets.ADZUNA_APP_KEY }}
           DICE_EMAIL:         ${{ secrets.DICE_EMAIL }}
           DICE_PASSWORD:      ${{ secrets.DICE_PASSWORD }}
+          WORKDAY_EMAIL:      ${{ secrets.WORKDAY_EMAIL }}
+          WORKDAY_PASSWORD:   ${{ secrets.WORKDAY_PASSWORD }}
           GOOGLE_EMAIL:       ${{ secrets.GOOGLE_EMAIL }}
           GOOGLE_PASSWORD:    ${{ secrets.GOOGLE_PASSWORD }}
           APIFY_API_KEY:      ${{ secrets.APIFY_API_KEY }}

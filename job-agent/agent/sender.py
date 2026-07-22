@@ -16,7 +16,7 @@ from email import encoders
 DATA_FILE   = Path("data/jobs.json")
 CONFIG_FILE = Path("data/config.json")
 
-RAM_EMAIL       = os.environ.get("GMAIL_USER", "Ram.burri1408@gmail.com")
+RAM_EMAIL       = os.environ.get("GMAIL_USER", "janakiram.b1408@gmail.com")
 GMAIL_USER      = os.environ.get("GMAIL_USER", "")
 GMAIL_PASSWORD  = os.environ.get("GMAIL_APP_PASSWORD", "")
 MAX_EMAILS      = 20
