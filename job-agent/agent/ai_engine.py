@@ -35,10 +35,10 @@ def claude(system, user, max_tokens=500):
 
 # ── Keyword pre-filter ────────────────────────────────────────────────────────
 RELEVANT = [
-    "net", "c#", "csharp", "asp", "react", "angular", "full stack",
-    "fullstack", "software engineer", "software developer", "application developer",
-    "frontend", "backend", "azure", "dotnet", "typescript", "node", "python", "ai",
-    "automation", "engineer", "developer"
+    "java", "spring", "spring boot", "microservices", "kafka", "react", "angular",
+    "full stack", "fullstack", "software engineer", "software developer",
+    "application developer", "frontend", "backend", "aws", "azure", "typescript",
+    "node", "python", "ai", "automation", "engineer", "developer"
 ]
 
 def is_relevant(job):
@@ -51,8 +51,8 @@ def analyze_fit(job, profile):
         system=(
             "You are an expert technical recruiter. Analyze candidate fit for this job.\n"
             "Return ONLY valid JSON, no markdown, no backticks:\n"
-            '{"score":75,"matched_skills":["C#",".NET"],"gaps":["Kubernetes"],'
-            '"angle":"Strong .NET developer with Azure and React experience matching this role perfectly",'
+            '{"score":75,"matched_skills":["Java","Spring Boot"],"gaps":["Kubernetes"],'
+            '"angle":"Strong Java/Spring Boot developer with AWS and React experience matching this role perfectly",'
             '"recruiter_name":"Hiring Manager",'
             '"recruiter_email":"careers@company.com"}'
         ),
@@ -60,7 +60,7 @@ def analyze_fit(job, profile):
             f"Job: {job['title']} at {job['company']}\n"
             f"Location: {job['location']}\n"
             f"Description:\n{job['description'][:2000]}\n\n"
-            f"Candidate: {profile.get('name', 'Ram Burri')}\n"
+            f"Candidate: {profile.get('name', 'Janaki Ram Reddy')}\n"
             f"Current Role: {profile.get('current_role', '')}\n"
             f"Skills: {profile.get('skills', '')}\n"
             f"Summary: {profile.get('summary', '')}\n"
@@ -76,7 +76,7 @@ def analyze_fit(job, profile):
     except Exception as e:
         print(f"  ! JSON parse error: {e}")
         return {"score": 0, "matched_skills": [], "gaps": [],
-                "angle": "Strong .NET and Azure background",
+                "angle": "Strong Java and Spring Boot background",
                 "recruiter_name": "Hiring Manager", "recruiter_email": ""}
 
 # ── Step 2: Draft cold email to recruiter ─────────────────────────────────────
