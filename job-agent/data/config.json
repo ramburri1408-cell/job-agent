@@ -18,6 +18,7 @@
   "min_fit_score": 50,
   "auto_apply_enabled": true,
   "min_apply_score": 75,
+  "max_career_applies_per_run": 10,
   "profile": {
     "name": "Ram Burri",
     "email": "Ram.Burri1408@gmail.com",
