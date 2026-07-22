@@ -7,13 +7,39 @@ Runs on **GitHub Actions (free)** — scrapes jobs every hour, tailors your resu
 ## What it does every hour
 
 ```
-1. Scrape → Indeed, Dice, Remotive for your target roles
-2. Analyze → Claude scores each job's fit against your profile
-3. Tailor  → Claude rewrites your resume for each job
-4. Draft   → Claude writes a personalized cold email
-5. Send    → Gmail SMTP fires the email with resume attached
-6. Log     → All activity committed to this repo
+1. Scrape    → Adzuna, Remotive, LinkedIn, Google Jobs for your target roles
+2. Analyze   → Claude scores each job's fit against your profile
+3. Tailor    → Claude rewrites your resume for each job
+4. Draft     → Claude writes a personalized cold email
+5. Send      → Gmail SMTP fires the email with resume attached
+6. Auto-apply→ Claude re-checks the job's actual requirements on Dice,
+               and if they meet your bar, submits Easy Apply automatically
+7. Log       → All activity committed to this repo
 ```
+
+### Auto-apply
+
+`agent/apply_bot.py` runs as the last pipeline step (requires `DICE_EMAIL` /
+`DICE_PASSWORD` secrets). For each Dice "Easy Apply" listing it finds, it:
+
+1. Opens the job and reads the actual requirements/description text.
+2. Asks Claude to score how well your profile meets those requirements.
+3. Only if the score is at or above `min_apply_score` does it click Easy
+   Apply, fill out the form (work authorization, salary, experience, etc.),
+   attach your tailored resume, and submit.
+4. Logs every submission to `data/apply_log.jsonl` and skips any job URL
+   it has already applied to, so it never double-applies on later runs.
+
+Control it in `data/config.json`:
+
+- `"auto_apply_enabled": true` — set to `false` to turn off auto-submission
+  entirely (the rest of the pipeline still runs).
+- `"min_apply_score": 75` — how strict the requirements match must be
+  before it will actually submit an application (0–100, independent of
+  `min_fit_score` which only gates the recruiter email).
+
+Other Easy Apply portals (Indeed, ZipRecruiter, Monster, JobRight) are
+currently stubbed out — they block headless browsers/bot traffic.
 
 ---
 

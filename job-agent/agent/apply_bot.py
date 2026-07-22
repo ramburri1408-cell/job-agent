@@ -17,11 +17,24 @@ DATA_FILE   = Path("data/jobs.json")
 LOG_FILE    = Path("data/apply_log.jsonl")
 CONFIG_FILE = Path("data/config.json")
 
+def load_config():
+    return json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
+
+CONFIG        = load_config()
+CFG_PROFILE   = CONFIG.get("profile", {})
+MIN_APPLY_SCORE    = int(CONFIG.get("min_apply_score", CONFIG.get("min_fit_score", 70)))
+AUTO_APPLY_ENABLED = bool(CONFIG.get("auto_apply_enabled", True))
+
 PROFILE = {
-    "name": "Ram Burri", "email": "Ram.burri1408@gmail.com",
-    "phone": "9544454339", "location": "Boca Raton, FL",
-    "experience": "4", "title": "Full Stack .NET Developer",
+    "name": CFG_PROFILE.get("name", "Ram Burri"),
+    "email": CFG_PROFILE.get("email", "Ram.burri1408@gmail.com"),
+    "phone": CFG_PROFILE.get("phone", "9544454339"),
+    "location": "Boca Raton, FL",
+    "experience": "4",
+    "title": CFG_PROFILE.get("title", "Full Stack .NET Developer"),
     "salary": "110000",
+    "skills": CFG_PROFILE.get("skills", ""),
+    "summary": CFG_PROFILE.get("summary", ""),
 }
 
 def load_jobs():
@@ -32,8 +45,66 @@ def log_apply(entry):
     with LOG_FILE.open("a") as f:
         f.write(json.dumps(entry) + "\n")
 
+def load_applied_urls() -> set:
+    """URLs we've already successfully applied to, so we never double-apply."""
+    urls = set()
+    if LOG_FILE.exists():
+        with LOG_FILE.open() as f:
+            for line in f:
+                try:
+                    entry = json.loads(line)
+                    if entry.get("success") and entry.get("url"):
+                        urls.add(entry["url"])
+                except Exception:
+                    pass
+    return urls
+
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
+
+def get_job_description(page) -> str:
+    """Pull the job requirements text off the detail page to check fit before applying."""
+    for sel in ['[data-testid="jobDescriptionHtml"]', '[class*="job-description"]',
+                '[class*="jobDescription"]', 'article', 'main']:
+        try:
+            el = page.query_selector(sel)
+            if el:
+                text = el.inner_text().strip()
+                if len(text) > 100:
+                    return text
+        except Exception:
+            pass
+    try:
+        return page.inner_text("body")
+    except Exception:
+        return ""
+
+def score_job_requirements(title: str, description: str) -> dict:
+    """Ask Claude whether this job's requirements actually match the candidate before applying."""
+    try:
+        raw = client.messages.create(
+            model="claude-opus-4-8", max_tokens=200,
+            system=(
+                "You are screening a job posting's requirements against a candidate profile "
+                "before an application is auto-submitted. Return ONLY valid JSON, no markdown:\n"
+                '{"score":80,"meets_requirements":true,"reason":"short reason"}'
+            ),
+            messages=[{"role": "user", "content": (
+                f"Job title: {title}\n"
+                f"Job requirements/description:\n{description[:2500]}\n\n"
+                f"Candidate title: {PROFILE['title']}\n"
+                f"Experience: {PROFILE.get('experience', '4')}+ years\n"
+                f"Skills: {PROFILE.get('skills', '')}\n"
+                f"Summary: {PROFILE.get('summary', '')}"
+            )}],
+        ).content[0].text.strip()
+        clean = raw.replace("```json", "").replace("```", "").strip()
+        d = json.loads(clean)
+        d["score"] = int(d.get("score", 0))
+        return d
+    except Exception as e:
+        print(f"  ! Requirement scoring error: {e}")
+        return {"score": 0, "meets_requirements": False, "reason": "scoring failed"}
 
 def get_resume_pdf(jobs):
     for jid, job in jobs.items():
@@ -302,6 +373,15 @@ def apply_to_job(page, title: str, job_url: str, resume_pdf: str) -> bool:
                 if h1: title = h1.inner_text().strip()
             except: pass
 
+        # ── Gate: only apply if the job's requirements actually match ──
+        description = get_job_description(page)
+        analysis    = score_job_requirements(title, description)
+        score       = analysis.get("score", 0)
+        print(f"  → Requirement match: {score}/100 ({analysis.get('reason', '')})")
+        if score < MIN_APPLY_SCORE:
+            print(f"  x Skipping, below min_apply_score {MIN_APPLY_SCORE}: {title}")
+            return False
+
         # Find Easy Apply button
         apply_btn = None
         for asel in [
@@ -346,6 +426,7 @@ def apply_to_job(page, title: str, job_url: str, resume_pdf: str) -> bool:
             log_apply({
                 "title": title, "url": job_url,
                 "portal": "Dice", "applied_at": now_iso(), "success": True,
+                "requirement_score": score, "requirement_reason": analysis.get("reason", ""),
             })
 
         return success
@@ -355,7 +436,8 @@ def apply_to_job(page, title: str, job_url: str, resume_pdf: str) -> bool:
         return False
 
 def apply_dice(page, jobs, resume_pdf):
-    applied = 0
+    applied      = 0
+    applied_urls = load_applied_urls()
     print("\n[Dice] Starting...")
 
     try:
@@ -412,10 +494,16 @@ def apply_dice(page, jobs, resume_pdf):
                 for job_data in job_list[:10]:
                     title   = job_data.get("title", "Unknown")
                     job_url = job_data.get("url", "")
+
+                    if job_url in applied_urls:
+                        print(f"  → Already applied, skipping: {title}")
+                        continue
+
                     print(f"  → Checking: {title}")
 
                     if apply_to_job(page, title, job_url, resume_pdf):
                         applied += 1
+                        applied_urls.add(job_url)
 
                     try:
                         page.goto(search_url, timeout=30000)
@@ -445,6 +533,10 @@ def apply_jobright(page, jobs, resume_pdf):
     print("\n[JobRight.ai] Skipped — Google OAuth fails headless"); return 0
 
 def run_apply_bot():
+    if not AUTO_APPLY_ENABLED:
+        print("\n[Apply Bot] auto_apply_enabled is false in config.json — skipping.")
+        return 0
+
     from playwright.sync_api import sync_playwright
 
     jobs       = load_jobs()
