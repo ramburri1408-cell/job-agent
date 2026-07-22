@@ -357,7 +357,7 @@ def scrape_linkedin(query: str) -> list:
                 "rows": 40,
                 "publishedAt": "r86400",  # past 24 hours
             },
-            timeout_secs=120,
+            timeout=timedelta(seconds=120),
         )
 
         items = list(apify.dataset(run["defaultDatasetId"]).iterate_items())
