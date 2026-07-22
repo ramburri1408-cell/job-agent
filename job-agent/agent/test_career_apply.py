@@ -12,27 +12,27 @@ sys.path.insert(0, str(Path(__file__).parent))
 RESULTS = []
 
 PROFILE = {
-    "first_name":   "Ram",
-    "last_name":    "Burri",
-    "full_name":    "Ram Burri",
-    "email":        "Ram.burri1408@gmail.com",
-    "phone":        "9544454339",
-    "phone_format": "(954) 445-4339",
+    "first_name":   "Janaki",
+    "last_name":    "Ram Reddy",
+    "full_name":    "Janaki Ram Reddy",
+    "email":        "janakiram.b1408@gmail.com",
+    "phone":        "+1 984-357-4658",
+    "phone_format": "+1 984-357-4658",
     "city":         "Boca Raton",
     "state":        "Florida",
     "state_abbr":   "FL",
     "zip":          "33431",
     "country":      "United States",
-    "linkedin":     "https://www.linkedin.com/in/ramburri",
+    "linkedin":     "https://www.linkedin.com/in/janakiram58/",
     "experience":   "4",
-    "title":        "Full Stack .NET Developer",
+    "title":        "Senior Software Engineer",
     "salary":       "110000",
     "authorized":   "Yes",
     "sponsorship":  "No",
     "visa":         "OPT",
     "university":   "Florida Atlantic University",
-    "degree":       "Master of Science in Computer Science",
-    "grad_year":    "2025",
+    "degree":       "Master's in Computer Science",
+    "grad_year":    "",
 }
 
 JOB_BOARDS = [
@@ -215,7 +215,7 @@ def test_ai_answer_logic():
 def test_email_content():
     """Review email must contain all required information."""
     job = {
-        "title":     ".NET Developer",
+        "title":     "Java Developer",
         "company":   "JPMorgan Chase",
         "location":  "Remote",
         "fit_score": 88,
@@ -224,7 +224,7 @@ def test_email_content():
     fields_filled = 12
 
     subject = f"🔔 Review & Submit: {job['title']} @ {job['company']}"
-    body    = f"""Hi Ram,
+    body    = f"""Hi {PROFILE['first_name']},
 
 Your application form has been auto-filled and is ready for your review!
 
@@ -238,13 +238,13 @@ Your application form has been auto-filled and is ready for your review!
 {apply_url}
 
 What was auto-filled:
-✓ Name, email, phone, address (Boca Raton, FL 33431)
+✓ Name, email, phone, address ({PROFILE['city']}, {PROFILE['state_abbr']} {PROFILE['zip']})
 ✓ Work authorization: Yes (OPT — authorized to work)
 ✓ Sponsorship required: No
-✓ Years of experience: 4
-✓ Education: MS CS, Florida Atlantic University (2025)
-✓ LinkedIn: linkedin.com/in/ramburri
-✓ Salary expectation: $110,000
+✓ Years of experience: {PROFILE['experience']}
+✓ Education: {PROFILE['degree']}, {PROFILE['university']}
+✓ LinkedIn: {PROFILE['linkedin']}
+✓ Salary expectation: ${int(PROFILE['salary']):,}
 ✓ Resume PDF uploaded
 ✓ Cover letter generated"""
 
@@ -622,7 +622,7 @@ def test_icims_form_fill():
             try:
                 cover = (
                     "I am excited to apply for this position. "
-                    "With 4+ years of .NET development experience, "
+                    "With 4+ years of full stack Java and Spring Boot development experience, "
                     "I am confident I will contribute immediately."
                 )
                 page.fill('#cover_letter', cover)
@@ -828,7 +828,7 @@ def test_external_apply_detection():
             page.set_content("""
 <html><body>
 <div class="job-listing">
-  <h1>.NET Developer at JPMorgan Chase</h1>
+  <h1>Java Developer at JPMorgan Chase</h1>
   <p>Job description here...</p>
   <div class="apply-section">
     <a href="https://jpmorgan.wd1.myworkdayjobs.com/JPMorgan_careers/job/123/apply"
