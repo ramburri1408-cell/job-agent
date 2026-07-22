@@ -139,7 +139,7 @@ def _claude_json(system: str, user: str, max_tokens: int) -> dict:
 
 
 def _flatten_background() -> str:
-    """Plain-text dump of Ram's real experience for the matching stage."""
+    """Plain-text dump of the candidate's real experience for the matching stage."""
     lines = [f"Summary: {MASTER_RESUME['summary']}", "", "Skills:"]
     for k, v in MASTER_RESUME["skills"].items():
         lines.append(f"  {k}: {v}")
@@ -150,8 +150,10 @@ def _flatten_background() -> str:
             lines.append(f"  - {b}")
         lines.append(f"  Environment: {exp['env']}")
         lines.append("")
-    edu = MASTER_RESUME["education"]
-    lines.append(f"Education: {edu['degree']}, {edu['school']} ({edu['dates']}), GPA {edu['gpa']}")
+    for edu in MASTER_RESUME["education"]:
+        parts = [p for p in [edu.get("school", ""), edu.get("dates", ""),
+                              (f"GPA {edu['gpa']}" if edu.get("gpa") else "")] if p]
+        lines.append(f"Education: {edu['degree']}, " + ", ".join(parts))
     return "\n".join(lines)
 
 
