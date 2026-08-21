@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tsenta": {
+      "type": "http",
+      "url": "https://api.autojobs.me/api/v1/mcp"
+    }
+  }
+}
